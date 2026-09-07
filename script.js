@@ -1,11 +1,11 @@
-// Product Data with Correct Images and KSh Prices
+// Product Data with KSh Prices
 const products = [
     // Brake Pads for Specific Cars
     {
         name: "Brake Pads - Toyota Camry 2018-2023",
         price: 4500,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71xQK7N0LbL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Toyota Camry",
         year: "2018-2023",
         brand: "BOSCH",
@@ -15,7 +15,7 @@ const products = [
         name: "Brake Pads - Honda Civic 2016-2021",
         price: 3900,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71rGtPZ9X8L._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Honda Civic",
         year: "2016-2021",
         brand: "ACDelco",
@@ -25,7 +25,7 @@ const products = [
         name: "Brake Pads - Ford F-150 2015-2020",
         price: 5000,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/61gHnPWDDhL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Ford F-150",
         year: "2015-2020",
         brand: "MOOG",
@@ -35,7 +35,7 @@ const products = [
         name: "Brake Pads - BMW 3 Series 2014-2019",
         price: 6800,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71KXoVn2RXL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "BMW 3 Series",
         year: "2014-2019",
         brand: "Brembo",
@@ -45,47 +45,27 @@ const products = [
         name: "Brake Pads - Mercedes C-Class 2015-2021",
         price: 7200,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71cKbXhK0XL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Mercedes C-Class",
         year: "2015-2021",
         brand: "ATE",
         sku: "BP-MC-1521"
     },
     {
-        name: "Brake Pads - Nissan Altima 2013-2018",
-        price: 3400,
-        category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71gKwK4gC3L._AC_SL1500_.jpg",
-        vehicle: "Nissan Altima",
-        year: "2013-2018",
-        brand: "Akebono",
-        sku: "BP-NA-1318"
-    },
-    {
         name: "Brake Rotors - Toyota Camry 2018-2023",
         price: 8900,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/81dZpHfn3sL._AC_SL1500_.jpg",
+        image: "🛞",
         vehicle: "Toyota Camry",
         year: "2018-2023",
         brand: "Brembo",
         sku: "BR-TC-1823"
     },
     {
-        name: "Brake Rotors - Honda Civic 2016-2021",
-        price: 7800,
-        category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71BqH2pW8RL._AC_SL1500_.jpg",
-        vehicle: "Honda Civic",
-        year: "2016-2021",
-        brand: "Power Stop",
-        sku: "BR-HC-1621"
-    },
-    {
         name: "Complete Strut Assembly - Toyota RAV4 2013-2018",
         price: 16800,
         category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/61Jq2LFHwnL._AC_SL1500_.jpg",
+        image: "🔩",
         vehicle: "Toyota RAV4",
         year: "2013-2018",
         brand: "KYB",
@@ -95,7 +75,7 @@ const products = [
         name: "Control Arm Kit - Honda CR-V 2012-2016",
         price: 13400,
         category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/71TZKRJzR6L._AC_SL1500_.jpg",
+        image: "⚙️",
         vehicle: "Honda CR-V",
         year: "2012-2016",
         brand: "MOOG",
@@ -105,7 +85,7 @@ const products = [
         name: "Oil Filter - Universal",
         price: 1500,
         category: "Filters",
-        image: "https://m.media-amazon.com/images/I/71jZD2kJmsL._AC_SL1500_.jpg",
+        image: "🔩",
         vehicle: "Universal",
         year: "All Years",
         brand: "FRAM",
@@ -115,7 +95,7 @@ const products = [
         name: "Spark Plugs (4 Pack) - Universal",
         price: 2800,
         category: "Electrical",
-        image: "https://m.media-amazon.com/images/I/71vRGcQXKDL._AC_SL1500_.jpg",
+        image: "⚡",
         vehicle: "Universal",
         year: "All Years",
         brand: "NGK",
@@ -125,7 +105,7 @@ const products = [
         name: "Air Filter - Universal",
         price: 2200,
         category: "Filters",
-        image: "https://m.media-amazon.com/images/I/71ZQ9QjGvEL._AC_SL1500_.jpg",
+        image: "💨",
         vehicle: "Universal",
         year: "All Years",
         brand: "K&N",
@@ -135,7 +115,7 @@ const products = [
         name: "Alternator - Universal",
         price: 21000,
         category: "Electrical",
-        image: "https://m.media-amazon.com/images/I/71vO6KmBPhL._AC_SL1500_.jpg",
+        image: "🔋",
         vehicle: "Universal",
         year: "All Years",
         brand: "DENSO",
@@ -145,7 +125,7 @@ const products = [
         name: "Timing Belt Kit - Universal",
         price: 14500,
         category: "Engine",
-        image: "https://m.media-amazon.com/images/I/81QSnYubKqL._AC_SL1500_.jpg",
+        image: "⛓️",
         vehicle: "Universal",
         year: "All Years",
         brand: "Gates",
@@ -155,7 +135,7 @@ const products = [
         name: "Water Pump - Universal",
         price: 8900,
         category: "Cooling",
-        image: "https://m.media-amazon.com/images/I/71e9WN0EDcL._AC_SL1500_.jpg",
+        image: "💧",
         vehicle: "Universal",
         year: "All Years",
         brand: "AISIN",
@@ -165,48 +145,17 @@ const products = [
         name: "Shock Absorber Set - Ford F-150 2015-2020",
         price: 21000,
         category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/71KkPSPjJcL._AC_SL1500_.jpg",
+        image: "🛠️",
         vehicle: "Ford F-150",
         year: "2015-2020",
         brand: "Bilstein",
         sku: "SAS-FF-1520"
     },
     {
-        name: "Sway Bar Link Set - Chevrolet Silverado 2014-2019",
-        price: 4500,
-        category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/71vY8DYD6RL._AC_SL1500_.jpg",
-        vehicle: "Chevrolet Silverado",
-        year: "2014-2019",
-        brand: "MOOG",
-        sku: "SBL-CS-1419"
-    },
-    {
-        name: "Coil Spring Set - Jeep Wrangler 2018-2023",
-        price: 17800,
-        category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/71M4K6LJXNL._AC_SL1500_.jpg",
-        vehicle: "Jeep Wrangler",
-        year: "2018-2023",
-        brand: "Rough Country",
-        sku: "CSS-JW-1823"
-    },
-    {
-        name: "Air Suspension Kit - Audi A4 2017-2022",
-        price: 100000,
-        category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/61mvB2m7FLL._AC_SL1500_.jpg",
-        vehicle: "Audi A4",
-        year: "2017-2022",
-        brand: "Air Lift",
-        sku: "ASK-AA-1722"
-    },
-    // Additional Toyota Parts (Popular in Kenya)
-    {
         name: "Brake Pads - Toyota Land Cruiser 2010-2020",
         price: 6200,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71Cfk4UUTgL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Toyota Land Cruiser",
         year: "2010-2020",
         brand: "BOSCH",
@@ -216,7 +165,7 @@ const products = [
         name: "Brake Pads - Toyota Hilux 2015-2023",
         price: 5000,
         category: "Brakes",
-        image: "https://m.media-amazon.com/images/I/71ZQtD1EYcL._AC_SL1500_.jpg",
+        image: "🔧",
         vehicle: "Toyota Hilux",
         year: "2015-2023",
         brand: "Akebono",
@@ -226,21 +175,11 @@ const products = [
         name: "Oil Filter - Toyota Land Cruiser",
         price: 1800,
         category: "Filters",
-        image: "https://m.media-amazon.com/images/I/61FJzSXvBQL._AC_SL1500_.jpg",
+        image: "🔩",
         vehicle: "Toyota Land Cruiser",
         year: "2010-2020",
         brand: "TOYOTA Genuine",
         sku: "OF-TL-1020"
-    },
-    {
-        name: "Shock Absorber - Toyota Hilux 2015-2023",
-        price: 14500,
-        category: "Suspension",
-        image: "https://m.media-amazon.com/images/I/71bJhhCZX8L._AC_SL1500_.jpg",
-        vehicle: "Toyota Hilux",
-        year: "2015-2023",
-        brand: "KYB",
-        sku: "SA-TH-1523"
     }
 ];
 
@@ -276,11 +215,7 @@ function loadProducts() {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.innerHTML = `
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.name}" 
-                     onerror="this.src='https://via.placeholder.com/400x200/1a237e/ffffff?text=${encodeURIComponent(product.name)}'"
-                     style="width: 100%; height: 200px; object-fit: contain; background: #f5f5f5;">
-            </div>
+            <div class="product-image">${product.image}</div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-vehicle">
@@ -435,11 +370,7 @@ function displayFilteredProducts(productList, title) {
         productCard.className = 'product-card';
         const originalIndex = products.indexOf(product);
         productCard.innerHTML = `
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.name}" 
-                     onerror="this.src='https://via.placeholder.com/400x200/1a237e/ffffff?text=${encodeURIComponent(product.name)}'"
-                     style="width: 100%; height: 200px; object-fit: contain; background: #f5f5f5;">
-            </div>
+            <div class="product-image">${product.image}</div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-vehicle">
