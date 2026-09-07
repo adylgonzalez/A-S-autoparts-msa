@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAJUS AUTOPARTS - Mombasa, Kenya</title>
     <style>
-        /* ALL CSS INCLUDED DIRECTLY */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +22,6 @@
             padding: 20px;
         }
 
-        /* Top Bar */
         .top-bar {
             background: #1a237e;
             color: white;
@@ -32,7 +30,6 @@
             font-size: 14px;
         }
 
-        /* Header */
         .header {
             background: white;
             padding: 20px;
@@ -55,7 +52,6 @@
             font-size: 16px;
         }
 
-        /* Navigation */
         .nav {
             background: #1a237e;
             padding: 15px;
@@ -75,7 +71,6 @@
             border-radius: 5px;
         }
 
-        /* Search Bar */
         .search-bar {
             text-align: center;
             padding: 20px;
@@ -101,7 +96,6 @@
             margin-left: 5px;
         }
 
-        /* Vehicle Selector */
         .vehicle-selector {
             background: #f0f0f0;
             padding: 20px;
@@ -128,7 +122,6 @@
             margin-left: 10px;
         }
 
-        /* Categories */
         .categories {
             padding: 40px 20px;
             background: white;
@@ -174,7 +167,6 @@
             margin-bottom: 10px;
         }
 
-        /* Products */
         .products {
             padding: 40px 20px;
             background: #f5f5f5;
@@ -247,7 +239,6 @@
             background: #ff6f00;
         }
 
-        /* Contact Info */
         .contact-info {
             background: white;
             padding: 40px 20px;
@@ -270,7 +261,6 @@
             margin-right: 10px;
         }
 
-        /* WhatsApp Buttons */
         .whatsapp-buttons {
             position: fixed;
             bottom: 30px;
@@ -300,7 +290,6 @@
             background: #128C7E;
         }
 
-        /* Footer */
         .footer {
             background: #1a237e;
             color: white;
@@ -312,7 +301,6 @@
             margin: 10px 0;
         }
 
-        /* Admin Button */
         .admin-btn {
             position: fixed;
             bottom: 10px;
@@ -325,7 +313,6 @@
             z-index: 999;
         }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .nav a {
                 display: block;
@@ -346,18 +333,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Top Bar -->
     <div class="top-bar">
         <p>📞 ADIL: 0713349554 | SUHAYL: 0752763924 | 📍 Mombasa, Kenya</p>
     </div>
 
-    <!-- Header -->
     <div class="header">
         <h1>RAJUS <span>AUTOPARTS</span></h1>
         <p>Two Brothers, One Mission: Quality Parts</p>
     </div>
 
-    <!-- Navigation -->
     <div class="nav">
         <a href="#home">Home</a>
         <a href="#categories">Categories</a>
@@ -365,13 +349,11 @@
         <a href="#contact">Contact</a>
     </div>
 
-    <!-- Search Bar -->
     <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Search for parts...">
         <button onclick="searchProducts()">🔍 Search</button>
     </div>
 
-    <!-- Vehicle Selector -->
     <div class="vehicle-selector">
         <h2>Find Parts for Your Vehicle</h2>
         <select id="vehicleYear">
@@ -404,7 +386,6 @@
         <button onclick="findParts()">Find Parts</button>
     </div>
 
-    <!-- Categories -->
     <div class="categories" id="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid">
@@ -431,15 +412,11 @@
         </div>
     </div>
 
-    <!-- Products -->
     <div class="products" id="products">
         <h2>Featured Products</h2>
-        <div class="product-grid" id="productGrid">
-            <!-- Products will load here -->
-        </div>
+        <div class="product-grid" id="productGrid"></div>
     </div>
 
-    <!-- Contact Info -->
     <div class="contact-info" id="contact">
         <h2>Contact Us</h2>
         <div class="contact-details">
@@ -451,13 +428,11 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2024 RAJUS AUTOPARTS - Mombasa, Kenya</p>
         <p>ADIL: 0713349554 | SUHAYL: 0752763924</p>
     </div>
 
-    <!-- WhatsApp Buttons -->
     <div class="whatsapp-buttons">
         <a href="https://wa.me/254713349554" class="whatsapp-btn adil" target="_blank">
             <i class="fab fa-whatsapp"></i> WhatsApp ADIL
@@ -467,12 +442,11 @@
         </a>
     </div>
 
-    <!-- Admin Button -->
     <button class="admin-btn" onclick="openAdminPanel()">Admin</button>
 
     <script>
-        // Product Data
-        let products = [
+        // Default products
+        const defaultProducts = [
             { name: "Brake Pads - Toyota Camry", price: 4500, category: "Brakes", image: "🔧", brand: "BOSCH" },
             { name: "Brake Pads - Honda Civic", price: 3900, category: "Brakes", image: "🔧", brand: "ACDelco" },
             { name: "Brake Rotors - Toyota Camry", price: 8900, category: "Brakes", image: "🛞", brand: "Brembo" },
@@ -487,7 +461,14 @@
             { name: "Brake Pads - Hilux", price: 5000, category: "Brakes", image: "🔧", brand: "Akebono" }
         ];
 
-        // Vehicle Models
+        // Load products from localStorage or use defaults
+        let products = JSON.parse(localStorage.getItem('rajusProducts')) || defaultProducts;
+
+        // Save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('rajusProducts', JSON.stringify(products));
+        }
+
         const vehicleModels = {
             "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado"],
             "Honda": ["Civic", "Accord", "CR-V", "Fit"],
@@ -497,12 +478,10 @@
             "Nissan": ["Altima", "X-Trail", "Patrol"]
         };
 
-        // Format Price
         function formatPrice(price) {
             return 'KSh ' + price.toLocaleString('en-KE');
         }
 
-        // Load Products
         function loadProducts() {
             const productGrid = document.getElementById('productGrid');
             productGrid.innerHTML = '';
@@ -515,7 +494,7 @@
                     <div class="product-name">${product.name}</div>
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="alert('Contact ADIL: 0713349554 or SUHAYL: 0752763924 to order this part')">
+                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
                         Order Now
                     </button>
                 `;
@@ -523,7 +502,12 @@
             });
         }
 
-        // Vehicle Selector
+        function orderProduct(name, price) {
+            const message = `Hello RAJUS AUTOPARTS, I want to order: ${name} for ${formatPrice(price)}`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/254713349554?text=${encodedMessage}`, '_blank');
+        }
+
         document.getElementById('vehicleMake').addEventListener('change', function() {
             const make = this.value;
             const modelSelect = document.getElementById('vehicleModel');
@@ -539,7 +523,6 @@
             }
         });
 
-        // Find Parts
         function findParts() {
             const year = document.getElementById('vehicleYear').value;
             const make = document.getElementById('vehicleMake').value;
@@ -554,7 +537,6 @@
             loadProducts();
         }
 
-        // Search
         function searchProducts() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = products.filter(p => 
@@ -578,7 +560,7 @@
                     <div class="product-name">${product.name}</div>
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="alert('Contact ADIL: 0713349554 or SUHAYL: 0752763924')">
+                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
                         Order Now
                     </button>
                 `;
@@ -586,7 +568,6 @@
             });
         }
 
-        // Shop by Category
         function shopByCategory(category) {
             const filtered = products.filter(p => p.category === category);
             
@@ -601,7 +582,7 @@
                     <div class="product-name">${product.name}</div>
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="alert('Contact ADIL: 0713349554 or SUHAYL: 0752763924')">
+                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
                         Order Now
                     </button>
                 `;
@@ -611,7 +592,6 @@
             document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Admin Panel
         function openAdminPanel() {
             const password = prompt("Enter Admin Password:");
             if (password === "rajus2024") {
@@ -622,8 +602,8 @@
         }
 
         function showAdminPanel() {
-            let adminHTML = '<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">';
-            adminHTML += '<h2 style="color:#1a237e;margin-bottom:20px;">Edit Prices</h2>';
+            let adminHTML = '<div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">';
+            adminHTML += '<h2 style="color:#1a237e;margin-bottom:20px;">Edit Prices (Saved Permanently)</h2>';
             
             products.forEach((product, index) => {
                 adminHTML += `
@@ -638,19 +618,25 @@
                 `;
             });
             
-            adminHTML += '<button onclick="this.parentElement.remove()" style="padding:10px 20px;background:#ff6f00;color:white;border:none;border-radius:5px;cursor:pointer;">Close</button>';
+            adminHTML += '<button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>';
             adminHTML += '</div>';
             
             document.body.insertAdjacentHTML('beforeend', adminHTML);
+        }
+
+        function closeAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            if (panel) panel.remove();
         }
 
         function updatePrice(index) {
             const newPrice = document.getElementById('price_' + index).value;
             if (newPrice && newPrice > 0) {
                 products[index].price = parseInt(newPrice);
+                saveProducts(); // SAVE TO LOCALSTORAGE
                 loadProducts();
-                alert('Price updated successfully!');
-                document.querySelector('[style*="z-index:2000"]').remove();
+                closeAdminPanel();
+                alert('✅ Price updated and saved permanently!');
                 showAdminPanel();
             } else {
                 alert('Please enter a valid price');
