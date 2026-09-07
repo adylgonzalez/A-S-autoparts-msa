@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAJUS AUTOPARTS - Quality Auto Parts</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span><i class="fas fa-phone"></i> +1 (555) 123-4567</span>
+                <span><i class="fas fa-envelope"></i> info@rajusautoparts.com</span>
+            </div>
+            <div class="top-links">
+                <a href="#">Track Order</a>
+                <a href="#">Help Center</a>
+                <a href="#">Wishlist</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>RAJUS <span>AUTOPARTS</span></h1>
+                </a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search for parts, brands, or vehicle type...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="header-actions">
+                <div class="action-item">
+                    <i class="fas fa-user"></i>
+                    <span>Account</span>
+                </div>
+                <div class="action-item cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart (0)</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+            <ul class="nav-list">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#featured">Featured Products</a></li>
+                <li><a href="#deals">Special Deals</a></li>
+                <li><a href="#brands">Brands</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-slider">
+            <div class="slide active">
+                <div class="container">
+                    <h2>Quality Auto Parts for Every Vehicle</h2>
+                    <p>Find the perfect parts for your car, truck, or SUV at unbeatable prices</p>
+                    <a href="#categories" class="btn-primary">Shop Now</a>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="container">
+                    <h2>Massive Discount on Engine Parts</h2>
+                    <p>Up to 40% off on selected engine components this week</p>
+                    <a href="#deals" class="btn-primary">View Deals</a>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="container">
+                    <h2>Genuine OEM and Aftermarket Parts</h2>
+                    <p>Trusted brands you know and love</p>
+                    <a href="#featured" class="btn-primary">Browse Products</a>
+                </div>
+            </div>
+        </div>
+        <button class="slider-btn prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-btn next"><i class="fas fa-chevron-right"></i></button>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Engine Parts</h3>
+                    <p>Pistons, Valves, Timing Belts</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-car-battery"></i>
+                    <h3>Brakes & Suspension</h3>
+                    <p>Brake Pads, Rotors, Shocks</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-oil-can"></i>
+                    <h3>Filters & Fluids</h3>
+                    <p>Oil Filters, Coolant, Oil</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Electrical Parts</h3>
+                    <p>Alternators, Starters, Batteries</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-fan"></i>
+                    <h3>Cooling System</h3>
+                    <p>Radiators, Water Pumps, Fans</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Accessories</h3>
+                    <p>Floor Mats, Covers, Tools</p>
+                    <a href="#">Shop Now →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products" id="featured">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="product-grid" id="productGrid">
+                <!-- Products will be loaded here via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Deals -->
+    <section class="deals" id="deals">
+        <div class="container">
+            <h2 class="section-title">Special Deals</h2>
+            <div class="deal-banner">
+                <div class="deal-content">
+                    <h3>Limited Time Offer!</h3>
+                    <p>Get 25% OFF on all brake parts</p>
+                    <span class="discount-code">Use Code: BRAKE25</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands Section -->
+    <section class="brands" id="brands">
+        <div class="container">
+            <h2 class="section-title">Top Brands</h2>
+            <div class="brand-grid">
+                <div class="brand-item">BOSCH</div>
+                <div class="brand-item">DENSO</div>
+                <div class="brand-item">ACDelco</div>
+                <div class="brand-item">MOOG</div>
+                <div class="brand-item">Monroe</div>
+                <div class="brand-item">NGK</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About RAJUS AUTOPARTS</h2>
+                    <p>With over 20 years of experience in the automotive industry, RAJUS AUTOPARTS has been providing quality auto parts to customers worldwide. We pride ourselves on offering genuine OEM and high-quality aftermarket parts at competitive prices.</p>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> 100% Genuine Products</li>
+                        <li><i class="fas fa-check-circle"></i> Fast & Free Shipping</li>
+                        <li><i class="fas fa-check-circle"></i> 30-Day Return Policy</li>
+                        <li><i class="fas fa-check-circle"></i> Expert Support</li>
+                    </ul>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <h3>20+</h3>
+                        <p>Years Experience</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>50K+</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>10K+</h3>
+                        <p>Products Available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>123 Auto Parts Street<br>Car City, CA 12345</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>info@rajusautoparts.com</p>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RAJUS AUTOPARTS</h3>
+                    <p>Your trusted source for quality automotive parts since 2003.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#featured">Products</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Warranty</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 RAJUS AUTOPARTS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
