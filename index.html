@@ -371,7 +371,7 @@
     </div>
 
     <div class="header">
-        <h1>RAJUS <span>AUTOPARTS</span></h1>
+        <h1>A & S <span>AUTOPARTS</span></h1>
         <p>Two Brothers, One Mission: Quality Affordable Parts</p>
     </div>
 
@@ -470,7 +470,7 @@
     </div>
 
     <div class="footer">
-        <p>&copy; 2024 RAJUS AUTOPARTS - Mombasa, Kenya</p>
+        <p>&copy; 2024 A & S AUTOPARTS - Mombasa, Kenya</p>
         <p>ADIL: 0713349554 | SUHAYL: 0752763924</p>
     </div>
 
@@ -659,11 +659,11 @@
         ];
 
         // Load from localStorage or use defaults
-        let products = JSON.parse(localStorage.getItem('rajusProducts')) || defaultProducts;
+        let products = JSON.parse(localStorage.getItem('A & SProducts')) || defaultProducts;
 
         // Save to localStorage
         function saveProducts() {
-            localStorage.setItem('rajusProducts', JSON.stringify(products));
+            localStorage.setItem('A & SProducts', JSON.stringify(products));
         }
 
         const vehicleModels = {
@@ -713,7 +713,7 @@
 
         function orderProduct(index) {
             const product = products[index];
-            const message = `Hello RAJUS AUTOPARTS, I want to order:\n\n📦 ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability.`;
+            const message = `Hello A & S AUTOPARTS, I want to order:\n\n📦 ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability.`;
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/254713349554?text=${encodedMessage}`, '_blank');
         }
