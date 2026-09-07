@@ -200,21 +200,64 @@ const products = [
         year: "2017-2022",
         brand: "Air Lift",
         sku: "ASK-AA-1722"
+    },
+    // Additional Toyota Parts (Popular in Kenya)
+    {
+        name: "Brake Pads - Toyota Land Cruiser 2010-2020",
+        price: 54.99,
+        category: "Brakes",
+        image: "🔧",
+        vehicle: "Toyota Land Cruiser",
+        year: "2010-2020",
+        brand: "BOSCH",
+        sku: "BP-TL-1020"
+    },
+    {
+        name: "Brake Pads - Toyota Hilux 2015-2023",
+        price: 44.99,
+        category: "Brakes",
+        image: "🔧",
+        vehicle: "Toyota Hilux",
+        year: "2015-2023",
+        brand: "Akebono",
+        sku: "BP-TH-1523"
+    },
+    {
+        name: "Oil Filter - Toyota Land Cruiser",
+        price: 15.99,
+        category: "Filters",
+        image: "🔩",
+        vehicle: "Toyota Land Cruiser",
+        year: "2010-2020",
+        brand: "TOYOTA Genuine",
+        sku: "OF-TL-1020"
+    },
+    {
+        name: "Shock Absorber - Toyota Hilux 2015-2023",
+        price: 129.99,
+        category: "Suspension",
+        image: "🛠️",
+        vehicle: "Toyota Hilux",
+        year: "2015-2023",
+        brand: "KYB",
+        sku: "SA-TH-1523"
     }
 ];
 
 // Vehicle Models Database
 const vehicleModels = {
-    "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "Tacoma", "4Runner"],
-    "Honda": ["Civic", "Accord", "CR-V", "Pilot", "Odyssey"],
-    "Ford": ["F-150", "Mustang", "Explorer", "Escape", "Focus"],
-    "BMW": ["3 Series", "5 Series", "X3", "X5", "M3"],
-    "Mercedes-Benz": ["C-Class", "E-Class", "S-Class", "GLC", "GLE"],
-    "Nissan": ["Altima", "Sentra", "Rogue", "Pathfinder", "Maxima"],
-    "Chevrolet": ["Silverado", "Malibu", "Equinox", "Tahoe", "Camaro"],
-    "Audi": ["A4", "A6", "Q5", "Q7", "RS5"],
-    "Subaru": ["Outback", "Forester", "Impreza", "Crosstrek", "Legacy"],
-    "Jeep": ["Wrangler", "Grand Cherokee", "Cherokee", "Compass", "Renegade"]
+    "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "Tacoma", "4Runner", "Land Cruiser", "Hilux", "Prado", "Fortuner"],
+    "Honda": ["Civic", "Accord", "CR-V", "Pilot", "Odyssey", "Fit"],
+    "Ford": ["F-150", "Mustang", "Explorer", "Escape", "Focus", "Ranger"],
+    "BMW": ["3 Series", "5 Series", "X3", "X5", "M3", "X1"],
+    "Mercedes-Benz": ["C-Class", "E-Class", "S-Class", "GLC", "GLE", "A-Class"],
+    "Nissan": ["Altima", "Sentra", "Rogue", "Pathfinder", "Maxima", "X-Trail"],
+    "Mitsubishi": ["Lancer", "Pajero", "Outlander", "ASX", "Triton"],
+    "Mazda": ["Mazda3", "Mazda6", "CX-5", "CX-9", "BT-50"],
+    "Subaru": ["Outback", "Forester", "Impreza", "Crosstrek", "Legacy", "WRX"],
+    "Volkswagen": ["Golf", "Passat", "Tiguan", "Polo", "Touareg"],
+    "Land Rover": ["Defender", "Discovery", "Range Rover", "Freelander"],
+    "Isuzu": ["D-Max", "MU-X", "Trooper"]
 };
 
 // Cart functionality
@@ -320,7 +363,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Vehicle Selector
+// Vehicle Selector - Update Models
 document.getElementById('vehicleMake').addEventListener('change', function() {
     const make = this.value;
     const modelSelect = document.getElementById('vehicleModel');
@@ -347,30 +390,42 @@ function findParts() {
         return;
     }
     
-    // Filter products for this vehicle
-    const vehicleProducts = products.filter(product => 
-        product.vehicle && 
-        (product.vehicle.includes(make + ' ' + model) || product.vehicle === "Universal")
-    );
+    // Create the vehicle string to search for
+    const vehicleSearch = make + ' ' + model;
     
-    displayFilteredProducts(vehicleProducts, `${year} ${make} ${model}`);
+    // Filter products for this vehicle or universal parts
+    const vehicleProducts = products.filter(product => {
+        if (product.vehicle === "Universal") {
+            return true;
+        }
+        return product.vehicle && product.vehicle.includes(vehicleSearch);
+    });
+    
+    // Display the filtered products
+    displayFilteredProducts(vehicleProducts, `Parts for ${year} ${make} ${model}`);
+    
+    // Scroll to products section
+    document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
 }
 
 // Display Filtered Products
-function displayFilteredProducts(productList, vehicleName) {
+function displayFilteredProducts(productList, title) {
     const productGrid = document.getElementById('productGrid');
     productGrid.innerHTML = '';
     
+    // Create title element
+    const heading = document.createElement('h3');
+    heading.style.cssText = 'grid-column: 1/-1; text-align: center; color: #1a237e; margin-bottom: 20px;';
+    heading.textContent = title;
+    productGrid.appendChild(heading);
+    
     if (productList.length === 0) {
-        productGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No parts found for ' + vehicleName + '</p>';
+        const noProducts = document.createElement('p');
+        noProducts.style.cssText = 'text-align: center; grid-column: 1/-1;';
+        noProducts.textContent = 'No parts found. Please try different vehicle selection or call ADIL: 0713349554 for assistance.';
+        productGrid.appendChild(noProducts);
         return;
     }
-    
-    // Add a heading showing selected vehicle
-    const heading = document.createElement('h3');
-    heading.style.cssText = 'grid-column: 1/-1; text-align: center; color: #1a237e;';
-    heading.textContent = 'Parts for ' + vehicleName;
-    productGrid.appendChild(heading);
     
     productList.forEach((product) => {
         const productCard = document.createElement('div');
@@ -395,8 +450,8 @@ function displayFilteredProducts(productList, vehicleName) {
     });
 }
 
-// Enhanced Search functionality
-document.querySelector('.search-bar button').addEventListener('click', function() {
+// Search functionality
+function searchProducts() {
     const searchTerm = document.querySelector('.search-bar input').value.toLowerCase();
     const filteredProducts = products.filter(product => 
         product.name.toLowerCase().includes(searchTerm) || 
@@ -406,15 +461,45 @@ document.querySelector('.search-bar button').addEventListener('click', function(
     );
     
     displayFilteredProducts(filteredProducts, `Search results for: "${searchTerm}"`);
-});
+    document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+}
 
-// Also search when pressing Enter
+// Search button click
+document.querySelector('.search-bar button').addEventListener('click', searchProducts);
+
+// Search on Enter key
 document.querySelector('.search-bar input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
-        document.querySelector('.search-bar button').click();
+        searchProducts();
     }
 });
+
+// Category Shop Now buttons
+function shopByCategory(categoryName) {
+    let categoryProducts = [];
+    
+    if (categoryName === 'Brakes') {
+        categoryProducts = products.filter(product => 
+            product.category === 'Brakes'
+        );
+    } else if (categoryName === 'Suspension') {
+        categoryProducts = products.filter(product => 
+            product.category === 'Suspension'
+        );
+    } else if (categoryName === 'Filters') {
+        categoryProducts = products.filter(product => 
+            product.category === 'Filters'
+        );
+    } else {
+        categoryProducts = products.filter(product => 
+            product.category === categoryName
+        );
+    }
+    
+    displayFilteredProducts(categoryProducts, `${categoryName} Products`);
+    document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+}
 
 // Add CSS animations for notifications
 const style = document.createElement('style');
@@ -439,6 +524,29 @@ style.textContent = `
             transform: translateX(100%);
             opacity: 0;
         }
+    }
+    
+    .whatsapp-float {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #25D366;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        z-index: 1000;
+        transition: transform 0.3s;
+    }
+    
+    .whatsapp-float:hover {
+        transform: scale(1.1);
     }
 `;
 document.head.appendChild(style);
