@@ -28,7 +28,35 @@
         <div class="container">
             <div class="logo">
                 <a href="index.html">
-                    <h1>RAJUS <span>AUTOPARTS</span></h1>
+                    <div class="logo-container">
+                        <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Circle background -->
+                            <circle cx="50" cy="50" r="48" fill="#1a237e" stroke="#ff6f00" stroke-width="3"/>
+                            <!-- Two brothers (simplified figures) -->
+                            <!-- Brother 1 -->
+                            <circle cx="38" cy="40" r="8" fill="#ffcc80" stroke="#333" stroke-width="1"/>
+                            <rect x="32" y="48" width="12" height="20" rx="3" fill="#4caf50" stroke="#333" stroke-width="1"/>
+                            <!-- Brother 2 -->
+                            <circle cx="62" cy="40" r="8" fill="#ffcc80" stroke="#333" stroke-width="1"/>
+                            <rect x="56" y="48" width="12" height="20" rx="3" fill="#2196f3" stroke="#333" stroke-width="1"/>
+                            <!-- Car parts they're holding -->
+                            <!-- Gear (Brother 1) -->
+                            <circle cx="38" cy="55" r="6" fill="#ff6f00" stroke="#333" stroke-width="1.5"/>
+                            <circle cx="38" cy="55" r="2" fill="#fff"/>
+                            <!-- Wrench (Brother 2) -->
+                            <rect x="58" y="52" width="8" height="3" fill="#ff6f00" stroke="#333" stroke-width="1"/>
+                            <circle cx="66" cy="53.5" r="3" fill="none" stroke="#ff6f00" stroke-width="2"/>
+                            <!-- Text RAJUS -->
+                            <text x="50" y="78" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">RAJUS</text>
+                            <!-- Connecting arms -->
+                            <line x1="40" y1="50" x2="38" y2="53" stroke="#333" stroke-width="1.5"/>
+                            <line x1="60" y1="50" x2="62" y2="53" stroke="#333" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>RAJUS <span>AUTOPARTS</span></h1>
+                        <p>Two Brothers, One Mission: Quality Parts</p>
+                    </div>
                 </a>
             </div>
             
@@ -97,6 +125,47 @@
         <button class="slider-btn next"><i class="fas fa-chevron-right"></i></button>
     </section>
 
+    <!-- Vehicle Selector -->
+    <section class="vehicle-selector">
+        <div class="container">
+            <h2 class="section-title">Find Parts for Your Vehicle</h2>
+            <div class="selector-box">
+                <select id="vehicleYear">
+                    <option value="">Select Year</option>
+                    <option>2024</option>
+                    <option>2023</option>
+                    <option>2022</option>
+                    <option>2021</option>
+                    <option>2020</option>
+                    <option>2019</option>
+                    <option>2018</option>
+                    <option>2017</option>
+                    <option>2016</option>
+                    <option>2015</option>
+                    <option>2014</option>
+                    <option>2013</option>
+                </select>
+                <select id="vehicleMake">
+                    <option value="">Select Make</option>
+                    <option>Toyota</option>
+                    <option>Honda</option>
+                    <option>Ford</option>
+                    <option>BMW</option>
+                    <option>Mercedes-Benz</option>
+                    <option>Nissan</option>
+                    <option>Chevrolet</option>
+                    <option>Audi</option>
+                    <option>Subaru</option>
+                    <option>Jeep</option>
+                </select>
+                <select id="vehicleModel">
+                    <option value="">Select Model</option>
+                </select>
+                <button class="btn-primary" onclick="findParts()">Find Parts</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Categories Section -->
     <section class="categories" id="categories">
         <div class="container">
@@ -133,9 +202,9 @@
                     <a href="#">Shop Now →</a>
                 </div>
                 <div class="category-card">
-                    <i class="fas fa-tools"></i>
-                    <h3>Accessories</h3>
-                    <p>Floor Mats, Covers, Tools</p>
+                    <i class="fas fa-car"></i>
+                    <h3>Suspension Parts</h3>
+                    <p>Struts, Springs, Control Arms</p>
                     <a href="#">Shop Now →</a>
                 </div>
             </div>
@@ -177,6 +246,8 @@
                 <div class="brand-item">MOOG</div>
                 <div class="brand-item">Monroe</div>
                 <div class="brand-item">NGK</div>
+                <div class="brand-item">Brembo</div>
+                <div class="brand-item">Akebono</div>
             </div>
         </div>
     </section>
@@ -187,12 +258,14 @@
             <div class="about-content">
                 <div class="about-text">
                     <h2 class="section-title">About RAJUS AUTOPARTS</h2>
-                    <p>With over 20 years of experience in the automotive industry, RAJUS AUTOPARTS has been providing quality auto parts to customers worldwide. We pride ourselves on offering genuine OEM and high-quality aftermarket parts at competitive prices.</p>
+                    <p>Founded by two brothers with a passion for automobiles, RAJUS AUTOPARTS has been providing quality auto parts to customers worldwide for over 20 years. What started as a small family business has grown into a trusted name in the automotive industry.</p>
+                    <p>Our mission is simple: provide genuine OEM and high-quality aftermarket parts at competitive prices, backed by exceptional customer service. When you shop with RAJUS, you're not just a customer – you're family.</p>
                     <ul class="features-list">
                         <li><i class="fas fa-check-circle"></i> 100% Genuine Products</li>
                         <li><i class="fas fa-check-circle"></i> Fast & Free Shipping</li>
                         <li><i class="fas fa-check-circle"></i> 30-Day Return Policy</li>
                         <li><i class="fas fa-check-circle"></i> Expert Support</li>
+                        <li><i class="fas fa-check-circle"></i> Family Owned & Operated</li>
                     </ul>
                 </div>
                 <div class="about-stats">
@@ -221,11 +294,11 @@
                 <div class="contact-info">
                     <div class="info-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <p>123 Car City<br>Mombasa, Kenya</p>
+                        <p>Auto Parts Street<br>Mombasa, Kenya</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-phone"></i>
-                        <p>0713349554/0752763924</p>
+                        <p>+1 (555) 123-4567</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-envelope"></i>
@@ -248,7 +321,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>RAJUS AUTOPARTS</h3>
-                    <p>Your trusted source for quality automotive parts since 2003.</p>
+                    <p>Your trusted source for quality automotive parts since 2003. Family owned and operated.</p>
                 </div>
                 <div class="footer-section">
                     <h3>Quick Links</h3>
@@ -279,7 +352,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 RAJUS AUTOPARTS. All rights reserved.</p>
+                <p>&copy; 2024 RAJUS AUTOPARTS. All rights reserved. | Two Brothers, One Mission: Quality Parts</p>
             </div>
         </div>
     </footer>
