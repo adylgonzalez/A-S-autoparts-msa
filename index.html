@@ -181,7 +181,7 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
@@ -193,6 +193,12 @@
             padding: 20px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .product-image {
@@ -207,6 +213,22 @@
             font-size: 18px;
         }
 
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .product-vehicle-info {
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+
         .product-brand {
             background: #1a237e;
             color: white;
@@ -215,6 +237,12 @@
             border-radius: 5px;
             font-size: 14px;
             margin-bottom: 10px;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
         }
 
         .product-price {
@@ -311,6 +339,11 @@
             border: none;
             cursor: pointer;
             z-index: 999;
+            font-size: 12px;
+        }
+
+        .admin-btn:hover {
+            opacity: 1;
         }
 
         @media (max-width: 768px) {
@@ -350,7 +383,7 @@
     </div>
 
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search for parts...">
+        <input type="text" id="searchInput" placeholder="Search parts, vehicles, brands...">
         <button onclick="searchProducts()">🔍 Search</button>
     </div>
 
@@ -358,27 +391,20 @@
         <h2>Find Parts for Your Vehicle</h2>
         <select id="vehicleYear">
             <option value="">Select Year</option>
-            <option>2024</option>
-            <option>2023</option>
-            <option>2022</option>
-            <option>2021</option>
-            <option>2020</option>
-            <option>2019</option>
-            <option>2018</option>
-            <option>2017</option>
-            <option>2016</option>
-            <option>2015</option>
-            <option>2014</option>
-            <option>2013</option>
+            <option>2024</option><option>2023</option><option>2022</option>
+            <option>2021</option><option>2020</option><option>2019</option>
+            <option>2018</option><option>2017</option><option>2016</option>
+            <option>2015</option><option>2014</option><option>2013</option>
+            <option>2012</option><option>2011</option><option>2010</option>
         </select>
         <select id="vehicleMake">
             <option value="">Select Make</option>
-            <option>Toyota</option>
-            <option>Honda</option>
-            <option>Ford</option>
-            <option>BMW</option>
-            <option>Mercedes-Benz</option>
-            <option>Nissan</option>
+            <option>Toyota</option><option>Honda</option>
+            <option>Ford</option><option>BMW</option>
+            <option>Mercedes-Benz</option><option>Nissan</option>
+            <option>Mitsubishi</option><option>Mazda</option>
+            <option>Subaru</option><option>Volkswagen</option>
+            <option>Land Rover</option><option>Isuzu</option>
         </select>
         <select id="vehicleModel">
             <option value="">Select Model</option>
@@ -408,6 +434,16 @@
                 <i class="fas fa-bolt"></i>
                 <h3>Electrical</h3>
                 <p>Alternators, Plugs</p>
+            </div>
+            <div class="category-card" onclick="shopByCategory('Engine')">
+                <i class="fas fa-cogs"></i>
+                <h3>Engine</h3>
+                <p>Timing Belts, Pumps</p>
+            </div>
+            <div class="category-card" onclick="shopByCategory('Cooling')">
+                <i class="fas fa-fan"></i>
+                <h3>Cooling</h3>
+                <p>Radiators, Water Pumps</p>
             </div>
         </div>
     </div>
@@ -442,40 +478,202 @@
         </a>
     </div>
 
-    <button class="admin-btn" onclick="openAdminPanel()">Admin</button>
+    <button class="admin-btn" onclick="openAdminPanel()">🔧 Admin Panel</button>
 
     <script>
-        // Default products
+        // Default products with full details
         const defaultProducts = [
-            { name: "Brake Pads - Toyota Camry", price: 4500, category: "Brakes", image: "🔧", brand: "BOSCH" },
-            { name: "Brake Pads - Honda Civic", price: 3900, category: "Brakes", image: "🔧", brand: "ACDelco" },
-            { name: "Brake Rotors - Toyota Camry", price: 8900, category: "Brakes", image: "🛞", brand: "Brembo" },
-            { name: "Strut Assembly - RAV4", price: 16800, category: "Suspension", image: "🔩", brand: "KYB" },
-            { name: "Oil Filter - Universal", price: 1500, category: "Filters", image: "🔩", brand: "FRAM" },
-            { name: "Spark Plugs (4 Pack)", price: 2800, category: "Electrical", image: "⚡", brand: "NGK" },
-            { name: "Air Filter - Universal", price: 2200, category: "Filters", image: "💨", brand: "K&N" },
-            { name: "Alternator - Universal", price: 21000, category: "Electrical", image: "🔋", brand: "DENSO" },
-            { name: "Timing Belt Kit", price: 14500, category: "Engine", image: "⛓️", brand: "Gates" },
-            { name: "Water Pump", price: 8900, category: "Cooling", image: "💧", brand: "AISIN" },
-            { name: "Brake Pads - Land Cruiser", price: 6200, category: "Brakes", image: "🔧", brand: "BOSCH" },
-            { name: "Brake Pads - Hilux", price: 5000, category: "Brakes", image: "🔧", brand: "Akebono" }
+            { 
+                name: "Brake Pads - Toyota Camry", 
+                price: 4500, 
+                category: "Brakes", 
+                image: "🔧", 
+                brand: "BOSCH",
+                description: "High-quality ceramic brake pads for smooth stopping power. Low dust, low noise.",
+                vehicleMake: "Toyota",
+                vehicleModel: "Camry",
+                yearStart: 2018,
+                yearEnd: 2023,
+                sku: "BP-TC-1823",
+                stock: 25
+            },
+            { 
+                name: "Brake Pads - Honda Civic", 
+                price: 3900, 
+                category: "Brakes", 
+                image: "🔧", 
+                brand: "ACDelco",
+                description: "Premium semi-metallic brake pads. Excellent heat dissipation and durability.",
+                vehicleMake: "Honda",
+                vehicleModel: "Civic",
+                yearStart: 2016,
+                yearEnd: 2021,
+                sku: "BP-HC-1621",
+                stock: 30
+            },
+            { 
+                name: "Brake Rotors - Toyota Camry", 
+                price: 8900, 
+                category: "Brakes", 
+                image: "🛞", 
+                brand: "Brembo",
+                description: "Vented brake rotors for maximum cooling. OEM specifications.",
+                vehicleMake: "Toyota",
+                vehicleModel: "Camry",
+                yearStart: 2018,
+                yearEnd: 2023,
+                sku: "BR-TC-1823",
+                stock: 15
+            },
+            { 
+                name: "Complete Strut Assembly - RAV4", 
+                price: 16800, 
+                category: "Suspension", 
+                image: "🔩", 
+                brand: "KYB",
+                description: "Complete strut assembly with coil spring. Direct fit, no modification needed.",
+                vehicleMake: "Toyota",
+                vehicleModel: "RAV4",
+                yearStart: 2013,
+                yearEnd: 2018,
+                sku: "CSA-TR-1318",
+                stock: 10
+            },
+            { 
+                name: "Oil Filter - Universal", 
+                price: 1500, 
+                category: "Filters", 
+                image: "🔩", 
+                brand: "FRAM",
+                description: "High-efficiency oil filter. Traps 95% of dirt and contaminants.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "OF-UNI-001",
+                stock: 100
+            },
+            { 
+                name: "Spark Plugs (4 Pack)", 
+                price: 2800, 
+                category: "Electrical", 
+                image: "⚡", 
+                brand: "NGK",
+                description: "Iridium spark plugs for better fuel efficiency and performance.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "SP-UNI-004",
+                stock: 50
+            },
+            { 
+                name: "Air Filter - Universal", 
+                price: 2200, 
+                category: "Filters", 
+                image: "💨", 
+                brand: "K&N",
+                description: "High-flow air filter. Increases horsepower and acceleration.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "AF-UNI-001",
+                stock: 40
+            },
+            { 
+                name: "Alternator - Universal", 
+                price: 21000, 
+                category: "Electrical", 
+                image: "🔋", 
+                brand: "DENSO",
+                description: "High-output alternator. Reliable charging for all electrical systems.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "ALT-UNI-001",
+                stock: 8
+            },
+            { 
+                name: "Timing Belt Kit", 
+                price: 14500, 
+                category: "Engine", 
+                image: "⛓️", 
+                brand: "Gates",
+                description: "Complete timing belt kit with tensioner and idler pulleys.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "TBK-UNI-001",
+                stock: 12
+            },
+            { 
+                name: "Water Pump", 
+                price: 8900, 
+                category: "Cooling", 
+                image: "💧", 
+                brand: "AISIN",
+                description: "High-quality water pump. Prevents overheating and engine damage.",
+                vehicleMake: "Universal",
+                vehicleModel: "All Models",
+                yearStart: 0,
+                yearEnd: 0,
+                sku: "WP-UNI-001",
+                stock: 20
+            },
+            { 
+                name: "Brake Pads - Land Cruiser", 
+                price: 6200, 
+                category: "Brakes", 
+                image: "🔧", 
+                brand: "BOSCH",
+                description: "Heavy-duty brake pads for SUVs. Excellent stopping power.",
+                vehicleMake: "Toyota",
+                vehicleModel: "Land Cruiser",
+                yearStart: 2010,
+                yearEnd: 2020,
+                sku: "BP-TL-1020",
+                stock: 18
+            },
+            { 
+                name: "Brake Pads - Hilux", 
+                price: 5000, 
+                category: "Brakes", 
+                image: "🔧", 
+                brand: "Akebono",
+                description: "Premium brake pads for pickup trucks. Long-lasting performance.",
+                vehicleMake: "Toyota",
+                vehicleModel: "Hilux",
+                yearStart: 2015,
+                yearEnd: 2023,
+                sku: "BP-TH-1523",
+                stock: 22
+            }
         ];
 
-        // Load products from localStorage or use defaults
+        // Load from localStorage or use defaults
         let products = JSON.parse(localStorage.getItem('rajusProducts')) || defaultProducts;
 
-        // Save products to localStorage
+        // Save to localStorage
         function saveProducts() {
             localStorage.setItem('rajusProducts', JSON.stringify(products));
         }
 
         const vehicleModels = {
-            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado"],
+            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner"],
             "Honda": ["Civic", "Accord", "CR-V", "Fit"],
             "Ford": ["F-150", "Ranger", "Explorer"],
             "BMW": ["3 Series", "5 Series", "X3", "X5"],
             "Mercedes-Benz": ["C-Class", "E-Class", "S-Class"],
-            "Nissan": ["Altima", "X-Trail", "Patrol"]
+            "Nissan": ["Altima", "X-Trail", "Patrol"],
+            "Mitsubishi": ["Lancer", "Pajero", "Outlander"],
+            "Mazda": ["Mazda3", "CX-5", "BT-50"],
+            "Subaru": ["Outback", "Forester", "Impreza"],
+            "Volkswagen": ["Golf", "Passat", "Tiguan"],
+            "Land Rover": ["Defender", "Discovery", "Range Rover"],
+            "Isuzu": ["D-Max", "MU-X"]
         };
 
         function formatPrice(price) {
@@ -492,18 +690,25 @@
                 productCard.innerHTML = `
                     <div class="product-image">${product.image}</div>
                     <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description || 'No description available'}</div>
+                    <div class="product-vehicle-info">
+                        <i class="fas fa-car"></i> ${product.vehicleMake} ${product.vehicleModel} 
+                        ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}
+                    </div>
                     <div class="product-brand">${product.brand}</div>
+                    <div class="product-sku">SKU: ${product.sku || 'N/A'} | Stock: ${product.stock || 0}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
-                        Order Now
+                    <button class="add-to-cart" onclick="orderProduct(${index})">
+                        <i class="fab fa-whatsapp"></i> Order via WhatsApp
                     </button>
                 `;
                 productGrid.appendChild(productCard);
             });
         }
 
-        function orderProduct(name, price) {
-            const message = `Hello RAJUS AUTOPARTS, I want to order: ${name} for ${formatPrice(price)}`;
+        function orderProduct(index) {
+            const product = products[index];
+            const message = `Hello RAJUS AUTOPARTS, I want to order:\n\n📦 ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability.`;
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/254713349554?text=${encodedMessage}`, '_blank');
         }
@@ -524,7 +729,7 @@
         });
 
         function findParts() {
-            const year = document.getElementById('vehicleYear').value;
+            const year = parseInt(document.getElementById('vehicleYear').value);
             const make = document.getElementById('vehicleMake').value;
             const model = document.getElementById('vehicleModel').value;
             
@@ -533,57 +738,59 @@
                 return;
             }
             
-            alert('Showing parts for ' + year + ' ' + make + ' ' + model + '\n\nCall ADIL: 0713349554 or SUHAYL: 0752763924');
-            loadProducts();
+            const filteredProducts = products.filter(product => {
+                // Include universal parts
+                if (product.vehicleMake === "Universal") return true;
+                
+                // Check if vehicle matches
+                if (product.vehicleMake !== make || product.vehicleModel !== model) return false;
+                
+                // Check year range
+                if (product.yearStart > 0 && product.yearEnd > 0) {
+                    return year >= product.yearStart && year <= product.yearEnd;
+                }
+                
+                return true;
+            });
+            
+            displayFilteredProducts(filteredProducts, `Parts for ${year} ${make} ${model}`);
         }
 
-        function searchProducts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) || 
-                p.category.toLowerCase().includes(searchTerm)
-            );
-            
+        function displayFilteredProducts(filteredProducts, title) {
             const productGrid = document.getElementById('productGrid');
             productGrid.innerHTML = '';
             
-            if (filtered.length === 0) {
-                productGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No products found. Call us for assistance.</p>';
+            if (filteredProducts.length === 0) {
+                productGrid.innerHTML = `
+                    <div style="text-align:center; grid-column: 1/-1; padding: 40px;">
+                        <p style="font-size: 18px; color: #666;">No parts found for ${title}</p>
+                        <p style="margin-top: 10px;">Call ADIL: 0713349554 or SUHAYL: 0752763924</p>
+                    </div>
+                `;
                 return;
             }
             
-            filtered.forEach((product) => {
+            // Add title
+            const titleElement = document.createElement('h3');
+            titleElement.style.cssText = 'text-align:center; grid-column: 1/-1; color: #1a237e;';
+            titleElement.textContent = title;
+            productGrid.appendChild(titleElement);
+            
+            filteredProducts.forEach((product) => {
+                const originalIndex = products.indexOf(product);
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <div class="product-image">${product.image}</div>
                     <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description || 'No description'}</div>
+                    <div class="product-vehicle-info">
+                        <i class="fas fa-car"></i> ${product.vehicleMake} ${product.vehicleModel}
+                    </div>
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
-                        Order Now
-                    </button>
-                `;
-                productGrid.appendChild(productCard);
-            });
-        }
-
-        function shopByCategory(category) {
-            const filtered = products.filter(p => p.category === category);
-            
-            const productGrid = document.getElementById('productGrid');
-            productGrid.innerHTML = '';
-            
-            filtered.forEach((product) => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-brand">${product.brand}</div>
-                    <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="orderProduct('${product.name}', ${product.price})">
-                        Order Now
+                    <button class="add-to-cart" onclick="orderProduct(${originalIndex})">
+                        <i class="fab fa-whatsapp"></i> Order via WhatsApp
                     </button>
                 `;
                 productGrid.appendChild(productCard);
@@ -592,6 +799,26 @@
             document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
         }
 
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) || 
+                p.category.toLowerCase().includes(searchTerm) ||
+                p.description.toLowerCase().includes(searchTerm) ||
+                p.vehicleMake.toLowerCase().includes(searchTerm) ||
+                p.vehicleModel.toLowerCase().includes(searchTerm) ||
+                p.brand.toLowerCase().includes(searchTerm)
+            );
+            
+            displayFilteredProducts(filtered, `Search results for: "${searchTerm}"`);
+        }
+
+        function shopByCategory(category) {
+            const filtered = products.filter(p => p.category === category);
+            displayFilteredProducts(filtered, `${category} Products`);
+        }
+
+        // ADMIN PANEL - Full Product Management
         function openAdminPanel() {
             const password = prompt("Enter Admin Password:");
             if (password === "rajus2024") {
@@ -602,45 +829,196 @@
         }
 
         function showAdminPanel() {
-            let adminHTML = '<div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">';
-            adminHTML += '<h2 style="color:#1a237e;margin-bottom:20px;">Edit Prices (Saved Permanently)</h2>';
+            let adminHTML = `
+                <div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
+                    <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Product Management</h2>
+                    <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;">
+                        ➕ Add New Product
+                    </button>
+                    <div id="addProductForm"></div>
+                    <div id="adminProductList">
+            `;
             
             products.forEach((product, index) => {
                 adminHTML += `
-                    <div style="margin-bottom:15px;padding:10px;border:1px solid #ddd;border-radius:5px;">
+                    <div style="margin-bottom:20px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
                         <strong>${product.name}</strong><br>
-                        <small>Current: ${formatPrice(product.price)}</small>
-                        <div style="display:flex;gap:10px;margin-top:5px;">
-                            <input type="number" id="price_${index}" value="${product.price}" style="width:100px;padding:5px;">
-                            <button onclick="updatePrice(${index})" style="padding:5px 15px;background:#4caf50;color:white;border:none;border-radius:3px;cursor:pointer;">Update</button>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                            <div>
+                                <label style="font-size:12px;">Price (KSh):</label>
+                                <input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Stock:</label>
+                                <input type="number" id="stock_${index}" value="${product.stock}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Brand:</label>
+                                <input type="text" id="brand_${index}" value="${product.brand}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Category:</label>
+                                <input type="text" id="category_${index}" value="${product.category}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Vehicle Make:</label>
+                                <input type="text" id="vmake_${index}" value="${product.vehicleMake}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Vehicle Model:</label>
+                                <input type="text" id="vmodel_${index}" value="${product.vehicleModel}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Year Start:</label>
+                                <input type="number" id="ystart_${index}" value="${product.yearStart}" style="width:100%;padding:5px;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px;">Year End:</label>
+                                <input type="number" id="yend_${index}" value="${product.yearEnd}" style="width:100%;padding:5px;">
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <label style="font-size:12px;">Description:</label>
+                            <textarea id="desc_${index}" style="width:100%;padding:5px;height:60px;">${product.description}</textarea>
+                        </div>
+                        <div style="margin-top:10px;display:flex;gap:10px;">
+                            <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:white;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
+                            <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:white;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
             });
             
-            adminHTML += '<button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>';
-            adminHTML += '</div>';
+            adminHTML += `
+                    </div>
+                    <button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:20px;">Close</button>
+                </div>
+            `;
             
             document.body.insertAdjacentHTML('beforeend', adminHTML);
+        }
+
+        function showAddProductForm() {
+            const formHTML = `
+                <div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;">
+                    <h3 style="color:#2e7d32;">Add New Product</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                        <div>
+                            <label>Product Name:</label>
+                            <input type="text" id="new_name" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Price (KSh):</label>
+                            <input type="number" id="new_price" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Category:</label>
+                            <input type="text" id="new_category" style="width:100%;padding:5px;" placeholder="Brakes, Suspension, etc.">
+                        </div>
+                        <div>
+                            <label>Brand:</label>
+                            <input type="text" id="new_brand" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Vehicle Make:</label>
+                            <input type="text" id="new_vmake" style="width:100%;padding:5px;" placeholder="Toyota, Honda, Universal...">
+                        </div>
+                        <div>
+                            <label>Vehicle Model:</label>
+                            <input type="text" id="new_vmodel" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Year Start (0 for universal):</label>
+                            <input type="number" id="new_ystart" value="0" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Year End (0 for universal):</label>
+                            <input type="number" id="new_yend" value="0" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Stock:</label>
+                            <input type="number" id="new_stock" value="0" style="width:100%;padding:5px;">
+                        </div>
+                        <div>
+                            <label>Image (emoji):</label>
+                            <input type="text" id="new_image" value="🔧" style="width:100%;padding:5px;">
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <label>Description:</label>
+                        <textarea id="new_description" style="width:100%;padding:5px;height:60px;" placeholder="Describe the product..."></textarea>
+                    </div>
+                    <button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button>
+                </div>
+            `;
+            
+            document.getElementById('addProductForm').innerHTML = formHTML;
+        }
+
+        function addNewProduct() {
+            const newProduct = {
+                name: document.getElementById('new_name').value,
+                price: parseInt(document.getElementById('new_price').value),
+                category: document.getElementById('new_category').value,
+                brand: document.getElementById('new_brand').value,
+                vehicleMake: document.getElementById('new_vmake').value || 'Universal',
+                vehicleModel: document.getElementById('new_vmodel').value || 'All Models',
+                yearStart: parseInt(document.getElementById('new_ystart').value) || 0,
+                yearEnd: parseInt(document.getElementById('new_yend').value) || 0,
+                stock: parseInt(document.getElementById('new_stock').value) || 0,
+                image: document.getElementById('new_image').value || '🔧',
+                description: document.getElementById('new_description').value,
+                sku: 'SKU-' + Date.now()
+            };
+            
+            if (!newProduct.name || !newProduct.price) {
+                alert('Please enter at least product name and price');
+                return;
+            }
+            
+            products.push(newProduct);
+            saveProducts();
+            loadProducts();
+            closeAdminPanel();
+            alert('✅ Product added successfully!');
+            showAdminPanel();
+        }
+
+        function updateProduct(index) {
+            products[index] = {
+                ...products[index],
+                price: parseInt(document.getElementById(`price_${index}`).value),
+                stock: parseInt(document.getElementById(`stock_${index}`).value),
+                brand: document.getElementById(`brand_${index}`).value,
+                category: document.getElementById(`category_${index}`).value,
+                vehicleMake: document.getElementById(`vmake_${index}`).value,
+                vehicleModel: document.getElementById(`vmodel_${index}`).value,
+                yearStart: parseInt(document.getElementById(`ystart_${index}`).value),
+                yearEnd: parseInt(document.getElementById(`yend_${index}`).value),
+                description: document.getElementById(`desc_${index}`).value
+            };
+            
+            saveProducts();
+            loadProducts();
+            closeAdminPanel();
+            alert('✅ Product updated successfully!');
+            showAdminPanel();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products.splice(index, 1);
+                saveProducts();
+                loadProducts();
+                closeAdminPanel();
+                alert('🗑️ Product deleted!');
+                showAdminPanel();
+            }
         }
 
         function closeAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (panel) panel.remove();
-        }
-
-        function updatePrice(index) {
-            const newPrice = document.getElementById('price_' + index).value;
-            if (newPrice && newPrice > 0) {
-                products[index].price = parseInt(newPrice);
-                saveProducts(); // SAVE TO LOCALSTORAGE
-                loadProducts();
-                closeAdminPanel();
-                alert('✅ Price updated and saved permanently!');
-                showAdminPanel();
-            } else {
-                alert('Please enter a valid price');
-            }
         }
 
         // Initialize
