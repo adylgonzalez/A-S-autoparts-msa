@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> A & S AUTOPARTS - Mombasa, Kenya</title>
+    <title>A & S AUTOPARTS - Mombasa, Kenya</title>
     <style>
         * {
             margin: 0;
@@ -252,19 +252,34 @@
             margin: 15px 0;
         }
 
-        .add-to-cart {
-            background: #1a237e;
-            color: white;
-            padding: 12px 20px;
+        .whatsapp-order-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .whatsapp-order-btn {
+            flex: 1;
+            padding: 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.3s;
         }
 
-        .add-to-cart:hover {
-            background: #ff6f00;
+        .whatsapp-order-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .whatsapp-order-btn.adil {
+            background: #25D366;
+        }
+
+        .whatsapp-order-btn.suhayl {
+            background: #128C7E;
         }
 
         .contact-info {
@@ -361,6 +376,10 @@
                 bottom: 20px;
                 right: 20px;
             }
+            
+            .whatsapp-order-buttons {
+                flex-direction: column;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -372,7 +391,7 @@
 
     <div class="header">
         <h1>A & S <span>AUTOPARTS</span></h1>
-        <p>Two Brothers, One Mission: Quality Affordable Parts</p>
+        <p>Two Brothers, One Mission: Quality Parts</p>
     </div>
 
     <div class="nav">
@@ -396,11 +415,6 @@
             <option>2018</option><option>2017</option><option>2016</option>
             <option>2015</option><option>2014</option><option>2013</option>
             <option>2012</option><option>2011</option><option>2010</option>
-            <option>2009</option><option>2008</option><option>2007</option>
-            <option>2006</option><option>2005</option><option>2004</option>
-            <option>2003</option><option>2002</option><option>2001</option>
-            <option>2000</option><option>1999</option><option>1998</option>
-            <option>1997</option><option>1996</option><option>1995</option>
         </select>
         <select id="vehicleMake">
             <option value="">Select Make</option>
@@ -667,7 +681,7 @@
         }
 
         const vehicleModels = {
-            "Toyota": ["Camry", "Corolla", "Crown", "Mark X", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner"],
+            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner"],
             "Honda": ["Civic", "Accord", "CR-V", "Fit"],
             "Ford": ["F-150", "Ranger", "Explorer"],
             "BMW": ["3 Series", "5 Series", "X3", "X5"],
@@ -703,19 +717,28 @@
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-sku">SKU: ${product.sku || 'N/A'} | Stock: ${product.stock || 0}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="orderProduct(${index})">
-                        <i class="fab fa-whatsapp"></i> Order via WhatsApp
-                    </button>
+                    <div class="whatsapp-order-buttons">
+                        <button class="whatsapp-order-btn adil" onclick="orderViaWhatsApp(${index}, 'adil')">
+                            <i class="fab fa-whatsapp"></i> Order from ADIL
+                        </button>
+                        <button class="whatsapp-order-btn suhayl" onclick="orderViaWhatsApp(${index}, 'suhayl')">
+                            <i class="fab fa-whatsapp"></i> Order from SUHAYL
+                        </button>
+                    </div>
                 `;
                 productGrid.appendChild(productCard);
             });
         }
 
-        function orderProduct(index) {
+        function orderViaWhatsApp(index, brother) {
             const product = products[index];
-            const message = `Hello A & S AUTOPARTS, I want to order:\n\n📦 ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability.`;
+            const phoneNumber = brother === 'adil' ? '254713349554' : '254752763924';
+            const brotherName = brother === 'adil' ? 'ADIL' : 'SUHAYL';
+            
+            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability and delivery to my location.`;
+            
             const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/254713349554?text=${encodedMessage}`, '_blank');
+            window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
         }
 
         document.getElementById('vehicleMake').addEventListener('change', function() {
@@ -744,17 +767,11 @@
             }
             
             const filteredProducts = products.filter(product => {
-                // Include universal parts
                 if (product.vehicleMake === "Universal") return true;
-                
-                // Check if vehicle matches
                 if (product.vehicleMake !== make || product.vehicleModel !== model) return false;
-                
-                // Check year range
                 if (product.yearStart > 0 && product.yearEnd > 0) {
                     return year >= product.yearStart && year <= product.yearEnd;
                 }
-                
                 return true;
             });
             
@@ -775,7 +792,6 @@
                 return;
             }
             
-            // Add title
             const titleElement = document.createElement('h3');
             titleElement.style.cssText = 'text-align:center; grid-column: 1/-1; color: #1a237e;';
             titleElement.textContent = title;
@@ -794,9 +810,14 @@
                     </div>
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
-                    <button class="add-to-cart" onclick="orderProduct(${originalIndex})">
-                        <i class="fab fa-whatsapp"></i> Order via WhatsApp
-                    </button>
+                    <div class="whatsapp-order-buttons">
+                        <button class="whatsapp-order-btn adil" onclick="orderViaWhatsApp(${originalIndex}, 'adil')">
+                            <i class="fab fa-whatsapp"></i> Order from ADIL
+                        </button>
+                        <button class="whatsapp-order-btn suhayl" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')">
+                            <i class="fab fa-whatsapp"></i> Order from SUHAYL
+                        </button>
+                    </div>
                 `;
                 productGrid.appendChild(productCard);
             });
