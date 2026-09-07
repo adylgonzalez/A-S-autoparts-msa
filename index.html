@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAJUS AUTOPARTS - Quality Auto Parts</title>
+    <title>RAJUS AUTOPARTS - Quality Auto Parts in Mombasa, Kenya</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -12,8 +12,8 @@
     <div class="top-bar">
         <div class="container">
             <div class="contact-info">
-                <span><i class="fas fa-phone"></i> 0713349554/0752763924</span>
-                <span><i class="fas fa-envelope"></i> info@rajusautoparts.com</span>
+                <span><i class="fas fa-phone"></i> ADIL: 0713349554 | SUHAYL: 0752763924</span>
+                <span><i class="fas fa-envelope"></i> info@rajusautoparts.co.ke</span>
             </div>
             <div class="top-links">
                 <a href="#">Track Order</a>
@@ -33,10 +33,10 @@
                             <!-- Circle background -->
                             <circle cx="50" cy="50" r="48" fill="#1a237e" stroke="#ff6f00" stroke-width="3"/>
                             <!-- Two brothers (simplified figures) -->
-                            <!-- Brother 1 -->
+                            <!-- Brother 1 (ADIL) -->
                             <circle cx="38" cy="40" r="8" fill="#ffcc80" stroke="#333" stroke-width="1"/>
                             <rect x="32" y="48" width="12" height="20" rx="3" fill="#4caf50" stroke="#333" stroke-width="1"/>
-                            <!-- Brother 2 -->
+                            <!-- Brother 2 (SUHAYL) -->
                             <circle cx="62" cy="40" r="8" fill="#ffcc80" stroke="#333" stroke-width="1"/>
                             <rect x="56" y="48" width="12" height="20" rx="3" fill="#2196f3" stroke="#333" stroke-width="1"/>
                             <!-- Car parts they're holding -->
@@ -62,7 +62,7 @@
             
             <div class="search-bar">
                 <input type="text" placeholder="Search for parts, brands, or vehicle type...">
-                <button><i class="fas fa-search"></i></button>
+                <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
             </div>
             
             <div class="header-actions">
@@ -102,7 +102,7 @@
             <div class="slide active">
                 <div class="container">
                     <h2>Quality Auto Parts for Every Vehicle</h2>
-                    <p>Find the perfect parts for your car, truck, or SUV at unbeatable prices</p>
+                    <p>Find the perfect parts for your car, truck, or SUV at unbeatable prices in Mombasa</p>
                     <a href="#categories" class="btn-primary">Shop Now</a>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             <div class="slide">
                 <div class="container">
                     <h2>Genuine OEM and Aftermarket Parts</h2>
-                    <p>Trusted brands you know and love</p>
+                    <p>Trusted brands you know and love, available in Kenya</p>
                     <a href="#featured" class="btn-primary">Browse Products</a>
                 </div>
             </div>
@@ -144,6 +144,14 @@
                     <option>2015</option>
                     <option>2014</option>
                     <option>2013</option>
+                    <option>2012</option>
+                    <option>2011</option>
+                    <option>2010</option>
+                    <option>2009</option>
+                    <option>2008</option>
+                    <option>2007</option>
+                    <option>2006</option>
+                    <option>2005</option>
                 </select>
                 <select id="vehicleMake">
                     <option value="">Select Make</option>
@@ -153,10 +161,12 @@
                     <option>BMW</option>
                     <option>Mercedes-Benz</option>
                     <option>Nissan</option>
-                    <option>Chevrolet</option>
-                    <option>Audi</option>
+                    <option>Mitsubishi</option>
+                    <option>Mazda</option>
                     <option>Subaru</option>
-                    <option>Jeep</option>
+                    <option>Volkswagen</option>
+                    <option>Land Rover</option>
+                    <option>Isuzu</option>
                 </select>
                 <select id="vehicleModel">
                     <option value="">Select Model</option>
@@ -171,41 +181,41 @@
         <div class="container">
             <h2 class="section-title">Shop by Category</h2>
             <div class="category-grid">
-                <div class="category-card">
+                <div class="category-card" onclick="shopByCategory('Engine')">
                     <i class="fas fa-cogs"></i>
                     <h3>Engine Parts</h3>
                     <p>Pistons, Valves, Timing Belts</p>
-                    <a href="#">Shop Now →</a>
+                    <a href="#featured">Shop Now →</a>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="shopByCategory('Brakes')">
                     <i class="fas fa-car-battery"></i>
-                    <h3>Brakes & Suspension</h3>
-                    <p>Brake Pads, Rotors, Shocks</p>
-                    <a href="#">Shop Now →</a>
+                    <h3>Brakes</h3>
+                    <p>Brake Pads, Rotors, Calipers</p>
+                    <a href="#featured">Shop Now →</a>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="shopByCategory('Suspension')">
+                    <i class="fas fa-car"></i>
+                    <h3>Suspension</h3>
+                    <p>Struts, Springs, Control Arms</p>
+                    <a href="#featured">Shop Now →</a>
+                </div>
+                <div class="category-card" onclick="shopByCategory('Filters')">
                     <i class="fas fa-oil-can"></i>
                     <h3>Filters & Fluids</h3>
-                    <p>Oil Filters, Coolant, Oil</p>
-                    <a href="#">Shop Now →</a>
+                    <p>Oil Filters, Air Filters, Coolant</p>
+                    <a href="#featured">Shop Now →</a>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="shopByCategory('Electrical')">
                     <i class="fas fa-bolt"></i>
                     <h3>Electrical Parts</h3>
                     <p>Alternators, Starters, Batteries</p>
-                    <a href="#">Shop Now →</a>
+                    <a href="#featured">Shop Now →</a>
                 </div>
-                <div class="category-card">
+                <div class="category-card" onclick="shopByCategory('Cooling')">
                     <i class="fas fa-fan"></i>
                     <h3>Cooling System</h3>
                     <p>Radiators, Water Pumps, Fans</p>
-                    <a href="#">Shop Now →</a>
-                </div>
-                <div class="category-card">
-                    <i class="fas fa-car"></i>
-                    <h3>Suspension Parts</h3>
-                    <p>Struts, Springs, Control Arms</p>
-                    <a href="#">Shop Now →</a>
+                    <a href="#featured">Shop Now →</a>
                 </div>
             </div>
         </div>
@@ -230,6 +240,7 @@
                     <h3>Limited Time Offer!</h3>
                     <p>Get 25% OFF on all brake parts</p>
                     <span class="discount-code">Use Code: BRAKE25</span>
+                    <p style="margin-top: 20px;">Call ADIL: 0713349554 to order</p>
                 </div>
             </div>
         </div>
@@ -258,14 +269,15 @@
             <div class="about-content">
                 <div class="about-text">
                     <h2 class="section-title">About RAJUS AUTOPARTS</h2>
-                    <p>Founded by two brothers with a passion for automobiles, RAJUS AUTOPARTS has been providing quality auto parts to customers worldwide for over 20 years. What started as a small family business has grown into a trusted name in the automotive industry.</p>
+                    <p>Founded by two brothers, ADIL and SUHAYL, in the heart of Mombasa, Kenya, RAJUS AUTOPARTS has been providing quality auto parts to customers across the coast and beyond. What started as a small family business has grown into a trusted name in the automotive industry.</p>
                     <p>Our mission is simple: provide genuine OEM and high-quality aftermarket parts at competitive prices, backed by exceptional customer service. When you shop with RAJUS, you're not just a customer – you're family.</p>
                     <ul class="features-list">
                         <li><i class="fas fa-check-circle"></i> 100% Genuine Products</li>
-                        <li><i class="fas fa-check-circle"></i> Fast & Free Shipping</li>
+                        <li><i class="fas fa-check-circle"></i> Fast Delivery in Mombasa</li>
                         <li><i class="fas fa-check-circle"></i> 30-Day Return Policy</li>
                         <li><i class="fas fa-check-circle"></i> Expert Support</li>
                         <li><i class="fas fa-check-circle"></i> Family Owned & Operated</li>
+                        <li><i class="fas fa-check-circle"></i> Nationwide Shipping</li>
                     </ul>
                 </div>
                 <div class="about-stats">
@@ -294,26 +306,36 @@
                 <div class="contact-info">
                     <div class="info-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <p>Auto Parts Street<br>Mombasa, Kenya</p>
+                        <p>RAJUS AUTOPARTS<br>Mombasa, Kenya</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-phone"></i>
-                        <p>+1 (555) 123-4567</p>
+                        <p>ADIL: 0713349554<br>SUHAYL: 0752763924</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-envelope"></i>
-                        <p>info@rajusautoparts.com</p>
+                        <p>info@rajusautoparts.co.ke</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Mon - Sat: 8:00 AM - 6:00 PM<br>Sunday: Closed</p>
                     </div>
                 </div>
                 <form class="contact-form">
                     <input type="text" placeholder="Your Name" required>
+                    <input type="tel" placeholder="Your Phone Number" required>
                     <input type="email" placeholder="Your Email" required>
-                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                    <textarea placeholder="Your Message or Part Request" rows="5" required></textarea>
                     <button type="submit" class="btn-primary">Send Message</button>
                 </form>
             </div>
         </div>
     </section>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/254713349554" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <!-- Footer -->
     <footer class="footer">
@@ -321,7 +343,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>RAJUS AUTOPARTS</h3>
-                    <p>Your trusted source for quality automotive parts since 2003. Family owned and operated.</p>
+                    <p>Your trusted source for quality automotive parts in Mombasa, Kenya. Family owned and operated since 2003.</p>
                 </div>
                 <div class="footer-section">
                     <h3>Quick Links</h3>
@@ -342,17 +364,23 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Follow Us</h3>
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> ADIL: 0713349554</li>
+                        <li><i class="fas fa-phone"></i> SUHAYL: 0752763924</li>
+                        <li><i class="fas fa-envelope"></i> info@rajusautoparts.co.ke</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Mombasa, Kenya</li>
+                    </ul>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/254713349554"><i class="fab fa-whatsapp"></i></a>
                         <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 RAJUS AUTOPARTS. All rights reserved. | Two Brothers, One Mission: Quality Parts</p>
+                <p>&copy; 2024 RAJUS AUTOPARTS. All rights reserved. | Two Brothers, One Mission: Quality Parts | Mombasa, Kenya</p>
             </div>
         </div>
     </footer>
