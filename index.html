@@ -240,7 +240,14 @@
                     <h3>Limited Time Offer!</h3>
                     <p>Get 25% OFF on all brake parts</p>
                     <span class="discount-code">Use Code: BRAKE25</span>
-                    <p style="margin-top: 20px;">Call ADIL: 0713349554 to order</p>
+                    <p style="margin-top: 20px;">
+                        <a href="https://wa.me/254713349554" class="btn-primary" style="margin: 5px;">
+                            <i class="fab fa-whatsapp"></i> WhatsApp ADIL
+                        </a>
+                        <a href="https://wa.me/254752763924" class="btn-primary" style="margin: 5px;">
+                            <i class="fab fa-whatsapp"></i> WhatsApp SUHAYL
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -313,6 +320,13 @@
                         <p>ADIL: 0713349554<br>SUHAYL: 0752763924</p>
                     </div>
                     <div class="info-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <p>
+                            <a href="https://wa.me/254713349554" style="color: #25D366; text-decoration: none;">WhatsApp ADIL</a><br>
+                            <a href="https://wa.me/254752763924" style="color: #25D366; text-decoration: none;">WhatsApp SUHAYL</a>
+                        </p>
+                    </div>
+                    <div class="info-item">
                         <i class="fas fa-envelope"></i>
                         <p>info@rajusautoparts.co.ke</p>
                     </div>
@@ -332,10 +346,31 @@
         </div>
     </section>
 
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/254713349554" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <!-- WhatsApp Floating Buttons -->
+    <div class="whatsapp-buttons">
+        <a href="https://wa.me/254713349554" class="whatsapp-float adil" target="_blank" title="Chat with ADIL">
+            <i class="fab fa-whatsapp"></i>
+            <span>ADIL</span>
+        </a>
+        <a href="https://wa.me/254752763924" class="whatsapp-float suhayl" target="_blank" title="Chat with SUHAYL">
+            <i class="fab fa-whatsapp"></i>
+            <span>SUHAYL</span>
+        </a>
+    </div>
+
+    <!-- Hidden Admin Button -->
+    <button onclick="openAdminPanel()" style="
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        opacity: 0.3;
+        font-size: 10px;
+        padding: 5px;
+        background: #ccc;
+        border: none;
+        cursor: pointer;
+        z-index: 999;
+    ">Admin</button>
 
     <!-- Footer -->
     <footer class="footer">
@@ -368,6 +403,8 @@
                     <ul>
                         <li><i class="fas fa-phone"></i> ADIL: 0713349554</li>
                         <li><i class="fas fa-phone"></i> SUHAYL: 0752763924</li>
+                        <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/254713349554">WhatsApp ADIL</a></li>
+                        <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/254752763924">WhatsApp SUHAYL</a></li>
                         <li><i class="fas fa-envelope"></i> info@rajusautoparts.co.ke</li>
                         <li><i class="fas fa-map-marker-alt"></i> Mombasa, Kenya</li>
                     </ul>
@@ -375,7 +412,7 @@
                         <a href="#"><i class="fab fa-facebook"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/254713349554"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="https://wa.me/254752763924"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
