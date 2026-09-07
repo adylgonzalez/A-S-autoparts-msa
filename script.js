@@ -1,9 +1,8 @@
-// Product Data
-const products = [
-    // Brake Pads for Specific Cars
+// Product Data with KSh Prices
+let products = [
     {
         name: "Brake Pads - Toyota Camry 2018-2023",
-        price: 39.99,
+        price: 4500,
         category: "Brakes",
         image: "🔧",
         vehicle: "Toyota Camry",
@@ -13,7 +12,7 @@ const products = [
     },
     {
         name: "Brake Pads - Honda Civic 2016-2021",
-        price: 34.99,
+        price: 3900,
         category: "Brakes",
         image: "🔧",
         vehicle: "Honda Civic",
@@ -23,7 +22,7 @@ const products = [
     },
     {
         name: "Brake Pads - Ford F-150 2015-2020",
-        price: 44.99,
+        price: 5000,
         category: "Brakes",
         image: "🔧",
         vehicle: "Ford F-150",
@@ -32,38 +31,8 @@ const products = [
         sku: "BP-FF-1520"
     },
     {
-        name: "Brake Pads - BMW 3 Series 2014-2019",
-        price: 59.99,
-        category: "Brakes",
-        image: "🔧",
-        vehicle: "BMW 3 Series",
-        year: "2014-2019",
-        brand: "Brembo",
-        sku: "BP-B3-1419"
-    },
-    {
-        name: "Brake Pads - Mercedes C-Class 2015-2021",
-        price: 64.99,
-        category: "Brakes",
-        image: "🔧",
-        vehicle: "Mercedes C-Class",
-        year: "2015-2021",
-        brand: "ATE",
-        sku: "BP-MC-1521"
-    },
-    {
-        name: "Brake Pads - Nissan Altima 2013-2018",
-        price: 29.99,
-        category: "Brakes",
-        image: "🔧",
-        vehicle: "Nissan Altima",
-        year: "2013-2018",
-        brand: "Akebono",
-        sku: "BP-NA-1318"
-    },
-    {
         name: "Brake Rotors - Toyota Camry 2018-2023",
-        price: 79.99,
+        price: 8900,
         category: "Brakes",
         image: "🛞",
         vehicle: "Toyota Camry",
@@ -72,18 +41,8 @@ const products = [
         sku: "BR-TC-1823"
     },
     {
-        name: "Brake Rotors - Honda Civic 2016-2021",
-        price: 69.99,
-        category: "Brakes",
-        image: "🛞",
-        vehicle: "Honda Civic",
-        year: "2016-2021",
-        brand: "Power Stop",
-        sku: "BR-HC-1621"
-    },
-    {
         name: "Complete Strut Assembly - Toyota RAV4 2013-2018",
-        price: 149.99,
+        price: 16800,
         category: "Suspension",
         image: "🔩",
         vehicle: "Toyota RAV4",
@@ -92,18 +51,8 @@ const products = [
         sku: "CSA-TR-1318"
     },
     {
-        name: "Control Arm Kit - Honda CR-V 2012-2016",
-        price: 119.99,
-        category: "Suspension",
-        image: "⚙️",
-        vehicle: "Honda CR-V",
-        year: "2012-2016",
-        brand: "MOOG",
-        sku: "CAK-HC-1216"
-    },
-    {
         name: "Oil Filter - Universal",
-        price: 12.99,
+        price: 1500,
         category: "Filters",
         image: "🔩",
         vehicle: "Universal",
@@ -113,7 +62,7 @@ const products = [
     },
     {
         name: "Spark Plugs (4 Pack) - Universal",
-        price: 24.99,
+        price: 2800,
         category: "Electrical",
         image: "⚡",
         vehicle: "Universal",
@@ -123,7 +72,7 @@ const products = [
     },
     {
         name: "Air Filter - Universal",
-        price: 18.99,
+        price: 2200,
         category: "Filters",
         image: "💨",
         vehicle: "Universal",
@@ -133,7 +82,7 @@ const products = [
     },
     {
         name: "Alternator - Universal",
-        price: 189.99,
+        price: 21000,
         category: "Electrical",
         image: "🔋",
         vehicle: "Universal",
@@ -143,7 +92,7 @@ const products = [
     },
     {
         name: "Timing Belt Kit - Universal",
-        price: 129.99,
+        price: 14500,
         category: "Engine",
         image: "⛓️",
         vehicle: "Universal",
@@ -153,7 +102,7 @@ const products = [
     },
     {
         name: "Water Pump - Universal",
-        price: 79.99,
+        price: 8900,
         category: "Cooling",
         image: "💧",
         vehicle: "Universal",
@@ -162,49 +111,8 @@ const products = [
         sku: "WP-UNI-001"
     },
     {
-        name: "Shock Absorber Set - Ford F-150 2015-2020",
-        price: 189.99,
-        category: "Suspension",
-        image: "🛠️",
-        vehicle: "Ford F-150",
-        year: "2015-2020",
-        brand: "Bilstein",
-        sku: "SAS-FF-1520"
-    },
-    {
-        name: "Sway Bar Link Set - Chevrolet Silverado 2014-2019",
-        price: 39.99,
-        category: "Suspension",
-        image: "🔗",
-        vehicle: "Chevrolet Silverado",
-        year: "2014-2019",
-        brand: "MOOG",
-        sku: "SBL-CS-1419"
-    },
-    {
-        name: "Coil Spring Set - Jeep Wrangler 2018-2023",
-        price: 159.99,
-        category: "Suspension",
-        image: "🌀",
-        vehicle: "Jeep Wrangler",
-        year: "2018-2023",
-        brand: "Rough Country",
-        sku: "CSS-JW-1823"
-    },
-    {
-        name: "Air Suspension Kit - Audi A4 2017-2022",
-        price: 899.99,
-        category: "Suspension",
-        image: "🎈",
-        vehicle: "Audi A4",
-        year: "2017-2022",
-        brand: "Air Lift",
-        sku: "ASK-AA-1722"
-    },
-    // Additional Toyota Parts (Popular in Kenya)
-    {
         name: "Brake Pads - Toyota Land Cruiser 2010-2020",
-        price: 54.99,
+        price: 6200,
         category: "Brakes",
         image: "🔧",
         vehicle: "Toyota Land Cruiser",
@@ -214,7 +122,7 @@ const products = [
     },
     {
         name: "Brake Pads - Toyota Hilux 2015-2023",
-        price: 44.99,
+        price: 5000,
         category: "Brakes",
         image: "🔧",
         vehicle: "Toyota Hilux",
@@ -224,23 +132,13 @@ const products = [
     },
     {
         name: "Oil Filter - Toyota Land Cruiser",
-        price: 15.99,
+        price: 1800,
         category: "Filters",
         image: "🔩",
         vehicle: "Toyota Land Cruiser",
         year: "2010-2020",
         brand: "TOYOTA Genuine",
         sku: "OF-TL-1020"
-    },
-    {
-        name: "Shock Absorber - Toyota Hilux 2015-2023",
-        price: 129.99,
-        category: "Suspension",
-        image: "🛠️",
-        vehicle: "Toyota Hilux",
-        year: "2015-2023",
-        brand: "KYB",
-        sku: "SA-TH-1523"
     }
 ];
 
@@ -263,9 +161,18 @@ const vehicleModels = {
 // Cart functionality
 let cart = [];
 
+// Admin password (Change this to your own)
+const ADMIN_PASSWORD = "rajus2024";
+
+// Format price in KSh
+function formatPrice(price) {
+    return 'KSh ' + price.toLocaleString('en-KE');
+}
+
 // Load Products
 function loadProducts() {
     const productGrid = document.getElementById('productGrid');
+    productGrid.innerHTML = '';
     
     products.forEach((product, index) => {
         const productCard = document.createElement('div');
@@ -279,7 +186,7 @@ function loadProducts() {
                 </div>
                 <div class="product-brand">${product.brand}</div>
                 <div class="product-sku">SKU: ${product.sku}</div>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
+                <div class="product-price">${formatPrice(product.price)}</div>
                 <button class="add-to-cart" onclick="addToCart(${index})">
                     <i class="fas fa-cart-plus"></i> Add to Cart
                 </button>
@@ -294,7 +201,7 @@ function addToCart(productIndex) {
     const product = products[productIndex];
     cart.push(product);
     updateCartCount();
-    showNotification(`${product.name} added to cart!`);
+    showNotification(`${product.name} added to cart! Price: ${formatPrice(product.price)}`);
 }
 
 // Update Cart Count
@@ -390,10 +297,8 @@ function findParts() {
         return;
     }
     
-    // Create the vehicle string to search for
     const vehicleSearch = make + ' ' + model;
     
-    // Filter products for this vehicle or universal parts
     const vehicleProducts = products.filter(product => {
         if (product.vehicle === "Universal") {
             return true;
@@ -401,10 +306,7 @@ function findParts() {
         return product.vehicle && product.vehicle.includes(vehicleSearch);
     });
     
-    // Display the filtered products
     displayFilteredProducts(vehicleProducts, `Parts for ${year} ${make} ${model}`);
-    
-    // Scroll to products section
     document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -413,7 +315,6 @@ function displayFilteredProducts(productList, title) {
     const productGrid = document.getElementById('productGrid');
     productGrid.innerHTML = '';
     
-    // Create title element
     const heading = document.createElement('h3');
     heading.style.cssText = 'grid-column: 1/-1; text-align: center; color: #1a237e; margin-bottom: 20px;';
     heading.textContent = title;
@@ -422,7 +323,7 @@ function displayFilteredProducts(productList, title) {
     if (productList.length === 0) {
         const noProducts = document.createElement('p');
         noProducts.style.cssText = 'text-align: center; grid-column: 1/-1;';
-        noProducts.textContent = 'No parts found. Please try different vehicle selection or call ADIL: 0713349554 for assistance.';
+        noProducts.textContent = 'No parts found. Please call ADIL: 0713349554 or SUHAYL: 0752763924 for assistance.';
         productGrid.appendChild(noProducts);
         return;
     }
@@ -440,7 +341,7 @@ function displayFilteredProducts(productList, title) {
                 </div>
                 <div class="product-brand">${product.brand}</div>
                 <div class="product-sku">SKU: ${product.sku}</div>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
+                <div class="product-price">${formatPrice(product.price)}</div>
                 <button class="add-to-cart" onclick="addToCart(${originalIndex})">
                     <i class="fas fa-cart-plus"></i> Add to Cart
                 </button>
@@ -501,6 +402,107 @@ function shopByCategory(categoryName) {
     document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
 }
 
+// ADMIN PANEL FUNCTIONS
+
+// Open Admin Panel
+function openAdminPanel() {
+    const password = prompt("Enter Admin Password:");
+    if (password === ADMIN_PASSWORD) {
+        showAdminPanel();
+    } else {
+        alert("Wrong password!");
+    }
+}
+
+// Show Admin Panel
+function showAdminPanel() {
+    const adminHTML = `
+        <div id="adminPanel" style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        ">
+            <h2 style="color: #1a237e; margin-bottom: 20px;">Edit Prices - RAJUS AUTOPARTS</h2>
+            <div id="adminProductList"></div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button onclick="closeAdminPanel()" style="
+                    padding: 10px 20px;
+                    background: #ff6f00;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                ">Close</button>
+            </div>
+        </div>
+    `;
+    
+    const adminContainer = document.createElement('div');
+    adminContainer.innerHTML = adminHTML;
+    document.body.appendChild(adminContainer);
+    
+    // Populate product list
+    const productList = document.getElementById('adminProductList');
+    products.forEach((product, index) => {
+        const productRow = document.createElement('div');
+        productRow.style.cssText = 'margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;';
+        productRow.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>${product.name}</strong>
+                    <br>
+                    <small>Current: ${formatPrice(product.price)}</small>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="price_${index}" value="${product.price}" 
+                           style="width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                    <button onclick="updatePrice(${index})" style="
+                        padding: 5px 15px;
+                        background: #4caf50;
+                        color: white;
+                        border: none;
+                        border-radius: 3px;
+                        cursor: pointer;
+                    ">Update</button>
+                </div>
+            </div>
+        `;
+        productList.appendChild(productRow);
+    });
+}
+
+// Close Admin Panel
+function closeAdminPanel() {
+    const adminPanel = document.getElementById('adminPanel');
+    if (adminPanel) {
+        adminPanel.parentElement.remove();
+    }
+}
+
+// Update Price
+function updatePrice(index) {
+    const newPrice = document.getElementById(`price_${index}`).value;
+    if (newPrice && newPrice > 0) {
+        products[index].price = parseInt(newPrice);
+        loadProducts();
+        showNotification(`Price updated: ${products[index].name} - ${formatPrice(products[index].price)}`);
+        closeAdminPanel();
+        showAdminPanel(); // Reopen with updated prices
+    } else {
+        alert('Please enter a valid price');
+    }
+}
+
 // Add CSS animations for notifications
 const style = document.createElement('style');
 style.textContent = `
@@ -524,29 +526,6 @@ style.textContent = `
             transform: translateX(100%);
             opacity: 0;
         }
-    }
-    
-    .whatsapp-float {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #25D366;
-        color: white;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        text-decoration: none;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        z-index: 1000;
-        transition: transform 0.3s;
-    }
-    
-    .whatsapp-float:hover {
-        transform: scale(1.1);
     }
 `;
 document.head.appendChild(style);
