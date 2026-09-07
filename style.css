@@ -62,13 +62,36 @@ body {
     gap: 30px;
 }
 
-.logo h1 {
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 15px;
+}
+
+.logo-container {
+    width: 70px;
+    height: 70px;
+}
+
+.logo-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.logo-text h1 {
     font-size: 28px;
     color: var(--primary-color);
 }
 
-.logo span {
+.logo-text span {
     color: var(--secondary-color);
+}
+
+.logo-text p {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
 }
 
 .search-bar {
@@ -196,6 +219,7 @@ body {
     text-decoration: none;
     border-radius: 5px;
     transition: transform 0.3s;
+    cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -220,6 +244,29 @@ body {
 
 .slider-btn.next {
     right: 20px;
+}
+
+/* Vehicle Selector */
+.vehicle-selector {
+    padding: 40px 0;
+    background: #f0f0f0;
+}
+
+.selector-box {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.selector-box select {
+    padding: 12px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    font-size: 16px;
+    min-width: 150px;
 }
 
 /* Categories Section */
@@ -280,7 +327,7 @@ body {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
 }
 
@@ -312,6 +359,29 @@ body {
 
 .product-name {
     font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.product-vehicle {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+}
+
+.product-sku {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.product-brand {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    font-size: 12px;
     margin-bottom: 10px;
 }
 
@@ -561,5 +631,15 @@ body {
     
     .about-stats {
         grid-template-columns: 1fr;
+    }
+    
+    .selector-box {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .selector-box select {
+        width: 100%;
+        max-width: 300px;
     }
 }
