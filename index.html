@@ -274,12 +274,19 @@
             transform: scale(1.05);
         }
 
-        .whatsapp-order-btn.adil {
-            background: #25D366;
+        .whatsapp-order-btn.available {
+            background: #4caf50;
         }
 
-        .whatsapp-order-btn.suhayl {
-            background: #128C7E;
+        .whatsapp-order-btn.unavailable {
+            background: #f44336;
+            cursor: not-allowed;
+        }
+
+        .whatsapp-order-btn .status-text {
+            display: block;
+            font-size: 11px;
+            margin-top: 3px;
         }
 
         .contact-info {
@@ -500,7 +507,7 @@
     <button class="admin-btn" onclick="openAdminPanel()">🔧 Admin Panel</button>
 
     <script>
-        // Default products with full details
+        // Default products
         const defaultProducts = [
             { 
                 name: "Brake Pads - Toyota Camry", 
@@ -508,7 +515,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "BOSCH",
-                description: "High-quality ceramic brake pads for smooth stopping power. Low dust, low noise.",
+                description: "High-quality ceramic brake pads for smooth stopping power.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Camry",
                 yearStart: 2018,
@@ -522,7 +529,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "ACDelco",
-                description: "Premium semi-metallic brake pads. Excellent heat dissipation and durability.",
+                description: "Premium semi-metallic brake pads. Excellent durability.",
                 vehicleMake: "Honda",
                 vehicleModel: "Civic",
                 yearStart: 2016,
@@ -536,7 +543,7 @@
                 category: "Brakes", 
                 image: "🛞", 
                 brand: "Brembo",
-                description: "Vented brake rotors for maximum cooling. OEM specifications.",
+                description: "Vented brake rotors for maximum cooling.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Camry",
                 yearStart: 2018,
@@ -550,7 +557,7 @@
                 category: "Suspension", 
                 image: "🔩", 
                 brand: "KYB",
-                description: "Complete strut assembly with coil spring. Direct fit, no modification needed.",
+                description: "Complete strut assembly with coil spring.",
                 vehicleMake: "Toyota",
                 vehicleModel: "RAV4",
                 yearStart: 2013,
@@ -564,7 +571,7 @@
                 category: "Filters", 
                 image: "🔩", 
                 brand: "FRAM",
-                description: "High-efficiency oil filter. Traps 95% of dirt and contaminants.",
+                description: "High-efficiency oil filter.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -578,7 +585,7 @@
                 category: "Electrical", 
                 image: "⚡", 
                 brand: "NGK",
-                description: "Iridium spark plugs for better fuel efficiency and performance.",
+                description: "Iridium spark plugs for better performance.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -592,7 +599,7 @@
                 category: "Filters", 
                 image: "💨", 
                 brand: "K&N",
-                description: "High-flow air filter. Increases horsepower and acceleration.",
+                description: "High-flow air filter.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -606,7 +613,7 @@
                 category: "Electrical", 
                 image: "🔋", 
                 brand: "DENSO",
-                description: "High-output alternator. Reliable charging for all electrical systems.",
+                description: "High-output alternator.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -620,7 +627,7 @@
                 category: "Engine", 
                 image: "⛓️", 
                 brand: "Gates",
-                description: "Complete timing belt kit with tensioner and idler pulleys.",
+                description: "Complete timing belt kit with tensioner.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -634,7 +641,7 @@
                 category: "Cooling", 
                 image: "💧", 
                 brand: "AISIN",
-                description: "High-quality water pump. Prevents overheating and engine damage.",
+                description: "High-quality water pump.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -648,7 +655,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "BOSCH",
-                description: "Heavy-duty brake pads for SUVs. Excellent stopping power.",
+                description: "Heavy-duty brake pads for SUVs.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Land Cruiser",
                 yearStart: 2010,
@@ -662,7 +669,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "Akebono",
-                description: "Premium brake pads for pickup trucks. Long-lasting performance.",
+                description: "Premium brake pads for pickup trucks.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Hilux",
                 yearStart: 2015,
@@ -674,10 +681,20 @@
 
         // Load from localStorage or use defaults
         let products = JSON.parse(localStorage.getItem('A & SProducts')) || defaultProducts;
+        
+        // Availability status (default: both available)
+        let availability = JSON.parse(localStorage.getItem('A & SAvailability')) || {
+            adil: true,
+            suhayl: true
+        };
 
-        // Save to localStorage
+        // Save functions
         function saveProducts() {
             localStorage.setItem('A & SProducts', JSON.stringify(products));
+        }
+        
+        function saveAvailability() {
+            localStorage.setItem('A & SAvailability', JSON.stringify(availability));
         }
 
         const vehicleModels = {
@@ -706,6 +723,17 @@
             products.forEach((product, index) => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                
+                // Adil button
+                const adilBtnClass = availability.adil ? 'available' : 'unavailable';
+                const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
+                const adilBtnDisabled = availability.adil ? '' : 'disabled';
+                
+                // Suhayl button
+                const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
+                const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
+                const suhaylBtnDisabled = availability.suhayl ? '' : 'disabled';
+                
                 productCard.innerHTML = `
                     <div class="product-image">${product.image}</div>
                     <div class="product-name">${product.name}</div>
@@ -718,11 +746,11 @@
                     <div class="product-sku">SKU: ${product.sku || 'N/A'} | Stock: ${product.stock || 0}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
                     <div class="whatsapp-order-buttons">
-                        <button class="whatsapp-order-btn adil" onclick="orderViaWhatsApp(${index}, 'adil')">
-                            <i class="fab fa-whatsapp"></i> Order from ADIL
+                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${index}, 'adil')" ${adilBtnDisabled}>
+                            <i class="fab fa-whatsapp"></i> ${adilBtnText}
                         </button>
-                        <button class="whatsapp-order-btn suhayl" onclick="orderViaWhatsApp(${index}, 'suhayl')">
-                            <i class="fab fa-whatsapp"></i> Order from SUHAYL
+                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${index}, 'suhayl')" ${suhaylBtnDisabled}>
+                            <i class="fab fa-whatsapp"></i> ${suhaylBtnText}
                         </button>
                     </div>
                 `;
@@ -731,11 +759,20 @@
         }
 
         function orderViaWhatsApp(index, brother) {
+            if (brother === 'adil' && !availability.adil) {
+                alert('ADIL is currently unavailable. Please contact SUHAYL.');
+                return;
+            }
+            if (brother === 'suhayl' && !availability.suhayl) {
+                alert('SUHAYL is currently unavailable. Please contact ADIL.');
+                return;
+            }
+            
             const product = products[index];
             const phoneNumber = brother === 'adil' ? '254713349554' : '254752763924';
             const brotherName = brother === 'adil' ? 'ADIL' : 'SUHAYL';
             
-            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability and delivery to my location.`;
+            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability and delivery.`;
             
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
@@ -785,7 +822,7 @@
             if (filteredProducts.length === 0) {
                 productGrid.innerHTML = `
                     <div style="text-align:center; grid-column: 1/-1; padding: 40px;">
-                        <p style="font-size: 18px; color: #666;">No parts found for ${title}</p>
+                        <p style="font-size: 18px; color: #666;">No parts found</p>
                         <p style="margin-top: 10px;">Call ADIL: 0713349554 or SUHAYL: 0752763924</p>
                     </div>
                 `;
@@ -801,6 +838,15 @@
                 const originalIndex = products.indexOf(product);
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                
+                const adilBtnClass = availability.adil ? 'available' : 'unavailable';
+                const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
+                const adilBtnDisabled = availability.adil ? '' : 'disabled';
+                
+                const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
+                const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
+                const suhaylBtnDisabled = availability.suhayl ? '' : 'disabled';
+                
                 productCard.innerHTML = `
                     <div class="product-image">${product.image}</div>
                     <div class="product-name">${product.name}</div>
@@ -811,11 +857,11 @@
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
                     <div class="whatsapp-order-buttons">
-                        <button class="whatsapp-order-btn adil" onclick="orderViaWhatsApp(${originalIndex}, 'adil')">
-                            <i class="fab fa-whatsapp"></i> Order from ADIL
+                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'adil')" ${adilBtnDisabled}>
+                            <i class="fab fa-whatsapp"></i> ${adilBtnText}
                         </button>
-                        <button class="whatsapp-order-btn suhayl" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')">
-                            <i class="fab fa-whatsapp"></i> Order from SUHAYL
+                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')" ${suhaylBtnDisabled}>
+                            <i class="fab fa-whatsapp"></i> ${suhaylBtnText}
                         </button>
                     </div>
                 `;
@@ -844,7 +890,7 @@
             displayFilteredProducts(filtered, `${category} Products`);
         }
 
-        // ADMIN PANEL - Full Product Management
+        // ADMIN PANEL
         function openAdminPanel() {
             const password = prompt("Enter Admin Password:");
             if (password === "rajus2024") {
@@ -857,7 +903,20 @@
         function showAdminPanel() {
             let adminHTML = `
                 <div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
-                    <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Product Management</h2>
+                    <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Admin Panel</h2>
+                    
+                    <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:10px;">Availability Status</h3>
+                        <div style="display:flex;gap:20px;">
+                            <button onclick="toggleAvailability('adil')" style="padding:10px 20px;background:${availability.adil ? '#4caf50' : '#f44336'};color:white;border:none;border-radius:5px;cursor:pointer;">
+                                ADIL: ${availability.adil ? 'Available' : 'Unavailable'}
+                            </button>
+                            <button onclick="toggleAvailability('suhayl')" style="padding:10px 20px;background:${availability.suhayl ? '#4caf50' : '#f44336'};color:white;border:none;border-radius:5px;cursor:pointer;">
+                                SUHAYL: ${availability.suhayl ? 'Available' : 'Unavailable'}
+                            </button>
+                        </div>
+                    </div>
+                    
                     <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;">
                         ➕ Add New Product
                     </button>
@@ -894,18 +953,10 @@
                                 <label style="font-size:12px;">Vehicle Model:</label>
                                 <input type="text" id="vmodel_${index}" value="${product.vehicleModel}" style="width:100%;padding:5px;">
                             </div>
-                            <div>
-                                <label style="font-size:12px;">Year Start:</label>
-                                <input type="number" id="ystart_${index}" value="${product.yearStart}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Year End:</label>
-                                <input type="number" id="yend_${index}" value="${product.yearEnd}" style="width:100%;padding:5px;">
-                            </div>
                         </div>
                         <div style="margin-top:10px;">
                             <label style="font-size:12px;">Description:</label>
-                            <textarea id="desc_${index}" style="width:100%;padding:5px;height:60px;">${product.description}</textarea>
+                            <textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${product.description}</textarea>
                         </div>
                         <div style="margin-top:10px;display:flex;gap:10px;">
                             <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:white;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
@@ -924,6 +975,15 @@
             document.body.insertAdjacentHTML('beforeend', adminHTML);
         }
 
+        function toggleAvailability(brother) {
+            availability[brother] = !availability[brother];
+            saveAvailability();
+            loadProducts();
+            closeAdminPanel();
+            alert(`${brother.toUpperCase()} is now ${availability[brother] ? 'Available' : 'Unavailable'}`);
+            showAdminPanel();
+        }
+
         function showAddProductForm() {
             const formHTML = `
                 <div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;">
@@ -939,7 +999,7 @@
                         </div>
                         <div>
                             <label>Category:</label>
-                            <input type="text" id="new_category" style="width:100%;padding:5px;" placeholder="Brakes, Suspension, etc.">
+                            <input type="text" id="new_category" style="width:100%;padding:5px;">
                         </div>
                         <div>
                             <label>Brand:</label>
@@ -947,19 +1007,11 @@
                         </div>
                         <div>
                             <label>Vehicle Make:</label>
-                            <input type="text" id="new_vmake" style="width:100%;padding:5px;" placeholder="Toyota, Honda, Universal...">
+                            <input type="text" id="new_vmake" style="width:100%;padding:5px;">
                         </div>
                         <div>
                             <label>Vehicle Model:</label>
                             <input type="text" id="new_vmodel" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Year Start (0 for universal):</label>
-                            <input type="number" id="new_ystart" value="0" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Year End (0 for universal):</label>
-                            <input type="number" id="new_yend" value="0" style="width:100%;padding:5px;">
                         </div>
                         <div>
                             <label>Stock:</label>
@@ -972,7 +1024,7 @@
                     </div>
                     <div style="margin-top:10px;">
                         <label>Description:</label>
-                        <textarea id="new_description" style="width:100%;padding:5px;height:60px;" placeholder="Describe the product..."></textarea>
+                        <textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea>
                     </div>
                     <button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button>
                 </div>
@@ -989,8 +1041,8 @@
                 brand: document.getElementById('new_brand').value,
                 vehicleMake: document.getElementById('new_vmake').value || 'Universal',
                 vehicleModel: document.getElementById('new_vmodel').value || 'All Models',
-                yearStart: parseInt(document.getElementById('new_ystart').value) || 0,
-                yearEnd: parseInt(document.getElementById('new_yend').value) || 0,
+                yearStart: 0,
+                yearEnd: 0,
                 stock: parseInt(document.getElementById('new_stock').value) || 0,
                 image: document.getElementById('new_image').value || '🔧',
                 description: document.getElementById('new_description').value,
@@ -998,7 +1050,7 @@
             };
             
             if (!newProduct.name || !newProduct.price) {
-                alert('Please enter at least product name and price');
+                alert('Please enter product name and price');
                 return;
             }
             
@@ -1006,7 +1058,7 @@
             saveProducts();
             loadProducts();
             closeAdminPanel();
-            alert('✅ Product added successfully!');
+            alert('✅ Product added!');
             showAdminPanel();
         }
 
@@ -1019,20 +1071,18 @@
                 category: document.getElementById(`category_${index}`).value,
                 vehicleMake: document.getElementById(`vmake_${index}`).value,
                 vehicleModel: document.getElementById(`vmodel_${index}`).value,
-                yearStart: parseInt(document.getElementById(`ystart_${index}`).value),
-                yearEnd: parseInt(document.getElementById(`yend_${index}`).value),
                 description: document.getElementById(`desc_${index}`).value
             };
             
             saveProducts();
             loadProducts();
             closeAdminPanel();
-            alert('✅ Product updated successfully!');
+            alert('✅ Product updated!');
             showAdminPanel();
         }
 
         function deleteProduct(index) {
-            if (confirm('Are you sure you want to delete this product?')) {
+            if (confirm('Delete this product?')) {
                 products.splice(index, 1);
                 saveProducts();
                 loadProducts();
