@@ -432,7 +432,7 @@ function showAdminPanel() {
             max-height: 80vh;
             overflow-y: auto;
         ">
-            <h2 style="color: #1a237e; margin-bottom: 20px;">Edit Prices - RAJUS AUTOPARTS</h2>
+            <h2 style="color: #1a237e; margin-bottom: 20px;">Edit Prices - A & S AUTOPARTS</h2>
             <div id="adminProductList"></div>
             <div style="margin-top: 20px; text-align: right;">
                 <button onclick="closeAdminPanel()" style="
