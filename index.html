@@ -71,18 +71,23 @@
             border-radius: 5px;
         }
 
+        .search-section {
+            background: white;
+            padding: 20px;
+        }
+
         .search-bar {
             text-align: center;
             padding: 20px;
-            background: white;
         }
 
         .search-bar input {
             padding: 12px;
-            width: 300px;
+            width: 60%;
             border: 2px solid #1a237e;
             border-radius: 5px;
             font-size: 16px;
+            margin-right: 5px;
         }
 
         .search-bar button {
@@ -93,7 +98,46 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            margin-left: 5px;
+        }
+
+        .vin-search {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .vin-search h3 {
+            color: #1a237e;
+            margin-bottom: 15px;
+        }
+
+        .vin-search input {
+            padding: 15px;
+            width: 100%;
+            border: 2px solid #1a237e;
+            border-radius: 5px;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .vin-search button {
+            padding: 15px 30px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .vin-search button:hover {
+            background: #128C7E;
         }
 
         .vehicle-selector {
@@ -239,12 +283,6 @@
             margin-bottom: 10px;
         }
 
-        .product-sku {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 5px;
-        }
-
         .product-price {
             color: #ff6f00;
             font-size: 24px;
@@ -281,12 +319,6 @@
         .whatsapp-order-btn.unavailable {
             background: #f44336;
             cursor: not-allowed;
-        }
-
-        .whatsapp-order-btn .status-text {
-            display: block;
-            font-size: 11px;
-            margin-top: 3px;
         }
 
         .contact-info {
@@ -387,6 +419,11 @@
             .whatsapp-order-buttons {
                 flex-direction: column;
             }
+            
+            .search-bar input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -403,9 +440,22 @@
 
     <div class="nav">
         <a href="#home">Home</a>
+        <a href="#vin">VIN Search</a>
         <a href="#categories">Categories</a>
         <a href="#products">Products</a>
         <a href="#contact">Contact</a>
+    </div>
+
+    <div class="search-section" id="vin">
+        <div class="vin-search">
+            <h3><i class="fas fa-search"></i> Search by VIN or Chassis Number</h3>
+            <p style="color: #666; margin-bottom: 15px;">Enter your vehicle's VIN or Chassis number to find compatible parts</p>
+            <input type="text" id="vinInput" placeholder="e.g., JTMZD33V275012345 or NCP42-0012345" maxlength="17">
+            <br>
+            <button onclick="searchByVIN()">
+                <i class="fab fa-whatsapp"></i> Search Parts via WhatsApp
+            </button>
+        </div>
     </div>
 
     <div class="search-bar">
@@ -422,6 +472,8 @@
             <option>2018</option><option>2017</option><option>2016</option>
             <option>2015</option><option>2014</option><option>2013</option>
             <option>2012</option><option>2011</option><option>2010</option>
+            <option>2009</option><option>2008</option><option>2007</option>
+            <option>2006</option><option>2005</option>
         </select>
         <select id="vehicleMake">
             <option value="">Select Make</option>
@@ -431,6 +483,10 @@
             <option>Mitsubishi</option><option>Mazda</option>
             <option>Subaru</option><option>Volkswagen</option>
             <option>Land Rover</option><option>Isuzu</option>
+            <option>Volvo</option><option>Audi</option>
+            <option>Chevrolet</option><option>Hyundai</option>
+            <option>Kia</option><option>Peugeot</option>
+            <option>Renault</option><option>Suzuki</option>
         </select>
         <select id="vehicleModel">
             <option value="">Select Model</option>
@@ -515,7 +571,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "BOSCH",
-                description: "High-quality ceramic brake pads for smooth stopping power.",
+                description: "High-quality ceramic brake pads.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Camry",
                 yearStart: 2018,
@@ -529,7 +585,7 @@
                 category: "Brakes", 
                 image: "🔧", 
                 brand: "ACDelco",
-                description: "Premium semi-metallic brake pads. Excellent durability.",
+                description: "Premium semi-metallic brake pads.",
                 vehicleMake: "Honda",
                 vehicleModel: "Civic",
                 yearStart: 2016,
@@ -543,7 +599,7 @@
                 category: "Brakes", 
                 image: "🛞", 
                 brand: "Brembo",
-                description: "Vented brake rotors for maximum cooling.",
+                description: "Vented brake rotors.",
                 vehicleMake: "Toyota",
                 vehicleModel: "Camry",
                 yearStart: 2018,
@@ -552,12 +608,12 @@
                 stock: 15
             },
             { 
-                name: "Complete Strut Assembly - RAV4", 
+                name: "Strut Assembly - RAV4", 
                 price: 16800, 
                 category: "Suspension", 
                 image: "🔩", 
                 brand: "KYB",
-                description: "Complete strut assembly with coil spring.",
+                description: "Complete strut assembly.",
                 vehicleMake: "Toyota",
                 vehicleModel: "RAV4",
                 yearStart: 2013,
@@ -566,7 +622,7 @@
                 stock: 10
             },
             { 
-                name: "Oil Filter - Universal", 
+                name: "Oil Filter", 
                 price: 1500, 
                 category: "Filters", 
                 image: "🔩", 
@@ -585,7 +641,7 @@
                 category: "Electrical", 
                 image: "⚡", 
                 brand: "NGK",
-                description: "Iridium spark plugs for better performance.",
+                description: "Iridium spark plugs.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -594,7 +650,7 @@
                 stock: 50
             },
             { 
-                name: "Air Filter - Universal", 
+                name: "Air Filter", 
                 price: 2200, 
                 category: "Filters", 
                 image: "💨", 
@@ -608,7 +664,7 @@
                 stock: 40
             },
             { 
-                name: "Alternator - Universal", 
+                name: "Alternator", 
                 price: 21000, 
                 category: "Electrical", 
                 image: "🔋", 
@@ -627,7 +683,7 @@
                 category: "Engine", 
                 image: "⛓️", 
                 brand: "Gates",
-                description: "Complete timing belt kit with tensioner.",
+                description: "Complete timing belt kit.",
                 vehicleMake: "Universal",
                 vehicleModel: "All Models",
                 yearStart: 0,
@@ -648,47 +704,17 @@
                 yearEnd: 0,
                 sku: "WP-UNI-001",
                 stock: 20
-            },
-            { 
-                name: "Brake Pads - Land Cruiser", 
-                price: 6200, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "BOSCH",
-                description: "Heavy-duty brake pads for SUVs.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Land Cruiser",
-                yearStart: 2010,
-                yearEnd: 2020,
-                sku: "BP-TL-1020",
-                stock: 18
-            },
-            { 
-                name: "Brake Pads - Hilux", 
-                price: 5000, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "Akebono",
-                description: "Premium brake pads for pickup trucks.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Hilux",
-                yearStart: 2015,
-                yearEnd: 2023,
-                sku: "BP-TH-1523",
-                stock: 22
             }
         ];
 
-        // Load from localStorage or use defaults
+        // Load from localStorage
         let products = JSON.parse(localStorage.getItem('A & SProducts')) || defaultProducts;
         
-        // Availability status (default: both available)
         let availability = JSON.parse(localStorage.getItem('A & SAvailability')) || {
             adil: true,
             suhayl: true
         };
 
-        // Save functions
         function saveProducts() {
             localStorage.setItem('A & SProducts', JSON.stringify(products));
         }
@@ -697,23 +723,69 @@
             localStorage.setItem('A & SAvailability', JSON.stringify(availability));
         }
 
+        // Complete vehicle database
         const vehicleModels = {
-            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner"],
-            "Honda": ["Civic", "Accord", "CR-V", "Fit"],
-            "Ford": ["F-150", "Ranger", "Explorer"],
-            "BMW": ["3 Series", "5 Series", "X3", "X5"],
-            "Mercedes-Benz": ["C-Class", "E-Class", "S-Class"],
-            "Nissan": ["Altima", "X-Trail", "Patrol"],
-            "Mitsubishi": ["Lancer", "Pajero", "Outlander"],
-            "Mazda": ["Mazda3", "CX-5", "BT-50"],
-            "Subaru": ["Outback", "Forester", "Impreza"],
-            "Volkswagen": ["Golf", "Passat", "Tiguan"],
-            "Land Rover": ["Defender", "Discovery", "Range Rover"],
-            "Isuzu": ["D-Max", "MU-X"]
+            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner", "Harrier", "Vitz", "Passo", "Probox", "Succeed", "Crown", "Mark X", "Avensis", "Yaris"],
+            "Honda": ["Civic", "Accord", "CR-V", "Fit", "Vezel", "Freed", "Odyssey", "Insight", "Airwave"],
+            "Ford": ["F-150", "Ranger", "Explorer", "Escape", "Focus", "Everest", "Mustang"],
+            "BMW": ["3 Series", "5 Series", "X3", "X5", "X1", "7 Series", "M3", "M5"],
+            "Mercedes-Benz": ["C-Class", "E-Class", "S-Class", "GLC", "GLE", "A-Class", "G-Class"],
+            "Nissan": ["Altima", "X-Trail", "Patrol", "Sunny", "Note", "Juke", "Navara", "Murano"],
+            "Mitsubishi": ["Lancer", "Pajero", "Outlander", "ASX", "Triton", "Galant", "RVR"],
+            "Mazda": ["Mazda3", "CX-5", "BT-50", "CX-3", "Atenza", "Demio", "Axela"],
+            "Subaru": ["Outback", "Forester", "Impreza", "Legacy", "XV", "WRX"],
+            "Volkswagen": ["Golf", "Passat", "Tiguan", "Polo", "Touareg", "Jetta"],
+            "Land Rover": ["Defender", "Discovery", "Range Rover", "Freelander"],
+            "Isuzu": ["D-Max", "MU-X", "Trooper"],
+            "Volvo": ["XC60", "XC90", "S60", "S90", "V40"],
+            "Audi": ["A3", "A4", "A6", "Q3", "Q5", "Q7"],
+            "Chevrolet": ["Silverado", "Cruze", "Malibu", "Equinox"],
+            "Hyundai": ["Tucson", "Santa Fe", "Elantra", "Accent", "i10", "i20"],
+            "Kia": ["Sportage", "Sorento", "Cerato", "Picanto", "Rio"],
+            "Peugeot": ["208", "308", "508", "2008", "3008"],
+            "Renault": ["Clio", "Megane", "Duster", "Captur"],
+            "Suzuki": ["Swift", "Vitara", "Jimny", "Baleno", "Alto"]
         };
 
         function formatPrice(price) {
             return 'KSh ' + price.toLocaleString('en-KE');
+        }
+
+        // VIN/Chassis Search
+        function searchByVIN() {
+            const vin = document.getElementById('vinInput').value.trim().toUpperCase();
+            
+            if (!vin || vin.length < 5) {
+                alert('Please enter a valid VIN or Chassis number (at least 5 characters)');
+                return;
+            }
+            
+            // Create message for WhatsApp
+            const message = `Hello A & S AUTOPARTS,\n\nI need parts for my vehicle.\n\nVIN/Chassis Number: ${vin}\n\nPlease check availability and let me know compatible parts.`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Open WhatsApp with ADIL
+            window.open(`https://wa.me/254713349554?text=${encodedMessage}`, '_blank');
+            
+            // Also show PartSouq link for reference
+            const partsouqLink = `https://partsouq.com/en/catalog/genuine/locate?vin=${vin}`;
+            
+            // Show helpful info
+            const resultDiv = document.createElement('div');
+            resultDiv.style.cssText = 'background:#e8f5e9;padding:15px;border-radius:5px;margin-top:15px;text-align:left;';
+            resultDiv.innerHTML = `
+                <strong>✅ Search initiated!</strong><br>
+                <p>We've opened WhatsApp to help you find parts for VIN: <strong>${vin}</strong></p>
+                <p style="margin-top:10px;">You can also check our catalog partner:</p>
+                <a href="${partsouqLink}" target="_blank" style="color:#1a237e;font-weight:bold;">🔍 View on PartSouq Catalog</a>
+            `;
+            
+            document.querySelector('.vin-search').appendChild(resultDiv);
+            
+            // Remove after 10 seconds
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 10000);
         }
 
         function loadProducts() {
@@ -724,12 +796,10 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
-                // Adil button
                 const adilBtnClass = availability.adil ? 'available' : 'unavailable';
                 const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
                 const adilBtnDisabled = availability.adil ? '' : 'disabled';
                 
-                // Suhayl button
                 const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
                 const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
                 const suhaylBtnDisabled = availability.suhayl ? '' : 'disabled';
@@ -743,7 +813,6 @@
                         ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}
                     </div>
                     <div class="product-brand">${product.brand}</div>
-                    <div class="product-sku">SKU: ${product.sku || 'N/A'} | Stock: ${product.stock || 0}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
                     <div class="whatsapp-order-buttons">
                         <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${index}, 'adil')" ${adilBtnDisabled}>
@@ -759,20 +828,11 @@
         }
 
         function orderViaWhatsApp(index, brother) {
-            if (brother === 'adil' && !availability.adil) {
-                alert('ADIL is currently unavailable. Please contact SUHAYL.');
-                return;
-            }
-            if (brother === 'suhayl' && !availability.suhayl) {
-                alert('SUHAYL is currently unavailable. Please contact ADIL.');
-                return;
-            }
-            
             const product = products[index];
             const phoneNumber = brother === 'adil' ? '254713349554' : '254752763924';
             const brotherName = brother === 'adil' ? 'ADIL' : 'SUHAYL';
             
-            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability and delivery.`;
+            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel}\n💰 Price: ${formatPrice(product.price)}\n📝 Description: ${product.description}\n\nPlease confirm availability.`;
             
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
@@ -824,6 +884,9 @@
                     <div style="text-align:center; grid-column: 1/-1; padding: 40px;">
                         <p style="font-size: 18px; color: #666;">No parts found</p>
                         <p style="margin-top: 10px;">Call ADIL: 0713349554 or SUHAYL: 0752763924</p>
+                        <p style="margin-top: 10px;">
+                            <a href="https://partsouq.com" target="_blank" style="color:#1a237e;">Search Full Catalog on PartSouq</a>
+                        </p>
                     </div>
                 `;
                 return;
@@ -841,11 +904,9 @@
                 
                 const adilBtnClass = availability.adil ? 'available' : 'unavailable';
                 const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
-                const adilBtnDisabled = availability.adil ? '' : 'disabled';
                 
                 const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
                 const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
-                const suhaylBtnDisabled = availability.suhayl ? '' : 'disabled';
                 
                 productCard.innerHTML = `
                     <div class="product-image">${product.image}</div>
@@ -857,10 +918,10 @@
                     <div class="product-brand">${product.brand}</div>
                     <div class="product-price">${formatPrice(product.price)}</div>
                     <div class="whatsapp-order-buttons">
-                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'adil')" ${adilBtnDisabled}>
+                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'adil')" ${availability.adil ? '' : 'disabled'}>
                             <i class="fab fa-whatsapp"></i> ${adilBtnText}
                         </button>
-                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')" ${suhaylBtnDisabled}>
+                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')" ${availability.suhayl ? '' : 'disabled'}>
                             <i class="fab fa-whatsapp"></i> ${suhaylBtnText}
                         </button>
                     </div>
@@ -890,7 +951,6 @@
             displayFilteredProducts(filtered, `${category} Products`);
         }
 
-        // ADMIN PANEL
         function openAdminPanel() {
             const password = prompt("Enter Admin Password:");
             if (password === "rajus2024") {
@@ -904,7 +964,6 @@
             let adminHTML = `
                 <div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
                     <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Admin Panel</h2>
-                    
                     <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
                         <h3 style="margin-bottom:10px;">Availability Status</h3>
                         <div style="display:flex;gap:20px;">
@@ -916,10 +975,7 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;">
-                        ➕ Add New Product
-                    </button>
+                    <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;">➕ Add New Product</button>
                     <div id="addProductForm"></div>
                     <div id="adminProductList">
             `;
@@ -929,34 +985,8 @@
                     <div style="margin-bottom:20px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
                         <strong>${product.name}</strong><br>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-                            <div>
-                                <label style="font-size:12px;">Price (KSh):</label>
-                                <input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Stock:</label>
-                                <input type="number" id="stock_${index}" value="${product.stock}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Brand:</label>
-                                <input type="text" id="brand_${index}" value="${product.brand}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Category:</label>
-                                <input type="text" id="category_${index}" value="${product.category}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Vehicle Make:</label>
-                                <input type="text" id="vmake_${index}" value="${product.vehicleMake}" style="width:100%;padding:5px;">
-                            </div>
-                            <div>
-                                <label style="font-size:12px;">Vehicle Model:</label>
-                                <input type="text" id="vmodel_${index}" value="${product.vehicleModel}" style="width:100%;padding:5px;">
-                            </div>
-                        </div>
-                        <div style="margin-top:10px;">
-                            <label style="font-size:12px;">Description:</label>
-                            <textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${product.description}</textarea>
+                            <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
+                            <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock}" style="width:100%;padding:5px;"></div>
                         </div>
                         <div style="margin-top:10px;display:flex;gap:10px;">
                             <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:white;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
@@ -984,96 +1014,9 @@
             showAdminPanel();
         }
 
-        function showAddProductForm() {
-            const formHTML = `
-                <div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;">
-                    <h3 style="color:#2e7d32;">Add New Product</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-                        <div>
-                            <label>Product Name:</label>
-                            <input type="text" id="new_name" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Price (KSh):</label>
-                            <input type="number" id="new_price" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Category:</label>
-                            <input type="text" id="new_category" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Brand:</label>
-                            <input type="text" id="new_brand" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Vehicle Make:</label>
-                            <input type="text" id="new_vmake" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Vehicle Model:</label>
-                            <input type="text" id="new_vmodel" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Stock:</label>
-                            <input type="number" id="new_stock" value="0" style="width:100%;padding:5px;">
-                        </div>
-                        <div>
-                            <label>Image (emoji):</label>
-                            <input type="text" id="new_image" value="🔧" style="width:100%;padding:5px;">
-                        </div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <label>Description:</label>
-                        <textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea>
-                    </div>
-                    <button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button>
-                </div>
-            `;
-            
-            document.getElementById('addProductForm').innerHTML = formHTML;
-        }
-
-        function addNewProduct() {
-            const newProduct = {
-                name: document.getElementById('new_name').value,
-                price: parseInt(document.getElementById('new_price').value),
-                category: document.getElementById('new_category').value,
-                brand: document.getElementById('new_brand').value,
-                vehicleMake: document.getElementById('new_vmake').value || 'Universal',
-                vehicleModel: document.getElementById('new_vmodel').value || 'All Models',
-                yearStart: 0,
-                yearEnd: 0,
-                stock: parseInt(document.getElementById('new_stock').value) || 0,
-                image: document.getElementById('new_image').value || '🔧',
-                description: document.getElementById('new_description').value,
-                sku: 'SKU-' + Date.now()
-            };
-            
-            if (!newProduct.name || !newProduct.price) {
-                alert('Please enter product name and price');
-                return;
-            }
-            
-            products.push(newProduct);
-            saveProducts();
-            loadProducts();
-            closeAdminPanel();
-            alert('✅ Product added!');
-            showAdminPanel();
-        }
-
         function updateProduct(index) {
-            products[index] = {
-                ...products[index],
-                price: parseInt(document.getElementById(`price_${index}`).value),
-                stock: parseInt(document.getElementById(`stock_${index}`).value),
-                brand: document.getElementById(`brand_${index}`).value,
-                category: document.getElementById(`category_${index}`).value,
-                vehicleMake: document.getElementById(`vmake_${index}`).value,
-                vehicleModel: document.getElementById(`vmodel_${index}`).value,
-                description: document.getElementById(`desc_${index}`).value
-            };
-            
+            products[index].price = parseInt(document.getElementById(`price_${index}`).value);
+            products[index].stock = parseInt(document.getElementById(`stock_${index}`).value);
             saveProducts();
             loadProducts();
             closeAdminPanel();
