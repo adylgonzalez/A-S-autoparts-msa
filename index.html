@@ -5,552 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A & S AUTOPARTS - Mombasa, Kenya</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .top-bar {
-            background: #1a237e;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .header {
-            background: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            color: #1a237e;
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .header h1 span {
-            color: #ff6f00;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .nav {
-            background: #1a237e;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .nav a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .nav a:hover {
-            background: #ff6f00;
-            border-radius: 5px;
-        }
-
-        .search-section {
-            background: white;
-            padding: 20px;
-        }
-
-        .vin-search {
-            background: #f0f4ff;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 700px;
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        .vin-search h3 {
-            color: #1a237e;
-            margin-bottom: 15px;
-        }
-
-        .vin-search input {
-            padding: 15px;
-            width: 100%;
-            border: 2px solid #1a237e;
-            border-radius: 5px;
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .vin-search button {
-            padding: 15px 30px;
-            background: #1a237e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .vin-search button:hover {
-            background: #ff6f00;
-        }
-
-        .vin-results {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .search-bar {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .search-bar input {
-            padding: 12px;
-            width: 60%;
-            border: 2px solid #1a237e;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-right: 5px;
-        }
-
-        .search-bar button {
-            padding: 12px 20px;
-            background: #ff6f00;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .vehicle-selector {
-            background: #f0f0f0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .vehicle-selector select {
-            padding: 12px;
-            margin: 5px;
-            border: 2px solid #1a237e;
-            border-radius: 5px;
-            font-size: 16px;
-            min-width: 150px;
-        }
-
-        .vehicle-selector button {
-            padding: 12px 30px;
-            background: #ff6f00;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-left: 10px;
-        }
-
-        .categories {
-            padding: 40px 20px;
-            background: white;
-        }
-
-        .categories h2 {
-            text-align: center;
-            color: #1a237e;
-            margin-bottom: 30px;
-            font-size: 32px;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .category-card {
-            background: #f5f5f5;
-            padding: 30px;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px);
-            background: #e0e0e0;
-        }
-
-        .category-card i {
-            font-size: 40px;
-            color: #ff6f00;
-            margin-bottom: 15px;
-        }
-
-        .category-card h3 {
-            color: #1a237e;
-            margin-bottom: 10px;
-        }
-
-        .products {
-            padding: 40px 20px;
-            background: #f5f5f5;
-        }
-
-        .products h2 {
-            text-align: center;
-            color: #1a237e;
-            margin-bottom: 30px;
-            font-size: 32px;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .product-image {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        .product-name {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .product-oem {
-            background: #fff3e0;
-            color: #e65100;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-
-        .product-description {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .product-vehicle-info {
-            background: #f0f0f0;
-            padding: 8px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 13px;
-            color: #555;
-        }
-
-        .product-brand {
-            background: #1a237e;
-            color: white;
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .product-price {
-            color: #ff6f00;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 15px 0;
-        }
-
-        .whatsapp-order-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .whatsapp-order-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            transition: transform 0.3s;
-        }
-
-        .whatsapp-order-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .whatsapp-order-btn.available {
-            background: #4caf50;
-        }
-
-        .whatsapp-order-btn.unavailable {
-            background: #f44336;
-            cursor: not-allowed;
-        }
-
-        .contact-info {
-            background: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .contact-info h2 {
-            color: #1a237e;
-            margin-bottom: 30px;
-            font-size: 32px;
-        }
-
-        .contact-details {
-            font-size: 18px;
-            line-height: 2;
-        }
-
-        .contact-details i {
-            color: #ff6f00;
-            margin-right: 10px;
-        }
-
-        .whatsapp-buttons {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .whatsapp-btn {
-            padding: 15px 25px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: block;
-            text-align: center;
-        }
-
-        .whatsapp-btn.adil {
-            background: #25D366;
-        }
-
-        .whatsapp-btn.suhayl {
-            background: #128C7E;
-        }
-
-        .footer {
-            background: #1a237e;
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-
-        .footer p {
-            margin: 10px 0;
-        }
-
-        .admin-btn {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            opacity: 0.3;
-            padding: 5px 10px;
-            background: #ccc;
-            border: none;
-            cursor: pointer;
-            z-index: 999;
-            font-size: 12px;
-        }
-
-        .admin-btn:hover {
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .nav a {
-                display: block;
-                padding: 10px;
-            }
-            
-            .vehicle-selector select {
-                width: 100%;
-                margin: 5px 0;
-            }
-            
-            .whatsapp-buttons {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            .whatsapp-order-buttons {
-                flex-direction: column;
-            }
-            
-            .search-bar input {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-        }
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f5f5f5}.top-bar{background:#1a237e;color:#fff;padding:10px 20px;text-align:center;font-size:14px}.header{background:#fff;padding:20px;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.1)}.header h1{color:#1a237e;font-size:36px;margin-bottom:10px}.header h1 span{color:#ff6f00}.header p{color:#666;font-size:16px}.nav{background:#1a237e;padding:15px;text-align:center}.nav a{color:#fff;text-decoration:none;padding:10px 20px;margin:0 5px;display:inline-block;cursor:pointer;border-radius:5px}.nav a:hover{background:#ff6f00}.search-section{background:#fff;padding:20px}.vin-search{background:#f0f4ff;padding:20px;border-radius:10px;max-width:700px;margin:20px auto;text-align:center}.vin-search h3{color:#1a237e;margin-bottom:15px}.vin-search input{padding:15px;width:100%;border:2px solid #1a237e;border-radius:5px;font-size:18px;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}.vin-search button{padding:15px 30px;background:#1a237e;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:16px;font-weight:700}.vin-search button:hover{background:#ff6f00}.vin-results{margin-top:20px;display:none}.search-bar{text-align:center;padding:20px}.search-bar input{padding:12px;width:60%;border:2px solid #1a237e;border-radius:5px;font-size:16px;margin-right:5px}.search-bar button{padding:12px 20px;background:#ff6f00;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:16px}.vehicle-selector{background:#f0f0f0;padding:20px;text-align:center}.vehicle-selector select{padding:12px;margin:5px;border:2px solid #1a237e;border-radius:5px;font-size:16px;min-width:150px}.vehicle-selector button{padding:12px 30px;background:#ff6f00;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:16px;margin-left:10px}.categories{padding:40px 20px;background:#fff}.categories h2{text-align:center;color:#1a237e;margin-bottom:30px;font-size:32px}.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:1000px;margin:0 auto}.category-card{background:#f5f5f5;padding:30px;text-align:center;border-radius:10px;cursor:pointer;transition:transform .3s}.category-card:hover{transform:translateY(-5px);background:#e0e0e0}.category-card i{font-size:40px;color:#ff6f00;margin-bottom:15px}.category-card h3{color:#1a237e;margin-bottom:10px}.products{padding:40px 20px;background:#f5f5f5}.products h2{text-align:center;color:#1a237e;margin-bottom:30px;font-size:32px}.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto}.product-card{background:#fff;border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.1);transition:transform .3s}.product-card:hover{transform:translateY(-5px);box-shadow:0 5px 15px rgba(0,0,0,.2)}.product-image{font-size:60px;margin-bottom:15px}.product-name{font-weight:700;color:#333;margin-bottom:10px;font-size:18px}.product-oem{background:#fff3e0;color:#e65100;padding:5px 10px;border-radius:3px;font-size:12px;margin-bottom:10px;display:inline-block}.product-description{color:#666;font-size:14px;margin-bottom:10px;line-height:1.4}.product-vehicle-info{background:#f0f0f0;padding:8px;border-radius:5px;margin-bottom:10px;font-size:13px;color:#555}.product-brand{background:#1a237e;color:#fff;display:inline-block;padding:5px 15px;border-radius:5px;font-size:14px;margin-bottom:10px}.product-price{color:#ff6f00;font-size:24px;font-weight:700;margin:15px 0}.whatsapp-order-buttons{display:flex;gap:10px;margin-top:10px}.whatsapp-order-btn{flex:1;padding:12px;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:700;color:#fff;transition:transform .3s}.whatsapp-order-btn:hover{transform:scale(1.05)}.whatsapp-order-btn.available{background:#4caf50}.whatsapp-order-btn.unavailable{background:#f44336;cursor:not-allowed}.contact-info{background:#fff;padding:40px 20px;text-align:center}.contact-info h2{color:#1a237e;margin-bottom:30px;font-size:32px}.contact-details{font-size:18px;line-height:2}.contact-details i{color:#ff6f00;margin-right:10px}.whatsapp-buttons{position:fixed;bottom:30px;right:30px;display:flex;flex-direction:column;gap:15px;z-index:1000}.whatsapp-btn{padding:15px 25px;border-radius:50px;color:#fff;text-decoration:none;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.3);display:block;text-align:center}.whatsapp-btn.adil{background:#25D366}.whatsapp-btn.suhayl{background:#128C7E}.footer{background:#1a237e;color:#fff;padding:30px 20px;text-align:center}.footer p{margin:10px 0}.admin-btn{position:fixed;bottom:10px;left:10px;opacity:.3;padding:5px 10px;background:#ccc;border:none;cursor:pointer;z-index:999;font-size:12px}.admin-btn:hover{opacity:1}@media(max-width:768px){.nav a{display:block;padding:10px}.vehicle-selector select{width:100%;margin:5px 0}.whatsapp-buttons{bottom:20px;right:20px}.whatsapp-order-buttons{flex-direction:column}.search-bar input{width:100%;margin-bottom:10px}}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="top-bar">
-        <p>📞 ADIL: 0713349554 | SUHAYL: 0752763924 | 📍 Mombasa, Kenya</p>
-    </div>
-
-    <div class="header">
-        <h1>A & S <span>AUTOPARTS</span></h1>
-        <p>Two Brothers, One Mission: Quality Parts</p>
-    </div>
-
+    <div class="top-bar"><p>📞 ADIL: 0713349554 | SUHAYL: 0752763924 | 📍 Mombasa, Kenya</p></div>
+    <div class="header"><h1>A & S <span>AUTOPARTS</span></h1><p>Two Brothers, One Mission: Quality Parts</p></div>
     <div class="nav">
         <a onclick="scrollToSection('vin')">VIN Search</a>
         <a onclick="scrollToSection('categories')">Categories</a>
         <a onclick="scrollToSection('products')">Products</a>
         <a onclick="scrollToSection('contact')">Contact</a>
     </div>
-
     <div class="search-section" id="vin">
         <div class="vin-search">
             <h3><i class="fas fa-search"></i> Search by VIN or Chassis Number</h3>
-            <p style="color: #666; margin-bottom: 15px;">Enter your vehicle's VIN or Chassis number to find compatible parts instantly</p>
-            <input type="text" id="vinInput" placeholder="e.g., JTMZD33V275012345 or NCP42-0012345" maxlength="17">
+            <p style="color:#666;margin-bottom:15px">Enter VIN or Chassis number to find compatible parts</p>
+            <input type="text" id="vinInput" placeholder="e.g., NCP42, GUN125, T32, FD1, W204" maxlength="17">
             <br>
-            <button onclick="searchByVIN()">
-                <i class="fas fa-search"></i> Find Parts
-            </button>
+            <button onclick="searchByVIN()"><i class="fas fa-search"></i> Find Parts</button>
             <div class="vin-results" id="vinResults"></div>
         </div>
     </div>
-
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search parts, OEM numbers, vehicles, brands...">
+        <input type="text" id="searchInput" placeholder="Search parts, OEM numbers, vehicles...">
         <button onclick="searchProducts()">🔍 Search</button>
     </div>
-
     <div class="vehicle-selector">
         <h2>Find Parts for Your Vehicle</h2>
-        <select id="vehicleYear">
-            <option value="">Select Year</option>
-            <option>2024</option><option>2023</option><option>2022</option>
-            <option>2021</option><option>2020</option><option>2019</option>
-            <option>2018</option><option>2017</option><option>2016</option>
-            <option>2015</option><option>2014</option><option>2013</option>
-            <option>2012</option><option>2011</option><option>2010</option>
-            <option>2009</option><option>2008</option><option>2007</option>
-            <option>2006</option><option>2005</option>
-        </select>
-        <select id="vehicleMake">
-            <option value="">Select Make</option>
-            <option>Toyota</option><option>Honda</option>
-            <option>Ford</option><option>BMW</option>
-            <option>Mercedes-Benz</option><option>Nissan</option>
-            <option>Mitsubishi</option><option>Mazda</option>
-            <option>Subaru</option><option>Volkswagen</option>
-            <option>Land Rover</option><option>Isuzu</option>
-            <option>Volvo</option><option>Audi</option>
-            <option>Chevrolet</option><option>Hyundai</option>
-            <option>Kia</option><option>Peugeot</option>
-            <option>Renault</option><option>Suzuki</option>
-        </select>
-        <select id="vehicleModel">
-            <option value="">Select Model</option>
-        </select>
+        <select id="vehicleYear"><option value="">Select Year</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option><option>2017</option><option>2016</option><option>2015</option><option>2014</option><option>2013</option><option>2012</option><option>2011</option><option>2010</option><option>2009</option><option>2008</option><option>2007</option><option>2006</option><option>2005</option><option>2004</option><option>2003</option><option>2002</option><option>2001</option><option>2000</option></select>
+        <select id="vehicleMake"><option value="">Select Make</option><option>Toyota</option><option>Nissan</option><option>Honda</option><option>Mitsubishi</option><option>Mazda</option><option>Subaru</option><option>Mercedes-Benz</option><option>BMW</option><option>Land Rover</option><option>Isuzu</option><option>Volkswagen</option><option>Audi</option><option>Ford</option><option>Chevrolet</option><option>Hyundai</option><option>Kia</option><option>Peugeot</option><option>Renault</option><option>Suzuki</option><option>Volvo</option></select>
+        <select id="vehicleModel"><option value="">Select Model</option></select>
         <button onclick="findParts()">Find Parts</button>
     </div>
-
     <div class="categories" id="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid">
-            <div class="category-card" onclick="shopByCategory('Brakes')">
-                <i class="fas fa-car-battery"></i>
-                <h3>Brakes</h3>
-                <p>Brake Pads, Rotors</p>
-            </div>
-            <div class="category-card" onclick="shopByCategory('Suspension')">
-                <i class="fas fa-car"></i>
-                <h3>Suspension</h3>
-                <p>Struts, Springs</p>
-            </div>
-            <div class="category-card" onclick="shopByCategory('Filters')">
-                <i class="fas fa-oil-can"></i>
-                <h3>Filters</h3>
-                <p>Oil, Air Filters</p>
-            </div>
-            <div class="category-card" onclick="shopByCategory('Electrical')">
-                <i class="fas fa-bolt"></i>
-                <h3>Electrical</h3>
-                <p>Alternators, Plugs</p>
-            </div>
-            <div class="category-card" onclick="shopByCategory('Engine')">
-                <i class="fas fa-cogs"></i>
-                <h3>Engine</h3>
-                <p>Timing Belts, Pumps</p>
-            </div>
-            <div class="category-card" onclick="shopByCategory('Cooling')">
-                <i class="fas fa-fan"></i>
-                <h3>Cooling</h3>
-                <p>Radiators, Water Pumps</p>
-            </div>
+            <div class="category-card" onclick="shopByCategory('Brakes')"><i class="fas fa-car-battery"></i><h3>Brakes</h3><p>Brake Pads, Rotors</p></div>
+            <div class="category-card" onclick="shopByCategory('Suspension')"><i class="fas fa-car"></i><h3>Suspension</h3><p>Struts, Springs</p></div>
+            <div class="category-card" onclick="shopByCategory('Filters')"><i class="fas fa-oil-can"></i><h3>Filters</h3><p>Oil, Air Filters</p></div>
+            <div class="category-card" onclick="shopByCategory('Electrical')"><i class="fas fa-bolt"></i><h3>Electrical</h3><p>Alternators, Plugs</p></div>
+            <div class="category-card" onclick="shopByCategory('Engine')"><i class="fas fa-cogs"></i><h3>Engine</h3><p>Timing Belts, Pumps</p></div>
+            <div class="category-card" onclick="shopByCategory('Cooling')"><i class="fas fa-fan"></i><h3>Cooling</h3><p>Radiators, Water Pumps</p></div>
         </div>
     </div>
-
     <div class="products" id="products">
         <h2>Featured Products</h2>
         <div class="product-grid" id="productGrid"></div>
     </div>
-
     <div class="contact-info" id="contact">
         <h2>Contact Us</h2>
         <div class="contact-details">
@@ -561,865 +64,152 @@
             <p><i class="fas fa-clock"></i> Mon-Sat: 8AM - 6PM</p>
         </div>
     </div>
-
-    <div class="footer">
-        <p>&copy; 2024 A & S AUTOPARTS - Mombasa, Kenya</p>
-        <p>ADIL: 0713349554 | SUHAYL: 0752763924</p>
-    </div>
-
+    <div class="footer"><p>&copy; 2024 A & S AUTOPARTS - Mombasa, Kenya</p><p>ADIL: 0713349554 | SUHAYL: 0752763924</p></div>
     <div class="whatsapp-buttons">
-        <a href="https://wa.me/254713349554" class="whatsapp-btn adil" target="_blank">
-            <i class="fab fa-whatsapp"></i> WhatsApp ADIL
-        </a>
-        <a href="https://wa.me/254752763924" class="whatsapp-btn suhayl" target="_blank">
-            <i class="fab fa-whatsapp"></i> WhatsApp SUHAYL
-        </a>
+        <a href="https://wa.me/254713349554" class="whatsapp-btn adil" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp ADIL</a>
+        <a href="https://wa.me/254752763924" class="whatsapp-btn suhayl" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp SUHAYL</a>
     </div>
-
-    <button class="admin-btn" onclick="openAdminPanel()">🔧 Admin Panel</button>
-
+    <button class="admin-btn" onclick="openAdminPanel()">🔧 Admin</button>
     <script>
-        // VIN Database - Maps VIN prefixes to vehicles
-        const vinDatabase = {
-            // Toyota VIN prefixes
-            "JTM": { make: "Toyota", model: "RAV4", years: [2013, 2023] },
-            "JT3": { make: "Toyota", model: "Land Cruiser", years: [2010, 2023] },
-            "NCP": { make: "Toyota", model: "Corolla", years: [2005, 2015] },
-            "NZE": { make: "Toyota", model: "Corolla", years: [2005, 2015] },
-            "ZRE": { make: "Toyota", model: "Corolla", years: [2008, 2023] },
-            "ACV": { make: "Toyota", model: "Camry", years: [2005, 2015] },
-            "GSV": { make: "Toyota", model: "Camry", years: [2010, 2023] },
-            "ANH": { make: "Toyota", model: "Hilux", years: [2005, 2015] },
-            "GUN": { make: "Toyota", model: "Hilux", years: [2010, 2023] },
-            "KUN": { make: "Toyota", model: "Hilux", years: [2015, 2023] },
-            "TRH": { make: "Toyota", model: "Hiace", years: [2005, 2023] },
-            "KDH": { make: "Toyota", model: "Hiace", years: [2005, 2015] },
-            "GRJ": { make: "Toyota", model: "Land Cruiser", years: [2010, 2023] },
-            "UZJ": { make: "Toyota", model: "Land Cruiser", years: [2000, 2010] },
-            "VZJ": { make: "Toyota", model: "Land Cruiser Prado", years: [2000, 2010] },
-            "KZJ": { make: "Toyota", model: "Land Cruiser Prado", years: [2000, 2010] },
-            "LJ": { make: "Toyota", model: "Land Cruiser", years: [1990, 2005] },
-            "RZJ": { make: "Toyota", model: "Land Cruiser Prado", years: [2000, 2010] },
-            "GRN": { make: "Toyota", model: "Fortuner", years: [2015, 2023] },
-            "TGN": { make: "Toyota", model: "Fortuner", years: [2015, 2023] },
-            "MNH": { make: "Toyota", model: "Hilux", years: [2005, 2015] },
-            
-            // Honda VIN prefixes
-            "JHM": { make: "Honda", model: "Civic", years: [2005, 2023] },
-            "SHH": { make: "Honda", model: "Civic", years: [2005, 2023] },
-            "2HG": { make: "Honda", model: "Civic", years: [2016, 2023] },
-            "1HG": { make: "Honda", model: "Accord", years: [2005, 2023] },
-            "JHL": { make: "Honda", model: "CR-V", years: [2012, 2023] },
-            
-            // Nissan VIN prefixes
-            "JN1": { make: "Nissan", model: "X-Trail", years: [2005, 2023] },
-            "JN8": { make: "Nissan", model: "Patrol", years: [2005, 2023] },
-            "VSK": { make: "Nissan", model: "Navara", years: [2010, 2023] },
-            "JN6": { make: "Nissan", model: "Navara", years: [2010, 2023] },
-            
-            // Mitsubishi VIN prefixes
-            "JMB": { make: "Mitsubishi", model: "Pajero", years: [2005, 2023] },
-            "JMF": { make: "Mitsubishi", model: "Lancer", years: [2005, 2020] },
-            "MMC": { make: "Mitsubishi", model: "Triton", years: [2010, 2023] },
-            
-            // Mazda VIN prefixes
-            "JMZ": { make: "Mazda", model: "Mazda3", years: [2005, 2023] },
-            "JM1": { make: "Mazda", model: "Mazda3", years: [2005, 2023] },
-            "JM0": { make: "Mazda", model: "BT-50", years: [2010, 2023] },
-            
-            // Subaru VIN prefixes
-            "JF1": { make: "Subaru", model: "Forester", years: [2005, 2023] },
-            "JF2": { make: "Subaru", model: "Outback", years: [2005, 2023] },
-            "GDB": { make: "Subaru", model: "Impreza", years: [2000, 2010] },
-            "GDA": { make: "Subaru", model: "Impreza", years: [2000, 2010] },
-            
-            // Mercedes VIN prefixes
-            "WDB": { make: "Mercedes-Benz", model: "C-Class", years: [2005, 2023] },
-            "WDD": { make: "Mercedes-Benz", model: "E-Class", years: [2005, 2023] },
-            "WDC": { make: "Mercedes-Benz", model: "G-Class", years: [2005, 2023] },
-            
-            // BMW VIN prefixes
-            "WBA": { make: "BMW", model: "3 Series", years: [2005, 2023] },
-            "WBS": { make: "BMW", model: "M3", years: [2005, 2023] },
-            "4US": { make: "BMW", model: "X5", years: [2005, 2023] },
-            
-            // Ford VIN prefixes
-            "1FT": { make: "Ford", model: "F-150", years: [2005, 2023] },
-            "WF0": { make: "Ford", model: "Ranger", years: [2010, 2023] },
-            "MNZ": { make: "Ford", model: "Ranger", years: [2010, 2023] },
-            
-            // Isuzu VIN prefixes
-            "JAA": { make: "Isuzu", model: "D-Max", years: [2010, 2023] },
-            "MPA": { make: "Isuzu", model: "D-Max", years: [2010, 2023] },
-            
-            // Land Rover VIN prefixes
-            "SAL": { make: "Land Rover", model: "Defender", years: [2005, 2023] },
-            "SALL": { make: "Land Rover", model: "Discovery", years: [2005, 2023] },
-            
-            // Volkswagen VIN prefixes
-            "WVW": { make: "Volkswagen", model: "Golf", years: [2005, 2023] },
-            "WVG": { make: "Volkswagen", model: "Tiguan", years: [2010, 2023] },
-            
-            // Audi VIN prefixes
-            "WAU": { make: "Audi", model: "A4", years: [2005, 2023] },
-            "WA1": { make: "Audi", model: "Q5", years: [2010, 2023] }
-        };
+        // VEHICLE DATABASE - All Brands
+        const toyotaModelCodes={NCP:{make:"Toyota",model:"Corolla/Vios/Yaris",years:[1999,2015]},NZE:{make:"Toyota",model:"Corolla",years:[2000,2018]},ZRE:{make:"Toyota",model:"Corolla/Auris",years:[2006,2023]},ZZE:{make:"Toyota",model:"Corolla",years:[1998,2008]},AE:{make:"Toyota",model:"Corolla/Sprinter",years:[1983,2000]},ACV:{make:"Toyota",model:"Camry",years:[2002,2011]},ASV:{make:"Toyota",model:"Camry",years:[2012,2016]},GSV:{make:"Toyota",model:"Camry/Aurion",years:[2006,2023]},MCV:{make:"Toyota",model:"Camry/Windom",years:[1994,2006]},SXV:{make:"Toyota",model:"Camry",years:[1991,2001]},GUN:{make:"Toyota",model:"Hilux",years:[2015,2023]},KUN:{make:"Toyota",model:"Hilux/Innova",years:[2004,2015]},ANH:{make:"Toyota",model:"Hilux",years:[2004,2015]},MNH:{make:"Toyota",model:"Hilux",years:[2004,2015]},GRJ:{make:"Toyota",model:"Land Cruiser",years:[2007,2021]},UZJ:{make:"Toyota",model:"Land Cruiser",years:[1996,2011]},URJ:{make:"Toyota",model:"Land Cruiser",years:[2007,2021]},VDJ:{make:"Toyota",model:"Land Cruiser",years:[2007,2021]},HDJ:{make:"Toyota",model:"Land Cruiser",years:[1990,2006]},HZJ:{make:"Toyota",model:"Land Cruiser",years:[1989,2023]},KZJ:{make:"Toyota",model:"Land Cruiser Prado",years:[1993,2006]},KDJ:{make:"Toyota",model:"Land Cruiser Prado",years:[2006,2023]},LJ:{make:"Toyota",model:"Land Cruiser",years:[1984,2001]},FZJ:{make:"Toyota",model:"Land Cruiser",years:[1989,1997]},RZJ:{make:"Toyota",model:"Land Cruiser Prado",years:[1996,2002]},VZJ:{make:"Toyota",model:"Land Cruiser Prado",years:[1996,2002]},TRJ:{make:"Toyota",model:"Land Cruiser Prado",years:[2004,2023]},TRH:{make:"Toyota",model:"Hiace",years:[2005,2023]},KDH:{make:"Toyota",model:"Hiace",years:[2005,2019]},ACA:{make:"Toyota",model:"RAV4",years:[2006,2016]},ALA:{make:"Toyota",model:"RAV4",years:[2008,2012]},GSA:{make:"Toyota",model:"RAV4",years:[2006,2023]},SXA:{make:"Toyota",model:"RAV4",years:[1994,2005]},AXA:{make:"Toyota",model:"RAV4",years:[2013,2023]},TGN:{make:"Toyota",model:"Fortuner",years:[2015,2023]},AN:{make:"Toyota",model:"Innova/Kijang",years:[2004,2023]},NLP:{make:"Toyota",model:"Yaris/Vitz",years:[2002,2011]},NHW:{make:"Toyota",model:"Prius",years:[1997,2009]},ZVW:{make:"Toyota",model:"Prius",years:[2009,2023]},GRS:{make:"Toyota",model:"Crown",years:[2003,2008]},JZS:{make:"Toyota",model:"Crown/Aristo",years:[1988,2004]},UZS:{make:"Toyota",model:"Crown Majesta",years:[1989,2012]},ATH:{make:"Toyota",model:"Alphard",years:[2002,2023]},NHP:{make:"Toyota",model:"Aqua/Prius C",years:[2011,2021]},GRX:{make:"Toyota",model:"Mark X",years:[2005,2019]},ZNE:{make:"Toyota",model:"Wish",years:[2003,2017]},ZRR:{make:"Toyota",model:"Voxy/Noah",years:[2007,2023]},ACU:{make:"Toyota",model:"Harrier",years:[2007,2023]},GSU:{make:"Toyota",model:"Harrier/RX",years:[2003,2023]}};
+        
+        const nissanModelCodes={NT30:{make:"Nissan",model:"X-Trail",years:[2001,2007]},T31:{make:"Nissan",model:"X-Trail",years:[2007,2013]},T32:{make:"Nissan",model:"X-Trail",years:[2013,2023]},T33:{make:"Nissan",model:"X-Trail",years:[2021,2023]},Y60:{make:"Nissan",model:"Patrol",years:[1987,1997]},Y61:{make:"Nissan",model:"Patrol",years:[1997,2013]},Y62:{make:"Nissan",model:"Patrol",years:[2010,2023]},D21:{make:"Nissan",model:"Navara/Hardbody",years:[1986,1997]},D22:{make:"Nissan",model:"Navara",years:[1997,2015]},D23:{make:"Nissan",model:"Navara",years:[2014,2023]},D40:{make:"Nissan",model:"Navara",years:[2004,2014]},B11:{make:"Nissan",model:"Sunny",years:[1982,1985]},B12:{make:"Nissan",model:"Sunny",years:[1986,1991]},B13:{make:"Nissan",model:"Sunny/Sentra",years:[1991,1994]},B14:{make:"Nissan",model:"Sunny/Sentra",years:[1994,1998]},B15:{make:"Nissan",model:"Sunny/Sentra",years:[1998,2002]},N16:{make:"Nissan",model:"Sunny/Almera",years:[2000,2005]},N17:{make:"Nissan",model:"Almera/Versa",years:[2011,2016]},N18:{make:"Nissan",model:"Almera/Versa",years:[2019,2023]},A32:{make:"Nissan",model:"Cefiro/Maxima",years:[1994,1998]},A33:{make:"Nissan",model:"Cefiro/Maxima",years:[1998,2003]},J31:{make:"Nissan",model:"Teana",years:[2003,2008]},J32:{make:"Nissan",model:"Teana",years:[2008,2013]},L33:{make:"Nissan",model:"Teana/Altima",years:[2013,2018]},V35:{make:"Nissan",model:"Skyline",years:[2001,2006]},V36:{make:"Nissan",model:"Skyline",years:[2006,2014]},V37:{make:"Nissan",model:"Skyline",years:[2014,2023]},C11:{make:"Nissan",model:"Tiida/Latio",years:[2004,2012]},Y11:{make:"Nissan",model:"Wingroad/AD",years:[1999,2005]},Y12:{make:"Nissan",model:"Wingroad/AD",years:[2005,2018]},E24:{make:"Nissan",model:"Urvan/Caravan",years:[1986,2001]},E25:{make:"Nissan",model:"Urvan/Caravan",years:[2001,2012]},E26:{make:"Nissan",model:"Urvan/Caravan",years:[2012,2023]},C25:{make:"Nissan",model:"Serena",years:[1999,2005]},C26:{make:"Nissan",model:"Serena",years:[2005,2010]},C27:{make:"Nissan",model:"Serena",years:[2010,2016]},C28:{make:"Nissan",model:"Serena",years:[2016,2023]},J10:{make:"Nissan",model:"Qashqai/Dualis",years:[2007,2013]},J11:{make:"Nissan",model:"Qashqai",years:[2013,2021]},J12:{make:"Nissan",model:"Qashqai",years:[2021,2023]},F15:{make:"Nissan",model:"Juke",years:[2010,2019]},F16:{make:"Nissan",model:"Juke",years:[2019,2023]},Z50:{make:"Nissan",model:"Murano",years:[2002,2008]},Z51:{make:"Nissan",model:"Murano",years:[2008,2014]},Z52:{make:"Nissan",model:"Murano",years:[2014,2023]},R50:{make:"Nissan",model:"Pathfinder",years:[1995,2004]},R51:{make:"Nissan",model:"Pathfinder",years:[2004,2012]},R52:{make:"Nissan",model:"Pathfinder",years:[2012,2021]},R35:{make:"Nissan",model:"GT-R",years:[2007,2025]},Z33:{make:"Nissan",model:"350Z",years:[2003,2008]},Z34:{make:"Nissan",model:"370Z",years:[2009,2020]}};
+        
+        const hondaModelCodes={FD1:{make:"Honda",model:"Civic",years:[2006,2011]},FD2:{make:"Honda",model:"Civic",years:[2006,2011]},FB1:{make:"Honda",model:"Civic",years:[2011,2016]},FC1:{make:"Honda",model:"Civic",years:[2016,2021]},FE1:{make:"Honda",model:"Civic",years:[2021,2023]},EK:{make:"Honda",model:"Civic",years:[1995,2000]},EG:{make:"Honda",model:"Civic",years:[1991,1995]},CL7:{make:"Honda",model:"Accord",years:[2003,2008]},CL9:{make:"Honda",model:"Accord",years:[2003,2008]},CU1:{make:"Honda",model:"Accord",years:[2008,2013]},CU2:{make:"Honda",model:"Accord",years:[2008,2013]},CR1:{make:"Honda",model:"Accord",years:[2013,2018]},RD1:{make:"Honda",model:"CR-V",years:[1995,2001]},RD5:{make:"Honda",model:"CR-V",years:[2002,2006]},RE1:{make:"Honda",model:"CR-V",years:[2006,2012]},RM1:{make:"Honda",model:"CR-V",years:[2012,2017]},RW1:{make:"Honda",model:"CR-V",years:[2017,2023]},GD1:{make:"Honda",model:"Fit/Jazz",years:[2001,2007]},GD3:{make:"Honda",model:"Fit/Jazz",years:[2001,2007]},GE6:{make:"Honda",model:"Fit/Jazz",years:[2007,2014]},GE8:{make:"Honda",model:"Fit/Jazz",years:[2007,2014]},GK5:{make:"Honda",model:"Fit/Jazz",years:[2014,2020]},GR1:{make:"Honda",model:"Fit/Jazz",years:[2020,2023]},RU1:{make:"Honda",model:"Vezel/HR-V",years:[2013,2021]},RA1:{make:"Honda",model:"Odyssey",years:[1994,1999]},RA6:{make:"Honda",model:"Odyssey",years:[1999,2003]},RB1:{make:"Honda",model:"Odyssey",years:[2003,2008]},RB3:{make:"Honda",model:"Odyssey",years:[2008,2013]},RC1:{make:"Honda",model:"Odyssey",years:[2013,2023]},RF1:{make:"Honda",model:"Stepwgn",years:[2005,2009]},RK1:{make:"Honda",model:"Stepwgn",years:[2009,2015]},RP1:{make:"Honda",model:"Stepwgn",years:[2015,2023]},GB3:{make:"Honda",model:"Freed",years:[2008,2016]},GB5:{make:"Honda",model:"Freed",years:[2016,2023]},GJ1:{make:"Honda",model:"Airwave",years:[2005,2010]}};
+        
+        const mitsubishiModelCodes={V93:{make:"Mitsubishi",model:"Pajero",years:[2006,2023]},V97:{make:"Mitsubishi",model:"Pajero",years:[2006,2023]},V98:{make:"Mitsubishi",model:"Pajero",years:[2006,2023]},V23:{make:"Mitsubishi",model:"Pajero",years:[1991,1999]},V45:{make:"Mitsubishi",model:"Pajero",years:[1991,1999]},CS:{make:"Mitsubishi",model:"Lancer",years:[2000,2007]},CY:{make:"Mitsubishi",model:"Lancer",years:[2007,2017]},CW:{make:"Mitsubishi",model:"Outlander",years:[2005,2012]},GF:{make:"Mitsubishi",model:"Outlander",years:[2012,2021]},ML:{make:"Mitsubishi",model:"Triton",years:[2005,2015]},MQ:{make:"Mitsubishi",model:"Triton",years:[2015,2023]},GA:{make:"Mitsubishi",model:"RVR/ASX",years:[2010,2023]},EA:{make:"Mitsubishi",model:"Galant",years:[1996,2006]}};
+        
+        const mazdaModelCodes={BK:{make:"Mazda",model:"Mazda3/Axela",years:[2003,2009]},BL:{make:"Mazda",model:"Mazda3/Axela",years:[2009,2013]},BM:{make:"Mazda",model:"Mazda3/Axela",years:[2013,2019]},BP:{make:"Mazda",model:"Mazda3",years:[2019,2023]},GG:{make:"Mazda",model:"Mazda6/Atenza",years:[2002,2008]},GH:{make:"Mazda",model:"Mazda6/Atenza",years:[2008,2012]},GJ:{make:"Mazda",model:"Mazda6/Atenza",years:[2012,2023]},KE:{make:"Mazda",model:"CX-5",years:[2012,2017]},KF:{make:"Mazda",model:"CX-5",years:[2017,2023]},DK:{make:"Mazda",model:"CX-3",years:[2015,2023]},DE:{make:"Mazda",model:"Demio/Mazda2",years:[2007,2014]},DJ:{make:"Mazda",model:"Demio/Mazda2",years:[2014,2023]},UN:{make:"Mazda",model:"BT-50",years:[2006,2020]},TF:{make:"Mazda",model:"BT-50",years:[2020,2023]}};
+        
+        const subaruModelCodes={SG:{make:"Subaru",model:"Forester",years:[2002,2008]},SH:{make:"Subaru",model:"Forester",years:[2008,2013]},SJ:{make:"Subaru",model:"Forester",years:[2013,2018]},SK:{make:"Subaru",model:"Forester",years:[2018,2023]},BP:{make:"Subaru",model:"Outback",years:[2003,2009]},BR:{make:"Subaru",model:"Outback",years:[2009,2014]},BS:{make:"Subaru",model:"Outback",years:[2014,2023]},GD:{make:"Subaru",model:"Impreza",years:[2000,2007]},GH:{make:"Subaru",model:"Impreza",years:[2007,2011]},GJ:{make:"Subaru",model:"Impreza",years:[2011,2016]},GK:{make:"Subaru",model:"Impreza",years:[2016,2023]},BL:{make:"Subaru",model:"Legacy",years:[2003,2009]},BM:{make:"Subaru",model:"Legacy",years:[2009,2014]},BN:{make:"Subaru",model:"Legacy",years:[2014,2023]},GP:{make:"Subaru",model:"XV",years:[2012,2017]},GT:{make:"Subaru",model:"XV",years:[2017,2023]}};
+        
+        const mercedesModelCodes={W203:{make:"Mercedes-Benz",model:"C-Class",years:[2000,2007]},W204:{make:"Mercedes-Benz",model:"C-Class",years:[2007,2014]},W205:{make:"Mercedes-Benz",model:"C-Class",years:[2014,2021]},W206:{make:"Mercedes-Benz",model:"C-Class",years:[2021,2023]},W210:{make:"Mercedes-Benz",model:"E-Class",years:[1995,2002]},W211:{make:"Mercedes-Benz",model:"E-Class",years:[2002,2009]},W212:{make:"Mercedes-Benz",model:"E-Class",years:[2009,2016]},W213:{make:"Mercedes-Benz",model:"E-Class",years:[2016,2023]},W220:{make:"Mercedes-Benz",model:"S-Class",years:[1998,2005]},W221:{make:"Mercedes-Benz",model:"S-Class",years:[2005,2013]},W222:{make:"Mercedes-Benz",model:"S-Class",years:[2013,2020]},W163:{make:"Mercedes-Benz",model:"ML-Class",years:[1997,2005]},W164:{make:"Mercedes-Benz",model:"ML-Class",years:[2005,2011]},W166:{make:"Mercedes-Benz",model:"ML/GLE",years:[2011,2019]},X164:{make:"Mercedes-Benz",model:"GL-Class",years:[2006,2012]},X166:{make:"Mercedes-Benz",model:"GL/GLS",years:[2012,2019]}};
+        
+        const bmwModelCodes={E36:{make:"BMW",model:"3 Series",years:[1990,2000]},E46:{make:"BMW",model:"3 Series",years:[1998,2006]},E90:{make:"BMW",model:"3 Series",years:[2005,2013]},F30:{make:"BMW",model:"3 Series",years:[2012,2019]},G20:{make:"BMW",model:"3 Series",years:[2019,2023]},E39:{make:"BMW",model:"5 Series",years:[1995,2003]},E60:{make:"BMW",model:"5 Series",years:[2003,2010]},F10:{make:"BMW",model:"5 Series",years:[2010,2017]},G30:{make:"BMW",model:"5 Series",years:[2017,2023]},E83:{make:"BMW",model:"X3",years:[2003,2010]},F25:{make:"BMW",model:"X3",years:[2010,2017]},G01:{make:"BMW",model:"X3",years:[2017,2023]},E53:{make:"BMW",model:"X5",years:[1999,2006]},E70:{make:"BMW",model:"X5",years:[2006,2013]},F15:{make:"BMW",model:"X5",years:[2013,2018]},G05:{make:"BMW",model:"X5",years:[2018,2023]}};
+        
+        const landRoverModelCodes={L316:{make:"Land Rover",model:"Defender",years:[1990,2016]},L663:{make:"Land Rover",model:"Defender",years:[2020,2023]},L319:{make:"Land Rover",model:"Discovery",years:[2004,2016]},L462:{make:"Land Rover",model:"Discovery",years:[2017,2023]},L322:{make:"Land Rover",model:"Range Rover",years:[2002,2012]},L405:{make:"Land Rover",model:"Range Rover",years:[2012,2022]},L460:{make:"Land Rover",model:"Range Rover",years:[2022,2023]},L320:{make:"Land Rover",model:"Range Rover Sport",years:[2005,2013]},L494:{make:"Land Rover",model:"Range Rover Sport",years:[2013,2022]},L314:{make:"Land Rover",model:"Freelander",years:[1997,2006]},L359:{make:"Land Rover",model:"Freelander",years:[2006,2014]}};
+        
+        const isuzuModelCodes={TFR:{make:"Isuzu",model:"D-Max",years:[2002,2012]},TFS:{make:"Isuzu",model:"D-Max",years:[2012,2023]},RF:{make:"Isuzu",model:"MU-X",years:[2013,2023]}};
+        
+        const volkswagenModelCodes={MK4:{make:"Volkswagen",model:"Golf",years:[1997,2004]},MK5:{make:"Volkswagen",model:"Golf",years:[2004,2009]},MK6:{make:"Volkswagen",model:"Golf",years:[2009,2013]},MK7:{make:"Volkswagen",model:"Golf",years:[2013,2020]},B5:{make:"Volkswagen",model:"Passat",years:[1996,2005]},B6:{make:"Volkswagen",model:"Passat",years:[2005,2010]},B7:{make:"Volkswagen",model:"Passat",years:[2010,2015]},B8:{make:"Volkswagen",model:"Passat",years:[2015,2023]},N5:{make:"Volkswagen",model:"Tiguan",years:[2007,2015]},AD:{make:"Volkswagen",model:"Tiguan",years:[2016,2023]}};
+        
+        const audiModelCodes={B5:{make:"Audi",model:"A4",years:[1994,2001]},B6:{make:"Audi",model:"A4",years:[2001,2005]},B7:{make:"Audi",model:"A4",years:[2005,2008]},B8:{make:"Audi",model:"A4",years:[2008,2016]},B9:{make:"Audi",model:"A4",years:[2016,2023]},R8:{make:"Audi",model:"Q5",years:[2008,2017]},FY:{make:"Audi",model:"Q5",years:[2017,2023]},L4:{make:"Audi",model:"Q7",years:[2006,2015]},M4:{make:"Audi",model:"Q7",years:[2015,2023]}};
 
-        // Comprehensive product database with OEM numbers from PartSouq
-        const defaultProducts = [
-            // TOYOTA PARTS
-            { 
-                name: "Brake Pads - Toyota Camry", 
-                price: 4500, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "BOSCH",
-                oem: "04465-33470",
-                description: "Front brake pads for Toyota Camry. OEM quality.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Camry",
-                yearStart: 2018,
-                yearEnd: 2023,
-                sku: "BP-TC-1823",
-                stock: 25,
-                vinPrefixes: ["GSV", "ACV"]
-            },
-            { 
-                name: "Brake Pads - Toyota Corolla", 
-                price: 3500, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "Akebono",
-                oem: "04465-02480",
-                description: "Front brake pads for Toyota Corolla.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Corolla",
-                yearStart: 2008,
-                yearEnd: 2023,
-                sku: "BP-TC-0823",
-                stock: 30,
-                vinPrefixes: ["NCP", "NZE", "ZRE"]
-            },
-            { 
-                name: "Brake Pads - Toyota Hilux", 
-                price: 5000, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "BOSCH",
-                oem: "04465-0K340",
-                description: "Heavy-duty brake pads for Toyota Hilux.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Hilux",
-                yearStart: 2015,
-                yearEnd: 2023,
-                sku: "BP-TH-1523",
-                stock: 20,
-                vinPrefixes: ["GUN", "KUN", "ANH", "MNH"]
-            },
-            { 
-                name: "Brake Pads - Toyota Land Cruiser", 
-                price: 6200, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "BOSCH",
-                oem: "04465-60310",
-                description: "Heavy-duty brake pads for Land Cruiser.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Land Cruiser",
-                yearStart: 2010,
-                yearEnd: 2023,
-                sku: "BP-TL-1023",
-                stock: 18,
-                vinPrefixes: ["GRJ", "UZJ", "LJ", "JT3"]
-            },
-            { 
-                name: "Oil Filter - Toyota", 
-                price: 1500, 
-                category: "Filters", 
-                image: "🔩", 
-                brand: "TOYOTA Genuine",
-                oem: "90915-YZZD2",
-                description: "Genuine Toyota oil filter.",
-                vehicleMake: "Toyota",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "OF-TY-ALL",
-                stock: 100,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Air Filter - Toyota", 
-                price: 2200, 
-                category: "Filters", 
-                image: "💨", 
-                brand: "DENSO",
-                oem: "17801-0D050",
-                description: "Engine air filter for Toyota vehicles.",
-                vehicleMake: "Toyota",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "AF-TY-ALL",
-                stock: 50,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Spark Plugs - Toyota (4 Pack)", 
-                price: 2800, 
-                category: "Electrical", 
-                image: "⚡", 
-                brand: "NGK",
-                oem: "90919-01253",
-                description: "Iridium spark plugs for Toyota.",
-                vehicleMake: "Toyota",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "SP-TY-ALL",
-                stock: 60,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Timing Belt Kit - Toyota", 
-                price: 14500, 
-                category: "Engine", 
-                image: "⛓️", 
-                brand: "Gates",
-                oem: "13568-09070",
-                description: "Complete timing belt kit with tensioner.",
-                vehicleMake: "Toyota",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "TB-TY-ALL",
-                stock: 15,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Water Pump - Toyota", 
-                price: 8900, 
-                category: "Cooling", 
-                image: "💧", 
-                brand: "AISIN",
-                oem: "16100-09280",
-                description: "High-quality water pump for Toyota.",
-                vehicleMake: "Toyota",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "WP-TY-ALL",
-                stock: 12,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Shock Absorber - Toyota Hilux", 
-                price: 14500, 
-                category: "Suspension", 
-                image: "🛠️", 
-                brand: "KYB",
-                oem: "48531-09885",
-                description: "Front shock absorber for Hilux.",
-                vehicleMake: "Toyota",
-                vehicleModel: "Hilux",
-                yearStart: 2015,
-                yearEnd: 2023,
-                sku: "SA-TH-1523",
-                stock: 10,
-                vinPrefixes: ["GUN", "KUN"]
-            },
-            
-            // HONDA PARTS
-            { 
-                name: "Brake Pads - Honda Civic", 
-                price: 3900, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "ACDelco",
-                oem: "45022-SNA-A01",
-                description: "Front brake pads for Honda Civic.",
-                vehicleMake: "Honda",
-                vehicleModel: "Civic",
-                yearStart: 2016,
-                yearEnd: 2023,
-                sku: "BP-HC-1623",
-                stock: 25,
-                vinPrefixes: ["JHM", "SHH", "2HG"]
-            },
-            { 
-                name: "Oil Filter - Honda", 
-                price: 1200, 
-                category: "Filters", 
-                image: "🔩", 
-                brand: "HONDA Genuine",
-                oem: "15400-PLM-A01",
-                description: "Genuine Honda oil filter.",
-                vehicleMake: "Honda",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "OF-HN-ALL",
-                stock: 80,
-                vinPrefixes: ["ALL"]
-            },
-            
-            // NISSAN PARTS
-            { 
-                name: "Brake Pads - Nissan X-Trail", 
-                price: 4200, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "Akebono",
-                oem: "D1060-JD00A",
-                description: "Front brake pads for Nissan X-Trail.",
-                vehicleMake: "Nissan",
-                vehicleModel: "X-Trail",
-                yearStart: 2010,
-                yearEnd: 2023,
-                sku: "BP-NX-1023",
-                stock: 20,
-                vinPrefixes: ["JN1"]
-            },
-            { 
-                name: "Oil Filter - Nissan", 
-                price: 1300, 
-                category: "Filters", 
-                image: "🔩", 
-                brand: "NISSAN Genuine",
-                oem: "15208-65F0A",
-                description: "Genuine Nissan oil filter.",
-                vehicleMake: "Nissan",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "OF-NS-ALL",
-                stock: 70,
-                vinPrefixes: ["ALL"]
-            },
-            
-            // MITSUBISHI PARTS
-            { 
-                name: "Brake Pads - Mitsubishi Pajero", 
-                price: 5500, 
-                category: "Brakes", 
-                image: "🔧", 
-                brand: "BOSCH",
-                oem: "MR527678",
-                description: "Front brake pads for Pajero.",
-                vehicleMake: "Mitsubishi",
-                vehicleModel: "Pajero",
-                yearStart: 2005,
-                yearEnd: 2023,
-                sku: "BP-MP-0523",
-                stock: 15,
-                vinPrefixes: ["JMB"]
-            },
-            
-            // MAZDA PARTS
-            { 
-                name: "Oil Filter - Mazda", 
-                price: 1400, 
-                category: "Filters", 
-                image: "🔩", 
-                brand: "MAZDA Genuine",
-                oem: "PE01-14-302",
-                description: "Genuine Mazda oil filter.",
-                vehicleMake: "Mazda",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "OF-MZ-ALL",
-                stock: 60,
-                vinPrefixes: ["ALL"]
-            },
-            
-            // UNIVERSAL PARTS
-            { 
-                name: "Universal Alternator", 
-                price: 21000, 
-                category: "Electrical", 
-                image: "🔋", 
-                brand: "DENSO",
-                oem: "27060-0T041",
-                description: "High-output alternator for various vehicles.",
-                vehicleMake: "Universal",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "ALT-UNI-001",
-                stock: 8,
-                vinPrefixes: ["ALL"]
-            },
-            { 
-                name: "Universal Wiper Blades", 
-                price: 800, 
-                category: "Accessories", 
-                image: "🌧️", 
-                brand: "BOSCH",
-                oem: "3397007112",
-                description: "Universal wiper blades (set of 2).",
-                vehicleMake: "Universal",
-                vehicleModel: "All Models",
-                yearStart: 0,
-                yearEnd: 0,
-                sku: "WB-UNI-002",
-                stock: 200,
-                vinPrefixes: ["ALL"]
-            }
+        // PRODUCTS
+        const defaultProducts=[
+            {name:"Brake Pads - Toyota Camry",price:4500,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-33470",description:"Front brake pads",vehicleMake:"Toyota",vehicleModel:"Camry",yearStart:2018,yearEnd:2023,sku:"BP-TC-1823",stock:25},
+            {name:"Brake Pads - Toyota Corolla",price:3500,category:"Brakes",image:"🔧",brand:"Akebono",oem:"04465-02480",description:"Front brake pads",vehicleMake:"Toyota",vehicleModel:"Corolla",yearStart:2008,yearEnd:2023,sku:"BP-TC-0823",stock:30},
+            {name:"Brake Pads - Toyota Hilux",price:5000,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-0K340",description:"Heavy-duty brake pads",vehicleMake:"Toyota",vehicleModel:"Hilux",yearStart:2015,yearEnd:2023,sku:"BP-TH-1523",stock:20},
+            {name:"Brake Pads - Toyota Land Cruiser",price:6200,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-60310",description:"Heavy-duty brake pads",vehicleMake:"Toyota",vehicleModel:"Land Cruiser",yearStart:2010,yearEnd:2023,sku:"BP-TL-1023",stock:18},
+            {name:"Oil Filter - Toyota",price:1500,category:"Filters",image:"🔩",brand:"TOYOTA Genuine",oem:"90915-YZZD2",description:"Genuine oil filter",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-TY-ALL",stock:100},
+            {name:"Air Filter - Toyota",price:2200,category:"Filters",image:"💨",brand:"DENSO",oem:"17801-0D050",description:"Engine air filter",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"AF-TY-ALL",stock:50},
+            {name:"Spark Plugs - Toyota (4 Pack)",price:2800,category:"Electrical",image:"⚡",brand:"NGK",oem:"90919-01253",description:"Iridium spark plugs",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"SP-TY-ALL",stock:60},
+            {name:"Brake Pads - Honda Civic",price:3900,category:"Brakes",image:"🔧",brand:"ACDelco",oem:"45022-SNA-A01",description:"Front brake pads",vehicleMake:"Honda",vehicleModel:"Civic",yearStart:2016,yearEnd:2023,sku:"BP-HC-1623",stock:25},
+            {name:"Oil Filter - Honda",price:1200,category:"Filters",image:"🔩",brand:"HONDA Genuine",oem:"15400-PLM-A01",description:"Genuine oil filter",vehicleMake:"Honda",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-HN-ALL",stock:80},
+            {name:"Brake Pads - Nissan X-Trail",price:4200,category:"Brakes",image:"🔧",brand:"Akebono",oem:"D1060-JD00A",description:"Front brake pads",vehicleMake:"Nissan",vehicleModel:"X-Trail",yearStart:2010,yearEnd:2023,sku:"BP-NX-1023",stock:20},
+            {name:"Universal Alternator",price:21000,category:"Electrical",image:"🔋",brand:"DENSO",oem:"27060-0T041",description:"High-output alternator",vehicleMake:"Universal",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"ALT-UNI-001",stock:8}
         ];
 
-        // Load from localStorage
-        let products = JSON.parse(localStorage.getItem('A & SProducts')) || defaultProducts;
-        
-        let availability = JSON.parse(localStorage.getItem('A & SAvailability')) || {
-            adil: true,
-            suhayl: true
-        };
+        let products=JSON.parse(localStorage.getItem('A & SProducts'))||defaultProducts;
+        let availability=JSON.parse(localStorage.getItem('A & SAvailability'))||{adil:true,suhayl:true};
 
-        function saveProducts() {
-            localStorage.setItem('A & SProducts', JSON.stringify(products));
-        }
-        
-        function saveAvailability() {
-            localStorage.setItem('A & SAvailability', JSON.stringify(availability));
-        }
+        function saveProducts(){localStorage.setItem('A & SProducts',JSON.stringify(products))}
+        function saveAvailability(){localStorage.setItem('A & SAvailability',JSON.stringify(availability))}
+        function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
+        function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
 
-        // VIN Search Function
-        function searchByVIN() {
-            const vin = document.getElementById('vinInput').value.trim().toUpperCase();
-            
-            if (!vin || vin.length < 3) {
-                alert('Please enter a valid VIN or Chassis number (at least 3 characters)');
-                return;
-            }
-            
-            // Find matching vehicle from VIN database
-            let matchedVehicle = null;
-            let matchedPrefix = '';
-            
-            for (const prefix in vinDatabase) {
-                if (vin.startsWith(prefix)) {
-                    matchedVehicle = vinDatabase[prefix];
-                    matchedPrefix = prefix;
-                    break;
-                }
-            }
-            
-            const vinResults = document.getElementById('vinResults');
-            
-            if (!matchedVehicle) {
-                vinResults.style.display = 'block';
-                vinResults.innerHTML = `
-                    <div style="background:#fff3e0;padding:15px;border-radius:5px;">
-                        <strong>Vehicle not found in database</strong><br>
-                        <p>VIN: ${vin}</p>
-                        <p>Please contact us directly for assistance.</p>
-                        <button onclick="window.open('https://wa.me/254713349554?text=${encodeURIComponent('Hello, I need parts for VIN: ' + vin)}', '_blank')" style="padding:10px 20px;background:#25D366;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">
-                            <i class="fab fa-whatsapp"></i> Ask on WhatsApp
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Find matching products
-            const matchingProducts = products.filter(product => {
-                // Check if product is for this vehicle
-                if (product.vehicleMake === matchedVehicle.make && 
-                    (product.vehicleModel === matchedVehicle.model || product.vehicleModel === "All Models")) {
-                    return true;
-                }
-                // Check VIN prefixes
-                if (product.vinPrefixes && (product.vinPrefixes.includes(matchedPrefix) || product.vinPrefixes.includes("ALL"))) {
-                    return true;
-                }
-                // Universal products
-                if (product.vehicleMake === "Universal") {
-                    return true;
-                }
-                return false;
-            });
-            
-            // Display results
-            vinResults.style.display = 'block';
-            
-            if (matchingProducts.length === 0) {
-                vinResults.innerHTML = `
-                    <div style="background:#fff3e0;padding:15px;border-radius:5px;">
-                        <strong>Vehicle Found: ${matchedVehicle.make} ${matchedVehicle.model}</strong><br>
-                        <p>No matching parts in stock. Please contact us.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            vinResults.innerHTML = `
-                <div style="background:#e8f5e9;padding:15px;border-radius:5px;">
-                    <strong>✅ Vehicle Found: ${matchedVehicle.make} ${matchedVehicle.model} (${matchedVehicle.years[0]}-${matchedVehicle.years[1]})</strong>
-                    <p>Found ${matchingProducts.length} compatible parts:</p>
-                </div>
-                <div style="margin-top:10px;text-align:left;">
-                    ${matchingProducts.map((product, idx) => `
-                        <div style="background:white;padding:10px;border:1px solid #ddd;border-radius:5px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;">
-                            <div>
-                                <strong>${product.image} ${product.name}</strong><br>
-                                <small>OEM: ${product.oem} | Brand: ${product.brand}</small>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="color:#ff6f00;font-weight:bold;">${formatPrice(product.price)}</div>
-                                <button onclick="orderViaWhatsApp(${products.indexOf(product)}, 'adil')" style="padding:5px 10px;background:#25D366;color:white;border:none;border-radius:3px;cursor:pointer;font-size:12px;">
-                                    <i class="fab fa-whatsapp"></i> Order
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            // Scroll to results
-            vinResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        function searchByVIN(){
+            const vin=document.getElementById('vinInput').value.trim().toUpperCase();
+            if(!vin||vin.length<3){alert('Please enter a valid VIN or Chassis number');return}
+            let matchedVehicle=null,matchedCode='';
+            const allDBs=[toyotaModelCodes,nissanModelCodes,hondaModelCodes,mitsubishiModelCodes,mazdaModelCodes,subaruModelCodes,mercedesModelCodes,bmwModelCodes,landRoverModelCodes,isuzuModelCodes,volkswagenModelCodes,audiModelCodes];
+            for(const db of allDBs){for(const code in db){if(vin.startsWith(code)){matchedVehicle=db[code];matchedCode=code;break}}if(matchedVehicle)break}
+            const vinResults=document.getElementById('vinResults');
+            if(!matchedVehicle){vinResults.style.display='block';vinResults.innerHTML=`<div style="background:#fff3e0;padding:15px;border-radius:5px;"><strong>Vehicle not found</strong><p>VIN: ${vin}</p><a href="https://partsouq.com/en/catalog/genuine/locate?vin=${vin}" target="_blank" style="display:inline-block;padding:10px 20px;background:#1a237e;color:#fff;text-decoration:none;border-radius:5px;margin-top:10px;">Check PartSouq</a></div>`;return}
+            const matchingProducts=products.filter(p=>{if(p.vehicleMake==="Universal")return true;if(p.vehicleMake===matchedVehicle.make){if(p.vehicleModel==="All Models")return true;const pm=p.vehicleModel.toLowerCase(),mm=matchedVehicle.model.toLowerCase();if(pm.includes(mm)||mm.includes(pm))return true}return false});
+            vinResults.style.display='block';
+            vinResults.innerHTML=`<div style="background:#e8f5e9;padding:15px;border-radius:5px;"><strong>✅ ${matchedVehicle.make} ${matchedVehicle.model}</strong><br><small>Code: ${matchedCode} | Years: ${matchedVehicle.years[0]}-${matchedVehicle.years[1]}</small>${matchingProducts.length>0?`<p>Found ${matchingProducts.length} parts:</p>`:'<p>No matching parts in stock.</p>'}</div>`;
+            if(matchingProducts.length>0){vinResults.innerHTML+=`<div style="margin-top:10px;text-align:left;">${matchingProducts.map(p=>`<div style="background:#fff;padding:10px;border:1px solid #ddd;border-radius:5px;margin-bottom:5px;display:flex;justify-content:space-between;"><div><strong>${p.image} ${p.name}</strong><br><small>OEM: ${p.oem} | ${p.brand}</small></div><div><strong style="color:#ff6f00;">${formatPrice(p.price)}</strong></div></div>`).join('')}</div>`}
         }
 
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function formatPrice(price) {
-            return 'KSh ' + price.toLocaleString('en-KE');
-        }
-
-        function loadProducts() {
-            const productGrid = document.getElementById('productGrid');
-            productGrid.innerHTML = '';
-            
-            products.forEach((product, index) => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                
-                const adilBtnClass = availability.adil ? 'available' : 'unavailable';
-                const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
-                
-                const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
-                const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
-                
-                productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-oem">OEM: ${product.oem || 'N/A'}</div>
-                    <div class="product-description">${product.description || 'No description'}</div>
-                    <div class="product-vehicle-info">
-                        <i class="fas fa-car"></i> ${product.vehicleMake} ${product.vehicleModel} 
-                        ${product.yearStart > 0 ? `(${product.yearStart}-${product.yearEnd})` : ''}
-                    </div>
-                    <div class="product-brand">${product.brand}</div>
-                    <div class="product-price">${formatPrice(product.price)}</div>
-                    <div class="whatsapp-order-buttons">
-                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${index}, 'adil')" ${availability.adil ? '' : 'disabled'}>
-                            <i class="fab fa-whatsapp"></i> ${adilBtnText}
-                        </button>
-                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${index}, 'suhayl')" ${availability.suhayl ? '' : 'disabled'}>
-                            <i class="fab fa-whatsapp"></i> ${suhaylBtnText}
-                        </button>
-                    </div>
-                `;
-                productGrid.appendChild(productCard);
+        function loadProducts(){
+            const productGrid=document.getElementById('productGrid');productGrid.innerHTML='';
+            products.forEach((product,index)=>{
+                const adilBtnClass=availability.adil?'available':'unavailable';
+                const adilBtnText=availability.adil?'Order from ADIL':'ADIL Unavailable';
+                const suhaylBtnClass=availability.suhayl?'available':'unavailable';
+                const suhaylBtnText=availability.suhayl?'Order from SUHAYL':'SUHAYL Unavailable';
+                const card=document.createElement('div');card.className='product-card';
+                card.innerHTML=`<div class="product-image">${product.image}</div><div class="product-name">${product.name}</div><div class="product-oem">OEM: ${product.oem||'N/A'}</div><div class="product-description">${product.description||''}</div><div class="product-vehicle-info"><i class="fas fa-car"></i> ${product.vehicleMake} ${product.vehicleModel} ${product.yearStart>0?`(${product.yearStart}-${product.yearEnd})`:''}</div><div class="product-brand">${product.brand}</div><div class="product-price">${formatPrice(product.price)}</div><div class="whatsapp-order-buttons"><button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${index},'adil')" ${availability.adil?'':'disabled'}><i class="fab fa-whatsapp"></i> ${adilBtnText}</button><button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${index},'suhayl')" ${availability.suhayl?'':'disabled'}><i class="fab fa-whatsapp"></i> ${suhaylBtnText}</button></div>`;
+                productGrid.appendChild(card);
             });
         }
 
-        function orderViaWhatsApp(index, brother) {
-            const product = products[index];
-            const phoneNumber = brother === 'adil' ? '254713349554' : '254752763924';
-            const brotherName = brother === 'adil' ? 'ADIL' : 'SUHAYL';
-            
-            const message = `Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 OEM: ${product.oem}\n🏷️ Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel}\n💰 Price: ${formatPrice(product.price)}\n\nPlease confirm availability.`;
-            
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+        function orderViaWhatsApp(index,brother){
+            const product=products[index];
+            const phoneNumber=brother==='adil'?'254713349554':'254752763924';
+            const brotherName=brother==='adil'?'ADIL':'SUHAYL';
+            const message=`Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 OEM: ${product.oem}\n🏷️ Brand: ${product.brand}\n🚗 Vehicle: ${product.vehicleMake} ${product.vehicleModel}\n💰 Price: ${formatPrice(product.price)}\n\nPlease confirm availability.`;
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
         }
 
-        // Vehicle model database
-        const vehicleModels = {
-            "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Hilux", "Prado", "Fortuner", "Harrier", "Vitz", "Passo", "Probox", "Succeed", "Crown", "Mark X", "Avensis", "Yaris", "Hiace"],
-            "Honda": ["Civic", "Accord", "CR-V", "Fit", "Vezel", "Freed", "Odyssey", "Insight", "Airwave"],
-            "Ford": ["F-150", "Ranger", "Explorer", "Escape", "Focus", "Everest", "Mustang"],
-            "BMW": ["3 Series", "5 Series", "X3", "X5", "X1", "7 Series", "M3", "M5"],
-            "Mercedes-Benz": ["C-Class", "E-Class", "S-Class", "GLC", "GLE", "A-Class", "G-Class"],
-            "Nissan": ["Altima", "X-Trail", "Patrol", "Sunny", "Note", "Juke", "Navara", "Murano"],
-            "Mitsubishi": ["Lancer", "Pajero", "Outlander", "ASX", "Triton", "Galant", "RVR"],
-            "Mazda": ["Mazda3", "CX-5", "BT-50", "CX-3", "Atenza", "Demio", "Axela"],
-            "Subaru": ["Outback", "Forester", "Impreza", "Legacy", "XV", "WRX"],
-            "Volkswagen": ["Golf", "Passat", "Tiguan", "Polo", "Touareg", "Jetta"],
-            "Land Rover": ["Defender", "Discovery", "Range Rover", "Freelander"],
-            "Isuzu": ["D-Max", "MU-X", "Trooper"],
-            "Volvo": ["XC60", "XC90", "S60", "S90", "V40"],
-            "Audi": ["A3", "A4", "A6", "Q3", "Q5", "Q7"],
-            "Chevrolet": ["Silverado", "Cruze", "Malibu", "Equinox"],
-            "Hyundai": ["Tucson", "Santa Fe", "Elantra", "Accent", "i10", "i20"],
-            "Kia": ["Sportage", "Sorento", "Cerato", "Picanto", "Rio"],
-            "Peugeot": ["208", "308", "508", "2008", "3008"],
-            "Renault": ["Clio", "Megane", "Duster", "Captur"],
-            "Suzuki": ["Swift", "Vitara", "Jimny", "Baleno", "Alto"]
-        };
+        const vehicleModels={Toyota:["Camry","Corolla","RAV4","Land Cruiser","Hilux","Prado","Fortuner","Harrier","Vitz","Passo","Probox","Succeed","Crown","Mark X","Avensis","Yaris","Hiace","Alphard","Voxy","Noah"],Nissan:["X-Trail","Patrol","Navara","Sunny","Almera","Teana","Cefiro","Skyline","Tiida","Wingroad","Urvan","Serena","Qashqai","Juke","Murano","Pathfinder"],Honda:["Civic","Accord","CR-V","Fit","Vezel","Odyssey","Stepwgn","Freed","Airwave"],Mitsubishi:["Pajero","Lancer","Outlander","Triton","RVR","ASX","Galant"],Mazda:["Mazda3","Mazda6","CX-5","CX-3","Demio","BT-50"],Subaru:["Forester","Outback","Impreza","Legacy","XV"],"Mercedes-Benz":["C-Class","E-Class","S-Class","ML-Class","GLE","GL-Class"],BMW:["3 Series","5 Series","X3","X5"],"Land Rover":["Defender","Discovery","Range Rover","Range Rover Sport","Freelander"],Isuzu:["D-Max","MU-X"],Volkswagen:["Golf","Passat","Tiguan"],Audi:["A4","Q5","Q7"],Ford:["F-150","Ranger","Explorer","Escape","Focus"],Chevrolet:["Silverado","Cruze","Malibu"],Hyundai:["Tucson","Santa Fe","Elantra"],Kia:["Sportage","Sorento","Cerato"],Peugeot:["208","308","508"],Renault:["Clio","Megane","Duster"],Suzuki:["Swift","Vitara","Jimny"],Volvo:["XC60","XC90","S60"]};
 
-        document.getElementById('vehicleMake').addEventListener('change', function() {
-            const make = this.value;
-            const modelSelect = document.getElementById('vehicleModel');
-            modelSelect.innerHTML = '<option value="">Select Model</option>';
-            
-            if (make && vehicleModels[make]) {
-                vehicleModels[make].forEach(model => {
-                    const option = document.createElement('option');
-                    option.value = model;
-                    option.textContent = model;
-                    modelSelect.appendChild(option);
-                });
-            }
+        document.getElementById('vehicleMake').addEventListener('change',function(){
+            const make=this.value;const modelSelect=document.getElementById('vehicleModel');
+            modelSelect.innerHTML='<option value="">Select Model</option>';
+            if(make&&vehicleModels[make]){vehicleModels[make].forEach(model=>{const option=document.createElement('option');option.value=model;option.textContent=model;modelSelect.appendChild(option)})}
         });
 
-        function findParts() {
-            const year = parseInt(document.getElementById('vehicleYear').value);
-            const make = document.getElementById('vehicleMake').value;
-            const model = document.getElementById('vehicleModel').value;
-            
-            if (!year || !make || !model) {
-                alert('Please select year, make, and model');
-                return;
-            }
-            
-            const filteredProducts = products.filter(product => {
-                if (product.vehicleMake === "Universal") return true;
-                if (product.vehicleMake !== make) return false;
-                if (product.vehicleModel !== model && product.vehicleModel !== "All Models") return false;
-                if (product.yearStart > 0 && product.yearEnd > 0) {
-                    return year >= product.yearStart && year <= product.yearEnd;
-                }
-                return true;
+        function findParts(){
+            const year=parseInt(document.getElementById('vehicleYear').value);
+            const make=document.getElementById('vehicleMake').value;
+            const model=document.getElementById('vehicleModel').value;
+            if(!year||!make||!model){alert('Please select year, make, and model');return}
+            const filtered=products.filter(p=>{if(p.vehicleMake==="Universal")return true;if(p.vehicleMake!==make)return false;if(p.vehicleModel!==model&&p.vehicleModel!=="All Models")return false;if(p.yearStart>0&&p.yearEnd>0){return year>=p.yearStart&&year<=p.yearEnd}return true});
+            displayFilteredProducts(filtered,`Parts for ${year} ${make} ${model}`);
+        }
+
+        function displayFilteredProducts(list,title){
+            const grid=document.getElementById('productGrid');grid.innerHTML='';
+            if(list.length===0){grid.innerHTML=`<div style="text-align:center;grid-column:1/-1;padding:40px;"><p style="font-size:18px;color:#666;">No parts found</p><p>Call ADIL: 0713349554 or SUHAYL: 0752763924</p></div>`;return}
+            const heading=document.createElement('h3');heading.style.cssText='text-align:center;grid-column:1/-1;color:#1a237e;';heading.textContent=title;grid.appendChild(heading);
+            list.forEach(product=>{
+                const idx=products.indexOf(product);
+                const adilBtnClass=availability.adil?'available':'unavailable';
+                const suhaylBtnClass=availability.suhayl?'available':'unavailable';
+                const card=document.createElement('div');card.className='product-card';
+                card.innerHTML=`<div class="product-image">${product.image}</div><div class="product-name">${product.name}</div><div class="product-oem">OEM: ${product.oem||'N/A'}</div><div class="product-brand">${product.brand}</div><div class="product-price">${formatPrice(product.price)}</div><div class="whatsapp-order-buttons"><button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${idx},'adil')" ${availability.adil?'':'disabled'}><i class="fab fa-whatsapp"></i> ${availability.adil?'Order from ADIL':'ADIL Unavailable'}</button><button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${idx},'suhayl')" ${availability.suhayl?'':'disabled'}><i class="fab fa-whatsapp"></i> ${availability.suhayl?'Order from SUHAYL':'SUHAYL Unavailable'}</button></div>`;
+                grid.appendChild(card);
             });
-            
-            displayFilteredProducts(filteredProducts, `Parts for ${year} ${make} ${model}`);
+            document.getElementById('products').scrollIntoView({behavior:'smooth'});
         }
 
-        function displayFilteredProducts(filteredProducts, title) {
-            const productGrid = document.getElementById('productGrid');
-            productGrid.innerHTML = '';
-            
-            if (filteredProducts.length === 0) {
-                productGrid.innerHTML = `
-                    <div style="text-align:center; grid-column: 1/-1; padding: 40px;">
-                        <p style="font-size: 18px; color: #666;">No parts found</p>
-                        <p style="margin-top: 10px;">Call ADIL: 0713349554 or SUHAYL: 0752763924</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const titleElement = document.createElement('h3');
-            titleElement.style.cssText = 'text-align:center; grid-column: 1/-1; color: #1a237e;';
-            titleElement.textContent = title;
-            productGrid.appendChild(titleElement);
-            
-            filteredProducts.forEach((product) => {
-                const originalIndex = products.indexOf(product);
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                
-                const adilBtnClass = availability.adil ? 'available' : 'unavailable';
-                const adilBtnText = availability.adil ? 'Order from ADIL' : 'ADIL Unavailable';
-                
-                const suhaylBtnClass = availability.suhayl ? 'available' : 'unavailable';
-                const suhaylBtnText = availability.suhayl ? 'Order from SUHAYL' : 'SUHAYL Unavailable';
-                
-                productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-oem">OEM: ${product.oem || 'N/A'}</div>
-                    <div class="product-description">${product.description || 'No description'}</div>
-                    <div class="product-vehicle-info">
-                        <i class="fas fa-car"></i> ${product.vehicleMake} ${product.vehicleModel}
-                    </div>
-                    <div class="product-brand">${product.brand}</div>
-                    <div class="product-price">${formatPrice(product.price)}</div>
-                    <div class="whatsapp-order-buttons">
-                        <button class="whatsapp-order-btn ${adilBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'adil')" ${availability.adil ? '' : 'disabled'}>
-                            <i class="fab fa-whatsapp"></i> ${adilBtnText}
-                        </button>
-                        <button class="whatsapp-order-btn ${suhaylBtnClass}" onclick="orderViaWhatsApp(${originalIndex}, 'suhayl')" ${availability.suhayl ? '' : 'disabled'}>
-                            <i class="fab fa-whatsapp"></i> ${suhaylBtnText}
-                        </button>
-                    </div>
-                `;
-                productGrid.appendChild(productCard);
-            });
-            
-            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        function searchProducts(){
+            const term=document.getElementById('searchInput').value.toLowerCase();
+            const filtered=products.filter(p=>p.name.toLowerCase().includes(term)||p.category.toLowerCase().includes(term)||(p.oem&&p.oem.toLowerCase().includes(term))||p.brand.toLowerCase().includes(term)||p.vehicleMake.toLowerCase().includes(term)||p.vehicleModel.toLowerCase().includes(term));
+            displayFilteredProducts(filtered,`Search results for: "${term}"`);
         }
 
-        function searchProducts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) || 
-                p.category.toLowerCase().includes(searchTerm) ||
-                p.description.toLowerCase().includes(searchTerm) ||
-                p.vehicleMake.toLowerCase().includes(searchTerm) ||
-                p.vehicleModel.toLowerCase().includes(searchTerm) ||
-                p.brand.toLowerCase().includes(searchTerm) ||
-                (p.oem && p.oem.toLowerCase().includes(searchTerm))
-            );
-            
-            displayFilteredProducts(filtered, `Search results for: "${searchTerm}"`);
+        function shopByCategory(category){const filtered=products.filter(p=>p.category===category);displayFilteredProducts(filtered,`${category} Products`)}
+
+        function openAdminPanel(){
+            const password=prompt("Enter Admin Password:");
+            if(password==="1234"){showAdminPanel()}else{alert("Wrong password!")}
         }
 
-        function shopByCategory(category) {
-            const filtered = products.filter(p => p.category === category);
-            displayFilteredProducts(filtered, `${category} Products`);
+        function showAdminPanel(){
+            let html=`<div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;"><h2 style="color:#1a237e;margin-bottom:20px;">🔧 Admin Panel</h2><div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;"><h3>Availability Status</h3><div style="display:flex;gap:20px;margin-top:10px;"><button onclick="toggleAvailability('adil')" style="padding:10px 20px;background:${availability.adil?'#4caf50':'#f44336'};color:#fff;border:none;border-radius:5px;cursor:pointer;">ADIL: ${availability.adil?'Available':'Unavailable'}</button><button onclick="toggleAvailability('suhayl')" style="padding:10px 20px;background:${availability.suhayl?'#4caf50':'#f44336'};color:#fff;border:none;border-radius:5px;cursor:pointer;">SUHAYL: ${availability.suhayl?'Available':'Unavailable'}</button></div></div>`;
+            products.forEach((product,index)=>{html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;"><strong>${product.name}</strong><br><small>OEM: ${product.oem} | Stock: ${product.stock}</small><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;"><div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div><div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock}" style="width:100%;padding:5px;"></div></div><button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-top:10px;">💾 Save</button></div>`});
+            html+=`<button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:20px;">Close</button></div>`;
+            document.body.insertAdjacentHTML('beforeend',html);
         }
 
-        function openAdminPanel() {
-            const password = prompt("Enter Admin Password:");
-            if (password === "1234") {
-                showAdminPanel();
-            } else {
-                alert("Wrong password!");
-            }
-        }
+        function toggleAvailability(brother){availability[brother]=!availability[brother];saveAvailability();loadProducts();closeAdminPanel();alert(`${brother.toUpperCase()} is now ${availability[brother]?'Available':'Unavailable'}`);showAdminPanel()}
+        function updateProduct(index){products[index].price=parseInt(document.getElementById(`price_${index}`).value);products[index].stock=parseInt(document.getElementById(`stock_${index}`).value);saveProducts();loadProducts();closeAdminPanel();alert('✅ Product updated!');showAdminPanel()}
+        function closeAdminPanel(){const panel=document.getElementById('adminPanel');if(panel)panel.remove()}
 
-        function showAdminPanel() {
-            let adminHTML = `
-                <div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
-                    <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Admin Panel</h2>
-                    <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
-                        <h3 style="margin-bottom:10px;">Availability Status</h3>
-                        <div style="display:flex;gap:20px;">
-                            <button onclick="toggleAvailability('adil')" style="padding:10px 20px;background:${availability.adil ? '#4caf50' : '#f44336'};color:white;border:none;border-radius:5px;cursor:pointer;">
-                                ADIL: ${availability.adil ? 'Available' : 'Unavailable'}
-                            </button>
-                            <button onclick="toggleAvailability('suhayl')" style="padding:10px 20px;background:${availability.suhayl ? '#4caf50' : '#f44336'};color:white;border:none;border-radius:5px;cursor:pointer;">
-                                SUHAYL: ${availability.suhayl ? 'Available' : 'Unavailable'}
-                            </button>
-                        </div>
-                    </div>
-                    <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;">➕ Add New Product</button>
-                    <div id="addProductForm"></div>
-                    <div id="adminProductList">
-            `;
-            
-            products.forEach((product, index) => {
-                adminHTML += `
-                    <div style="margin-bottom:20px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
-                        <strong>${product.name}</strong><br>
-                        <small>OEM: ${product.oem} | Stock: ${product.stock}</small>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-                            <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
-                            <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock}" style="width:100%;padding:5px;"></div>
-                        </div>
-                        <div style="margin-top:10px;display:flex;gap:10px;">
-                            <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:white;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
-                            <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:white;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            adminHTML += `
-                    </div>
-                    <button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:20px;">Close</button>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', adminHTML);
-        }
-
-        function toggleAvailability(brother) {
-            availability[brother] = !availability[brother];
-            saveAvailability();
-            loadProducts();
-            closeAdminPanel();
-            alert(`${brother.toUpperCase()} is now ${availability[brother] ? 'Available' : 'Unavailable'}`);
-            showAdminPanel();
-        }
-
-        function showAddProductForm() {
-            const formHTML = `
-                <div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;">
-                    <h3 style="color:#2e7d32;">Add New Product</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-                        <div><label>Product Name:</label><input type="text" id="new_name" style="width:100%;padding:5px;"></div>
-                        <div><label>Price (KSh):</label><input type="number" id="new_price" style="width:100%;padding:5px;"></div>
-                        <div><label>OEM Number:</label><input type="text" id="new_oem" style="width:100%;padding:5px;"></div>
-                        <div><label>Category:</label><input type="text" id="new_category" style="width:100%;padding:5px;"></div>
-                        <div><label>Brand:</label><input type="text" id="new_brand" style="width:100%;padding:5px;"></div>
-                        <div><label>Vehicle Make:</label><input type="text" id="new_vmake" style="width:100%;padding:5px;"></div>
-                        <div><label>Vehicle Model:</label><input type="text" id="new_vmodel" style="width:100%;padding:5px;"></div>
-                        <div><label>Stock:</label><input type="number" id="new_stock" value="0" style="width:100%;padding:5px;"></div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <label>Description:</label>
-                        <textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea>
-                    </div>
-                    <button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button>
-                </div>
-            `;
-            document.getElementById('addProductForm').innerHTML = formHTML;
-        }
-
-        function addNewProduct() {
-            const newProduct = {
-                name: document.getElementById('new_name').value,
-                price: parseInt(document.getElementById('new_price').value),
-                oem: document.getElementById('new_oem').value,
-                category: document.getElementById('new_category').value,
-                brand: document.getElementById('new_brand').value,
-                vehicleMake: document.getElementById('new_vmake').value || 'Universal',
-                vehicleModel: document.getElementById('new_vmodel').value || 'All Models',
-                yearStart: 0,
-                yearEnd: 0,
-                stock: parseInt(document.getElementById('new_stock').value) || 0,
-                image: '🔧',
-                description: document.getElementById('new_description').value,
-                sku: 'SKU-' + Date.now(),
-                vinPrefixes: ["ALL"]
-            };
-            
-            if (!newProduct.name || !newProduct.price) {
-                alert('Please enter product name and price');
-                return;
-            }
-            
-            products.push(newProduct);
-            saveProducts();
-            loadProducts();
-            closeAdminPanel();
-            alert('✅ Product added!');
-            showAdminPanel();
-        }
-
-        function updateProduct(index) {
-            products[index].price = parseInt(document.getElementById(`price_${index}`).value);
-            products[index].stock = parseInt(document.getElementById(`stock_${index}`).value);
-            saveProducts();
-            loadProducts();
-            closeAdminPanel();
-            alert('✅ Product updated!');
-            showAdminPanel();
-        }
-
-        function deleteProduct(index) {
-            if (confirm('Delete this product?')) {
-                products.splice(index, 1);
-                saveProducts();
-                loadProducts();
-                closeAdminPanel();
-                alert('🗑️ Product deleted!');
-                showAdminPanel();
-            }
-        }
-
-        function closeAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            if (panel) panel.remove();
-        }
-
-        // Initialize
         loadProducts();
     </script>
 </body>
