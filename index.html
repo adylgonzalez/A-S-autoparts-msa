@@ -46,6 +46,14 @@
         .source-it-box .source-buttons a{flex:1;min-width:180px;padding:14px 20px;border-radius:50px;color:#fff;text-decoration:none;font-weight:700;text-align:center}
         .source-it-box .source-buttons a.adil{background:#25D366}
         .source-it-box .source-buttons a.suhayl{background:#128C7E}
+
+        /* === DROPDOWN + ADD NEW STYLES === */
+        .combo-wrap{margin:5px 0 15px}
+        .combo-wrap label{font-size:13px;font-weight:700;display:block;margin-bottom:4px}
+        .combo-wrap select,.combo-wrap input[type="text"]{width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;font-size:14px;background:#fff}
+        .combo-wrap .combo-new-input{display:none;margin-top:6px;border:2px solid #4caf50 !important}
+        .combo-wrap .combo-new-input.show{display:block}
+        .combo-wrap .combo-hint{font-size:11px;color:#888;margin-top:4px}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -139,9 +147,7 @@
             <p><i class="fas fa-phone"></i> SUHAYL: 0752763924</p>
             <p><i class="fab fa-whatsapp"></i> WhatsApp: Available 24/7</p>
             <p><i class="fas fa-map-marker-alt"></i> Mombasa, Kenya</p>
-            <p><i class="fas fa-clock"></i> Mon-Fri: 8AM - 5PM</p>
-            <p><i class="fas fa-clock"></i> Sat: 8AM - 1PM</p>
-            <p><i class="fas fa-clock"></i> Sun: CLOSED</p>
+            <p><i class="fas fa-clock"></i> Mon-Sat: 8AM - 6PM</p>
         </div>
     </div>
     <div class="footer"><p>&copy; 2024 A & S AUTOPARTS - Mombasa, Kenya</p><p>ADIL: 0713349554 | SUHAYL: 0752763924</p></div>
@@ -162,12 +168,28 @@
 
     <script>
 // ==================== GITHUB CONFIG ====================
-// Token is stored in localStorage (set via the Admin Panel)
 const GITHUB_OWNER = 'adylgonzalez';
 const GITHUB_REPO  = 'A-S-autoparts-msa';
 const GITHUB_FILE  = 'products.json';
+const OPTIONS_FILE = 'options.json';
 const GITHUB_BRANCH = 'main';
 const PRODUCTS_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${GITHUB_FILE}`;
+const OPTIONS_URL  = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${OPTIONS_FILE}`;
+
+// ==================== DEFAULT OPTIONS (fallback) ====================
+const DEFAULT_CATEGORIES = [
+    "Brakes","Suspension","Filters","Electrical","Engine","Cooling",
+    "Transmission","Body & Exterior","Interior","Lighting","Steering",
+    "Fuel System","Exhaust","Air Conditioning","Belts & Hoses","Bearings",
+    "Clutch","Ignition","Sensors","Other"
+];
+const DEFAULT_BRANDS = [
+    "BOSCH","DENSO","NGK","KYB","AISIN","Gates","Akebono","ACDelco",
+    "TOYOTA Genuine","HONDA Genuine","NISSAN Genuine","MITSUBISHI Genuine",
+    "MAZDA Genuine","SUBARU Genuine","TYC","KINGMIRROR","TAMA (Japan)",
+    "PFI","FROTIS","MECHANGING","TYD","YTM","555","Nisshinbo","Advics",
+    "NTN","NSK","Taiho","NPR","Musashi","Exedy","Other"
+];
 
 // ==================== COMPLETE TOYOTA DATABASE ====================
 const toyotaModelCodes={
@@ -542,6 +564,8 @@ const defaultProducts=[
 
 // ==================== STATE MANAGEMENT ====================
 let products = [];
+let categories = [...DEFAULT_CATEGORIES];
+let brands = [...DEFAULT_BRANDS];
 let availability = JSON.parse(localStorage.getItem('A & SAvailability')) || {adil:true, suhayl:true};
 let cart = JSON.parse(localStorage.getItem('A & SCart')) || [];
 let adminLoggedIn = false;
@@ -567,6 +591,23 @@ async function fetchProductsFromGitHub(){
     } catch (err){
         console.warn('Could not load products.json — using default list. Error:', err.message);
         products = defaultProducts;
+        return false;
+    }
+}
+
+async function fetchOptionsFromGitHub(){
+    try {
+        const res = await axios.get(OPTIONS_URL + '?t=' + Date.now());
+        if(res.data && Array.isArray(res.data.categories) && Array.isArray(res.data.brands)){
+            categories = res.data.categories;
+            brands = res.data.brands;
+            return true;
+        }
+        throw new Error('options.json did not have categories/brands arrays');
+    } catch (err){
+        console.warn('Could not load options.json — using default lists. Error:', err.message);
+        categories = [...DEFAULT_CATEGORIES];
+        brands = [...DEFAULT_BRANDS];
         return false;
     }
 }
@@ -609,6 +650,62 @@ async function saveProductsToGitHub(){
         console.error('GitHub save failed:', err);
         const msg = err.response?.data?.message || err.message;
         alert('❌ Save to GitHub failed:\n\n' + msg + '\n\nCheck your token in the Admin Panel.');
+        return false;
+    }
+}
+
+async function saveOptionsToGitHub(){
+    const token = getToken();
+    if(!token){
+        alert('⚠️ No GitHub token saved.\n\nOpen the Admin Panel and paste your token first.');
+        return false;
+    }
+    try {
+        const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${OPTIONS_FILE}`;
+        // Try to get the current SHA. If the file doesn't exist yet, GitHub returns 404 — we handle that by creating it.
+        let sha = null;
+        try {
+            const getRes = await axios.get(apiBase, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                params: { ref: GITHUB_BRANCH }
+            });
+            sha = getRes.data.sha;
+        } catch (getErr){
+            if(getErr.response && getErr.response.status === 404){
+                // File doesn't exist yet — that's fine, we'll create it (no sha needed)
+                sha = null;
+            } else {
+                throw getErr;
+            }
+        }
+
+        const payload = { categories, brands };
+        const content = JSON.stringify(payload, null, 2);
+        const base64Content = btoa(unescape(encodeURIComponent(content)));
+
+        const putBody = {
+            message: `Update options.json — ${new Date().toISOString()}`,
+            content: base64Content,
+            branch: GITHUB_BRANCH
+        };
+        if(sha){ putBody.sha = sha; }
+
+        await axios.put(apiBase, putBody, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+        showNotification('✅ Options saved to GitHub!');
+        return true;
+    } catch (err){
+        console.error('Options save failed:', err);
+        const msg = err.response?.data?.message || err.message;
+        alert('❌ Save options to GitHub failed:\n\n' + msg);
         return false;
     }
 }
@@ -899,11 +996,81 @@ function searchProducts(){
 
 function shopByCategory(category){const filtered=products.filter(p=>p.category===category);displayFilteredProducts(filtered,`${category} Products`)}
 
+// ==================== COMBO (dropdown + add new) HELPERS ====================
+function buildComboHTML(idPrefix, label, options, currentValue, placeholderNew){
+    // Ensure currentValue is in options; if not, add it so it appears as selected
+    let opts = [...options];
+    if(currentValue && !opts.includes(currentValue)){ opts.push(currentValue); }
+
+    let optsHTML = `<option value="">— Select —</option>`;
+    opts.forEach(o => {
+        const sel = (o === currentValue) ? ' selected' : '';
+        optsHTML += `<option value="${o}"${sel}>${o}</option>`;
+    });
+    optsHTML += `<option value="__ADD_NEW__">➕ Add New...</option>`;
+
+    return `
+        <div class="combo-wrap">
+            <label>${label}</label>
+            <select id="${idPrefix}_select" onchange="handleComboChange('${idPrefix}')">${optsHTML}</select>
+            <input type="text" id="${idPrefix}_new" class="combo-new-input" placeholder="${placeholderNew}">
+            <div class="combo-hint">Pick from list, or choose "➕ Add New..." to type a new one.</div>
+        </div>
+    `;
+}
+
+function handleComboChange(idPrefix){
+    const sel = document.getElementById(idPrefix + '_select');
+    const newInput = document.getElementById(idPrefix + '_new');
+    if(!sel || !newInput) return;
+    if(sel.value === '__ADD_NEW__'){
+        newInput.classList.add('show');
+        newInput.focus();
+    } else {
+        newInput.classList.remove('show');
+        newInput.value = '';
+    }
+}
+
+function getComboValue(idPrefix){
+    const sel = document.getElementById(idPrefix + '_select');
+    const newInput = document.getElementById(idPrefix + '_new');
+    if(!sel) return '';
+    if(sel.value === '__ADD_NEW__'){
+        const v = (newInput?.value || '').trim();
+        return v;
+    }
+    return sel.value;
+}
+
+async function rememberNewOption(kind, value){
+    // kind = 'category' or 'brand'
+    if(!value) return;
+    if(kind === 'category'){
+        if(!categories.includes(value)){
+            categories.push(value);
+        }
+    } else if(kind === 'brand'){
+        if(!brands.includes(value)){
+            brands.push(value);
+        }
+    }
+    await saveOptionsToGitHub();
+}
+
 // ==================== QUICK ADD ====================
 function openQuickAdd(){
     if(!adminLoggedIn){ alert('Please log in via the Admin Panel first.'); return; }
+
+    // Sort category and brand options alphabetically for the dropdowns
+    const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
+    const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
+
+    const catCombo = buildComboHTML('qa_cat', 'Category', catOptions, '', 'Type new category name');
+    const brandCombo = buildComboHTML('qa_br', 'Brand', brandOptions, '', 'Type new brand name');
+
     const html = `
-        <div id="quickAddModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:5000;max-width:480px;width:95%;">
+        <div id="quickAddModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:5000;max-width:480px;width:95%;max-height:90vh;overflow-y:auto;">
             <h2 style="color:#1a237e;margin-bottom:20px;">➕ Quick Add Part</h2>
             <label style="font-size:13px;font-weight:700;">Part Name *</label>
             <input type="text" id="qa_name" placeholder="e.g. Brake Pads - Toyota Hilux" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
@@ -911,13 +1078,11 @@ function openQuickAdd(){
             <input type="text" id="qa_partNo" placeholder="e.g. 04465-0K340" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
             <label style="font-size:13px;font-weight:700;">Fits (Application)</label>
             <input type="text" id="qa_application" placeholder="e.g. Toyota Hilux 2015-2023" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
-            <label style="font-size:13px;font-weight:700;">Brand</label>
-            <input type="text" id="qa_brand" placeholder="e.g. BOSCH" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+            ${brandCombo}
             <label style="font-size:13px;font-weight:700;">Price (KSh) *</label>
             <input type="number" id="qa_price" placeholder="e.g. 5000" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
-            <label style="font-size:13px;font-weight:700;">Category</label>
-            <input type="text" id="qa_category" placeholder="Brakes, Filters, Engine..." style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
-            <div style="display:flex;gap:10px;">
+            ${catCombo}
+            <div style="display:flex;gap:10px;margin-top:10px;">
                 <button onclick="saveQuickAdd()" style="flex:1;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">💾 Save & Push to GitHub</button>
                 <button onclick="document.getElementById('quickAddModal').remove()" style="flex:1;padding:12px;background:#ccc;color:#333;border:none;border-radius:5px;cursor:pointer;font-weight:700;">Cancel</button>
             </div>
@@ -933,6 +1098,26 @@ async function saveQuickAdd(){
 
     const partNo = document.getElementById('qa_partNo').value.trim();
     const application = document.getElementById('qa_application').value.trim();
+    const brandVal = getComboValue('qa_br');
+    const catVal = getComboValue('qa_cat');
+
+    if(!brandVal){ alert('Please select or add a brand.'); return; }
+    if(!catVal){ alert('Please select or add a category.'); return; }
+
+    // If they added new options, remember them and push options.json
+    let newOptionsAdded = false;
+    if(!brands.includes(brandVal)){
+        brands.push(brandVal);
+        newOptionsAdded = true;
+    }
+    if(!categories.includes(catVal)){
+        categories.push(catVal);
+        newOptionsAdded = true;
+    }
+    if(newOptionsAdded){
+        showNotification('⏳ Saving new brand/category...');
+        await saveOptionsToGitHub();
+    }
 
     const newProduct = {
         name,
@@ -940,8 +1125,8 @@ async function saveQuickAdd(){
         partNo: partNo || 'N/A',
         oem: partNo || 'N/A',
         application: application || 'Universal',
-        brand: document.getElementById('qa_brand').value.trim() || 'Generic',
-        category: document.getElementById('qa_category').value.trim() || 'General',
+        brand: brandVal,
+        category: catVal,
         image: '🔧',
         description: name,
         vehicleMake: 'Universal',
@@ -955,7 +1140,7 @@ async function saveQuickAdd(){
     products.push(newProduct);
     loadProducts();
     document.getElementById('quickAddModal').remove();
-    showNotification('⏳ Pushing to GitHub...');
+    showNotification('⏳ Pushing product to GitHub...');
     const ok = await saveProductsToGitHub();
     if(ok){
         showNotification('✅ Part added! Live on site in ~1 minute.');
@@ -996,15 +1181,16 @@ function showAdminPanel(){
 
         <div style="background:#e8f5e9;padding:15px;border-radius:5px;margin-bottom:20px;">
             <h3 style="color:#2e7d32;margin-bottom:10px;">☁️ Sync with GitHub</h3>
-            <p style="font-size:13px;color:#555;margin-bottom:10px;">Push all local changes (adds/edits/deletes) to <code>products.json</code> on GitHub.</p>
+            <p style="font-size:13px;color:#555;margin-bottom:10px;">Push all local changes to <code>products.json</code> and <code>options.json</code> on GitHub.</p>
             <button onclick="pushAllToGitHub()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">⬆️ Push All Changes to GitHub</button>
         </div>
 
         <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
-            <h3>Availability Status</h3>
+            <h3>Session</h3>
             <p style="font-size:13px;color:#555;margin-top:8px;">You are logged in as admin. Close the tab or click Log Out below to lock the panel.</p>
             <button onclick="logOutAdmin()" style="margin-top:10px;padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">🔒 Log Out</button>
         </div>
+
         <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
             <h3>Availability Status</h3>
             <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
@@ -1061,20 +1247,32 @@ function clearTokenFromPanel(){
 async function pushAllToGitHub(){
     if(!getToken()){ alert('Please save your GitHub token first.'); return; }
     showNotification('⏳ Pushing to GitHub...');
-    const ok = await saveProductsToGitHub();
-    if(ok) showNotification('✅ All changes pushed! Live in ~1 minute.');
+    const okProducts = await saveProductsToGitHub();
+    const okOptions = await saveOptionsToGitHub();
+    if(okProducts && okOptions){
+        showNotification('✅ All changes pushed! Live in ~1 minute.');
+    }
 }
 
 function showAddProductForm(){
+    const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
+    const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
+    const catCombo = buildComboHTML('new_cat', 'Category', catOptions, '', 'Type new category name');
+    const brandCombo = buildComboHTML('new_br', 'Brand', brandOptions, '', 'Type new brand name');
+
     const formHTML=`<div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;">
-        <h3 style="color:#2e7d32;">➕ Add New Product</h3>
+        <h3 style="color:#2e7d32;">➕ Add New Product (Full Form)</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
             <div><label>Product Name:</label><input type="text" id="new_name" style="width:100%;padding:5px;"></div>
             <div><label>Price (KSh):</label><input type="number" id="new_price" style="width:100%;padding:5px;"></div>
             <div><label>Part No / OEM:</label><input type="text" id="new_oem" style="width:100%;padding:5px;"></div>
             <div><label>Fits (Application):</label><input type="text" id="new_application" style="width:100%;padding:5px;" placeholder="e.g. Toyota Hilux 2015-2023"></div>
-            <div><label>Category:</label><input type="text" id="new_category" style="width:100%;padding:5px;" placeholder="Brakes, Filters..."></div>
-            <div><label>Brand:</label><input type="text" id="new_brand" style="width:100%;padding:5px;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            ${brandCombo}
+            ${catCombo}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
             <div><label>Vehicle Make:</label><input type="text" id="new_vmake" style="width:100%;padding:5px;" placeholder="Toyota, Universal..."></div>
             <div><label>Vehicle Model:</label><input type="text" id="new_vmodel" style="width:100%;padding:5px;" placeholder="Camry, All Models..."></div>
             <div><label>Stock:</label><input type="number" id="new_stock" value="0" style="width:100%;padding:5px;"></div>
@@ -1089,14 +1287,29 @@ function showAddProductForm(){
 async function addNewProduct(){
     const partNo = document.getElementById('new_oem').value;
     const application = document.getElementById('new_application').value;
+    const brandVal = getComboValue('new_br');
+    const catVal = getComboValue('new_cat');
+
+    if(!brandVal){ alert('Please select or add a brand.'); return; }
+    if(!catVal){ alert('Please select or add a category.'); return; }
+
+    // Remember new options
+    let newOptionsAdded = false;
+    if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
+    if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
+    if(newOptionsAdded){
+        showNotification('⏳ Saving new brand/category...');
+        await saveOptionsToGitHub();
+    }
+
     const newProduct={
         name:document.getElementById('new_name').value,
         price:parseInt(document.getElementById('new_price').value),
         partNo: partNo || 'N/A',
-        oem:partNo || 'N/A',
+        oem: partNo || 'N/A',
         application: application || 'Universal',
-        category:document.getElementById('new_category').value,
-        brand:document.getElementById('new_brand').value,
+        category: catVal,
+        brand: brandVal,
         vehicleMake:document.getElementById('new_vmake').value||'Universal',
         vehicleModel:document.getElementById('new_vmodel').value||'All Models',
         yearStart:0,yearEnd:0,
@@ -1159,10 +1372,9 @@ function logOutAdmin(){
 
 // ==================== INITIALIZE ====================
 async function init(){
-    // Make sure Quick Add is hidden on every page load
     document.getElementById('quickAddFab').classList.remove('show');
-
     await fetchProductsFromGitHub();
+    await fetchOptionsFromGitHub();
     loadProducts();
     updateFloatingWhatsApp();
     updateCartCount();
