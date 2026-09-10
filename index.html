@@ -67,6 +67,16 @@
         .see-all-btn:hover{background:#ff6f00}
         .see-all-btn .arrow{display:inline-block;transition:transform .3s;margin-left:6px}
         .see-all-btn.expanded .arrow{transform:rotate(180deg)}
+
+        /* === ADMIN SEARCH === */
+        .admin-search-wrap{background:#fff8e1;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #ffc107}
+        .admin-search-wrap h3{color:#e65100;margin-bottom:8px;font-size:16px}
+        .admin-search-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+        .admin-search-row input[type="text"]{flex:1;min-width:200px;padding:10px;border:2px solid #ff6f00;border-radius:5px;font-size:15px}
+        .admin-search-row button{padding:10px 15px;background:#ff6f00;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;font-size:14px}
+        .admin-search-row button:hover{background:#e65100}
+        .admin-search-count{font-size:13px;color:#666;margin-top:6px}
+        .admin-no-results{padding:30px;text-align:center;color:#999;font-style:italic;background:#f9f9f9;border-radius:5px}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -212,10 +222,8 @@ const DEFAULT_BRANDS = [
 ];
 
 // ==================== CATEGORY DISPLAY HELPERS ====================
-// The 6 fixed categories shown as big cards (do not change order)
 const FIXED_CATEGORIES = ["Brakes","Suspension","Filters","Electrical","Engine","Cooling"];
 
-// Small descriptions for each category (used on the small cards)
 const CATEGORY_DESCRIPTIONS = {
     "Brakes":"Pads, Rotors",
     "Suspension":"Struts, Springs",
@@ -239,7 +247,6 @@ const CATEGORY_DESCRIPTIONS = {
     "Other":"Misc. Parts"
 };
 
-// Icons for each category (Font Awesome)
 const CATEGORY_ICONS = {
     "Brakes":"fa-car-battery",
     "Suspension":"fa-car",
@@ -648,6 +655,7 @@ let brands = [...DEFAULT_BRANDS];
 let availability = JSON.parse(localStorage.getItem('A & SAvailability')) || {adil:true, suhayl:true};
 let cart = JSON.parse(localStorage.getItem('A & SCart')) || [];
 let adminLoggedIn = false;
+let adminSearchTerm = '';
 
 function saveAvailability(){localStorage.setItem('A & SAvailability', JSON.stringify(availability))}
 function saveCart(){localStorage.setItem('A & SCart', JSON.stringify(cart))}
@@ -1076,7 +1084,6 @@ function shopByCategory(category){const filtered=products.filter(p=>p.category==
 // ==================== EXTRA CATEGORIES (See all) ====================
 function buildExtraCategoryCards(){
     const grid = document.getElementById('categoryGrid');
-    // Remove any existing extra cards first (so refresh works)
     grid.querySelectorAll('.extra-category').forEach(el => el.remove());
 
     const extras = categories.filter(c => !FIXED_CATEGORIES.includes(c));
@@ -1092,7 +1099,6 @@ function buildExtraCategoryCards(){
         grid.appendChild(card);
     });
 
-    // Update button label
     const total = FIXED_CATEGORIES.length + extras.length;
     document.getElementById('seeAllText').textContent = `See all ${total} categories`;
 }
@@ -1251,11 +1257,94 @@ function openAdminPanel(){
     }
 }
 
+function adminMatchesSearch(product){
+    if(!adminSearchTerm) return true;
+    const q = adminSearchTerm;
+    const fields = [
+        product.name,
+        product.partNo,
+        product.oem,
+        product.brand,
+        product.category,
+        product.sku,
+        product.application,
+        product.vehicleMake,
+        product.vehicleModel,
+        product.description
+    ].filter(Boolean).map(v => String(v).toLowerCase());
+    return fields.some(f => f.includes(q));
+}
+
+function renderAdminProductCards(){
+    const container = document.getElementById('adminProductList');
+    if(!container) return;
+
+    const list = products
+        .map((product, index) => ({product, index}))
+        .filter(({product}) => adminMatchesSearch(product));
+
+    if(list.length === 0){
+        container.innerHTML = `<div class="admin-no-results">No parts match "<strong>${adminSearchTerm}</strong>"</div>`;
+        const countEl = document.getElementById('adminSearchCount');
+        if(countEl) countEl.textContent = '0 results';
+        return;
+    }
+
+    let html = '';
+    list.forEach(({product, index})=>{
+        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
+            <strong>${product.name}</strong><br><small>Part No: ${product.partNo||product.oem||'N/A'} | SKU: ${product.sku}</small>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock||0}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Brand:</label><input type="text" id="brand_${index}" value="${product.brand||''}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Category:</label><input type="text" id="category_${index}" value="${product.category||''}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${product.partNo||product.oem||''}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${product.application||''}" style="width:100%;padding:5px;"></div>
+            </div>
+            <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${product.description||''}</textarea></div>
+            <div style="margin-top:10px;display:flex;gap:10px;">
+                <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
+                <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+
+    const countEl = document.getElementById('adminSearchCount');
+    if(countEl){
+        countEl.textContent = adminSearchTerm
+            ? `${list.length} of ${products.length} parts shown`
+            : `${products.length} parts total`;
+    }
+}
+
+function handleAdminSearch(value){
+    adminSearchTerm = value.trim().toLowerCase();
+    renderAdminProductCards();
+}
+
+function clearAdminSearch(){
+    adminSearchTerm = '';
+    const input = document.getElementById('adminSearchInput');
+    if(input){ input.value = ''; }
+    renderAdminProductCards();
+}
+
 function showAdminPanel(){
     const tokenSaved = getToken() ? '✅ Saved' : '⚠️ Not saved yet';
     let html=`<div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
 
         <h2 style="color:#1a237e;margin-bottom:20px;">🔧 Admin Panel</h2>
+
+        <div class="admin-search-wrap">
+            <h3>🔍 Search Parts</h3>
+            <div class="admin-search-row">
+                <input type="text" id="adminSearchInput" placeholder="Type name, Part No, brand, category, SKU..." oninput="handleAdminSearch(this.value)" value="${adminSearchTerm}">
+                <button onclick="clearAdminSearch()">Clear</button>
+            </div>
+            <div class="admin-search-count" id="adminSearchCount"></div>
+        </div>
 
         <div style="background:#fff3e0;padding:15px;border-radius:5px;margin-bottom:20px;border-left:4px solid #ff6f00;">
             <h3 style="color:#e65100;margin-bottom:10px;">🔑 GitHub Token</h3>
@@ -1289,31 +1378,12 @@ function showAdminPanel(){
 
         <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;width:100%;font-size:16px;">➕ ADD NEW PRODUCT (Full Form)</button>
         <div id="addProductForm"></div>
-        <div id="adminProductList">`;
+        <div id="adminProductList"></div>
 
-    products.forEach((product,index)=>{
-        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
-            <strong>${product.name}</strong><br><small>Part No: ${product.partNo||product.oem||'N/A'} | SKU: ${product.sku}</small>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-                <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock||0}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Brand:</label><input type="text" id="brand_${index}" value="${product.brand||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Category:</label><input type="text" id="category_${index}" value="${product.category||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${product.partNo||product.oem||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${product.application||''}" style="width:100%;padding:5px;"></div>
-            </div>
-            <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${product.description||''}</textarea></div>
-            <div style="margin-top:10px;display:flex;gap:10px;">
-                <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
-                <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
-            </div>
-        </div>`;
-    });
-
-    html+=`</div>
         <button onclick="closeAdminPanel()" style="padding:10px 20px;background:#ff6f00;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:20px;width:100%;">Close</button>
     </div>`;
     document.body.insertAdjacentHTML('beforeend',html);
+    renderAdminProductCards();
 }
 
 function saveTokenFromPanel(){
@@ -1453,6 +1523,7 @@ function closeAdminPanel(){
 
 function logOutAdmin(){
     adminLoggedIn = false;
+    adminSearchTerm = '';
     document.getElementById('quickAddFab').classList.remove('show');
     closeAdminPanel();
     alert('🔒 Logged out. The Quick Add button is now hidden.');
