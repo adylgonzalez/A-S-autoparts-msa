@@ -270,5 +270,22 @@
     "yearEnd": 0,
     "sku": "QA-1789065675366",
     "stock": 1
+  },
+  {
+    "name": "Alternator",
+    "price": 15000,
+    "partNo": "N/A",
+    "oem": "N/A",
+    "application": "Universal",
+    "category": "Electrical",
+    "brand": "DENSO",
+    "vehicleMake": "Toyota Crown, Mark X, lexus IS250, IS350, GS",
+    "vehicleModel": "All Models",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 5,
+    "image": "🔧",
+    "description": "",
+    "sku": "SKU-1789066296841"
   }
 ]
