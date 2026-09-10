@@ -167,6 +167,9 @@ const ADMIN_PASSWORD = "rajus2024";
 // Format price in KSh
 function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
 function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function scrollToTop(){window.scrollTo({top:0, behavior:'smooth'});}
+function handleBackToTopVisibility(){const btn=document.getElementById('backToTopBtn');if(!btn)return;if(window.scrollY>300){btn.classList.add('show');}else{btn.classList.remove('show');}}
+window.addEventListener('scroll', handleBackToTopVisibility);
 
 // Load Products
 function loadProducts() {
