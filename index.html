@@ -9,6 +9,29 @@
 
         /* === VIN CLOSE BUTTON STYLES === */
         .vin-results-close{position:absolute;top:10px;right:10px;background:#f44336;color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .3s}.vin-results-close:hover{background:#d32f2f}.vin-results{position:relative}
+
+        /* === LIST WITH US PAGE STYLES === */
+        .list-with-us{padding:50px 20px;background:#fff;display:none}
+        .list-with-us.active{display:block}
+        .list-with-us-inner{max-width:900px;margin:0 auto}
+        .list-with-us h2{text-align:center;color:#1a237e;margin-bottom:10px;font-size:34px}
+        .list-with-us .lwu-subtitle{text-align:center;color:#666;font-size:16px;margin-bottom:35px}
+        .lwu-card{background:#f0f4ff;border-radius:12px;padding:30px;margin-bottom:25px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .lwu-card h3{color:#1a237e;font-size:24px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+        .lwu-card h3 i{color:#ff6f00}
+        .lwu-checklist{list-style:none;padding:0;margin:0}
+        .lwu-checklist li{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #e0e6f5;font-size:16px;color:#333;line-height:1.5}
+        .lwu-checklist li:last-child{border-bottom:none}
+        .lwu-checklist li i{color:#4caf50;font-size:18px;margin-top:3px;flex-shrink:0}
+        .lwu-ready{background:#e8f5e9;border-left:5px solid #4caf50;padding:25px 30px;border-radius:8px;margin-bottom:25px}
+        .lwu-ready h3{color:#2e7d32;font-size:22px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+        .lwu-ready p{font-size:17px;color:#333;line-height:1.6;margin-bottom:10px}
+        .lwu-whatsapp{display:flex;gap:15px;flex-wrap:wrap;margin-top:15px}
+        .lwu-whatsapp a{flex:1;min-width:200px;padding:15px 25px;border-radius:50px;color:#fff;text-decoration:none;font-weight:700;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.15);transition:transform .3s}
+        .lwu-whatsapp a:hover{transform:scale(1.03)}
+        .lwu-whatsapp a.adil{background:#25D366}
+        .lwu-whatsapp a.suhayl{background:#128C7E}
+        @media(max-width:768px){.lwu-whatsapp a{min-width:100%}.list-with-us h2{font-size:28px}}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -21,6 +44,7 @@
         <a onclick="scrollToSection('products')">Products</a>
         <a onclick="scrollToSection('contact')">Contact</a>
         <a onclick="viewCart()">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+        <a onclick="showListWithUs()">🤝 List With Us</a>
     </div>
     <div class="search-section" id="vin">
         <div class="vin-search">
@@ -58,6 +82,37 @@
         <h2>Featured Products</h2>
         <div class="product-grid" id="productGrid"></div>
     </div>
+
+    <!-- ==================== LIST WITH US PAGE ==================== -->
+    <div class="list-with-us" id="listWithUs">
+        <div class="list-with-us-inner">
+            <h2><i class="fas fa-handshake" style="color:#ff6f00;"></i> List With Us</h2>
+            <p class="lwu-subtitle">Partner with A & S AUTOPARTS and reach customers across Mombasa and Kenya.</p>
+
+            <div class="lwu-card">
+                <h3><i class="fas fa-clipboard-check"></i> What we look for</h3>
+                <ul class="lwu-checklist">
+                    <li><i class="fas fa-check-circle"></i> <span>Genuine, ethically sourced parts only — no second-hand, no imitations.</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span>Accurate part numbers and honest pricing.</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span>Reliable dispatch — same-day within Mombasa, next-day countrywide.</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span>A real shop or warehouse in Kenya we can verify.</span></li>
+                </ul>
+            </div>
+
+            <div class="lwu-ready">
+                <h3><i class="fas fa-bolt"></i> Ready to list?</h3>
+                <p>Send us one WhatsApp message and we'll take it from there.</p>
+                <div class="lwu-whatsapp">
+                    <a href="https://wa.me/254713349554?text=Hello%20ADIL%2C%20I%27d%20like%20to%20list%20my%20parts%20with%20A%20%26%20S%20AUTOPARTS." class="adil" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp ADIL — 0713349554</a>
+                    <a href="https://wa.me/254752763924?text=Hello%20SUHAYL%2C%20I%27d%20like%20to%20list%20my%20parts%20with%20A%20%26%20S%20AUTOPARTS." class="suhayl" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp SUHAYL — 0752763924</a>
+                </div>
+            </div>
+
+            <button onclick="hideListWithUs()" style="width:100%;padding:14px;background:#1a237e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:700;">← Back to Shop</button>
+        </div>
+    </div>
+    <!-- ==================== END LIST WITH US PAGE ==================== -->
+
     <div class="contact-info" id="contact">
         <h2>Contact Us</h2>
         <div class="contact-details">
@@ -65,9 +120,7 @@
             <p><i class="fas fa-phone"></i> SUHAYL: 0752763924</p>
             <p><i class="fab fa-whatsapp"></i> WhatsApp: Available 24/7</p>
             <p><i class="fas fa-map-marker-alt"></i> Mombasa, Kenya</p>
-            <p><i class="fas fa-clock"></i> Mon-Fri: 8AM - 5PM</p>
-            <p><i class="fas fa-clock"></i> Sat: 8AM - 1PM</p>
-            <p><i class="fas fa-clock"></i> Sun: CLOSED</p>
+            <p><i class="fas fa-clock"></i> Mon-Sat: 8AM - 6PM</p>
         </div>
     </div>
     <div class="footer"><p>&copy; 2024 A & S AUTOPARTS - Mombasa, Kenya</p><p>ADIL: 0713349554 | SUHAYL: 0752763924</p></div>
@@ -466,6 +519,29 @@ function saveAvailability(){localStorage.setItem('A & SAvailability',JSON.string
 function saveCart(){localStorage.setItem('A & SCart',JSON.stringify(cart))}
 function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
 function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
+// ==================== LIST WITH US PAGE ====================
+function showListWithUs(){
+    document.querySelector('.search-section').style.display='none';
+    document.querySelector('.search-bar').style.display='none';
+    document.querySelector('.vehicle-selector').style.display='none';
+    document.querySelector('.categories').style.display='none';
+    document.querySelector('.products').style.display='none';
+    document.querySelector('.contact-info').style.display='none';
+    document.getElementById('listWithUs').classList.add('active');
+    document.getElementById('listWithUs').scrollIntoView({behavior:'smooth'});
+}
+
+function hideListWithUs(){
+    document.getElementById('listWithUs').classList.remove('active');
+    document.querySelector('.search-section').style.display='block';
+    document.querySelector('.search-bar').style.display='block';
+    document.querySelector('.vehicle-selector').style.display='block';
+    document.querySelector('.categories').style.display='block';
+    document.querySelector('.products').style.display='block';
+    document.querySelector('.contact-info').style.display='block';
+    document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
 
 // ==================== FLOATING WHATSAPP BUTTONS ====================
 function updateFloatingWhatsApp(){
