@@ -204,23 +204,6 @@
     "stock": 70
   },
   {
-    "name": "Universal Alternator",
-    "price": 21000,
-    "category": "Electrical",
-    "image": "🔋",
-    "brand": "DENSO",
-    "partNo": "27060-0T041",
-    "oem": "27060-0T041",
-    "application": "Universal All Models",
-    "description": "High-output alternator for various vehicles.",
-    "vehicleMake": "Universal",
-    "vehicleModel": "All Models",
-    "yearStart": 0,
-    "yearEnd": 0,
-    "sku": "ALT-UNI-001",
-    "stock": 8
-  },
-  {
     "name": "Timing Belt Kit - Toyota",
     "price": 14500,
     "category": "Engine",
