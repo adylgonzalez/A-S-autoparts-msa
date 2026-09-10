@@ -120,14 +120,12 @@
     <div class="categories" id="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid" id="categoryGrid">
-            <!-- The 6 fixed category cards -->
             <div class="category-card" onclick="shopByCategory('Brakes')"><i class="fas fa-car-battery"></i><h3>Brakes</h3><p>Brake Pads, Rotors</p></div>
             <div class="category-card" onclick="shopByCategory('Suspension')"><i class="fas fa-car"></i><h3>Suspension</h3><p>Struts, Springs</p></div>
             <div class="category-card" onclick="shopByCategory('Filters')"><i class="fas fa-oil-can"></i><h3>Filters</h3><p>Oil, Air Filters</p></div>
             <div class="category-card" onclick="shopByCategory('Electrical')"><i class="fas fa-bolt"></i><h3>Electrical</h3><p>Alternators, Plugs</p></div>
             <div class="category-card" onclick="shopByCategory('Engine')"><i class="fas fa-cogs"></i><h3>Engine</h3><p>Timing Belts, Pumps</p></div>
             <div class="category-card" onclick="shopByCategory('Cooling')"><i class="fas fa-fan"></i><h3>Cooling</h3><p>Radiators, Water Pumps</p></div>
-            <!-- Extra categories will be inserted here by JavaScript -->
         </div>
         <div class="see-all-wrap">
             <button class="see-all-btn" id="seeAllBtn" onclick="toggleAllCategories()">
@@ -1100,7 +1098,8 @@ function buildExtraCategoryCards(){
     });
 
     const total = FIXED_CATEGORIES.length + extras.length;
-    document.getElementById('seeAllText').textContent = `See all ${total} categories`;
+    const seeAllText = document.getElementById('seeAllText');
+    if(seeAllText) seeAllText.textContent = `See all ${total} categories`;
 }
 
 function toggleAllCategories(){
@@ -1290,17 +1289,27 @@ function renderAdminProductCards(){
         return;
     }
 
+    const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
+    const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
+
     let html = '';
     list.forEach(({product, index})=>{
+        const catCombo = buildComboHTML(`edit_cat_${index}`, 'Category', catOptions, product.category || '', 'Type new category name');
+        const brandCombo = buildComboHTML(`edit_br_${index}`, 'Brand', brandOptions, product.brand || '', 'Type new brand name');
+
         html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
-            <strong>${product.name}</strong><br><small>Part No: ${product.partNo||product.oem||'N/A'} | SKU: ${product.sku}</small>
+            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Product Name (editable):</label>
+            <input type="text" id="name_${index}" value="${(product.name||'').replace(/"/g,'&quot;')}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-weight:700;font-size:15px;margin-bottom:6px;">
+            <small>Part No: ${product.partNo||product.oem||'N/A'} | SKU: ${product.sku}</small>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
                 <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
                 <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock||0}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Brand:</label><input type="text" id="brand_${index}" value="${product.brand||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Category:</label><input type="text" id="category_${index}" value="${product.category||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${product.partNo||product.oem||''}" style="width:100%;padding:5px;"></div>
-                <div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${product.application||''}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${(product.partNo||product.oem||'').replace(/"/g,'&quot;')}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${(product.application||'').replace(/"/g,'&quot;')}" style="width:100%;padding:5px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                ${brandCombo}
+                ${catCombo}
             </div>
             <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${product.description||''}</textarea></div>
             <div style="margin-top:10px;display:flex;gap:10px;">
@@ -1485,14 +1494,40 @@ async function addNewProduct(){
 }
 
 async function updateProduct(index){
+    // Name
+    const nameInput = document.getElementById(`name_${index}`);
+    if(nameInput){
+        const newName = nameInput.value.trim();
+        if(newName){ products[index].name = newName; }
+    }
+
+    // Simple fields
     products[index].price=parseInt(document.getElementById(`price_${index}`).value);
     products[index].stock=parseInt(document.getElementById(`stock_${index}`).value);
-    products[index].brand=document.getElementById(`brand_${index}`).value;
-    products[index].category=document.getElementById(`category_${index}`).value;
     products[index].partNo=document.getElementById(`partNo_${index}`).value;
     products[index].oem=products[index].partNo;
     products[index].application=document.getElementById(`application_${index}`).value;
     products[index].description=document.getElementById(`desc_${index}`).value;
+
+    // Combo (Brand + Category)
+    const newBrandVal = getComboValue(`edit_br_${index}`);
+    const newCatVal = getComboValue(`edit_cat_${index}`);
+    if(!newBrandVal){ alert('Please select or add a brand.'); return; }
+    if(!newCatVal){ alert('Please select or add a category.'); return; }
+
+    let newOptionsAdded = false;
+    if(newBrandVal && !brands.includes(newBrandVal)){ brands.push(newBrandVal); newOptionsAdded = true; }
+    if(newCatVal && !categories.includes(newCatVal)){ categories.push(newCatVal); newOptionsAdded = true; }
+
+    products[index].brand = newBrandVal;
+    products[index].category = newCatVal;
+
+    if(newOptionsAdded){
+        showNotification('⏳ Saving new brand/category...');
+        await saveOptionsToGitHub();
+        buildExtraCategoryCards();
+    }
+
     loadProducts();
     closeAdminPanel(); showAdminPanel();
     showNotification('⏳ Pushing to GitHub...');
