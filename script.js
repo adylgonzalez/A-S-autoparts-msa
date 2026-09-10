@@ -165,9 +165,8 @@ let cart = [];
 const ADMIN_PASSWORD = "rajus2024";
 
 // Format price in KSh
-function formatPrice(price) {
-    return 'KSh ' + price.toLocaleString('en-KE');
-}
+function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
 
 // Load Products
 function loadProducts() {
