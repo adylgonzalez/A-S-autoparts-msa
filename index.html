@@ -677,6 +677,13 @@ function checkoutCart(brother){
     });
     message+=`💰 TOTAL: ${formatPrice(total)}\n\nPlease confirm availability and delivery.`;
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
+    setTimeout(() => {
+        cart = [];
+        saveCart();
+        updateCartCount();
+        closeCart();
+        showNotification('✅ Order sent — cart cleared');
+    }, 500);
 }
 
 // ==================== NOTIFICATION ====================
