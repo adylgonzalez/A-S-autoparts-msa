@@ -255,7 +255,7 @@
     "stock": 10
   },
   {
-    "name": "Brake Pads",
+    "name": "Brake Pads- Toyota",
     "price": 3500,
     "partNo": "N/A",
     "oem": "N/A",
@@ -263,7 +263,7 @@
     "brand": "TOYOTA Genuine",
     "category": "Brakes",
     "image": "🔧",
-    "description": "Brake Pads",
+    "description": "Brake Pads fits toyota crown, mark x, lexus is250/350",
     "vehicleMake": "Universal",
     "vehicleModel": "All Models",
     "yearStart": 0,
