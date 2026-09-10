@@ -54,6 +54,19 @@
         .combo-wrap .combo-new-input{display:none;margin-top:6px;border:2px solid #4caf50 !important}
         .combo-wrap .combo-new-input.show{display:block}
         .combo-wrap .combo-hint{font-size:11px;color:#888;margin-top:4px}
+
+        /* === EXTRA CATEGORIES (See all) === */
+        .category-grid .extra-category{display:none}
+        .category-grid.expanded .extra-category{display:block}
+        .category-grid .category-card.small{padding:20px}
+        .category-grid .category-card.small i{font-size:30px;margin-bottom:10px}
+        .category-grid .category-card.small h3{font-size:15px;margin-bottom:4px}
+        .category-grid .category-card.small p{font-size:12px;color:#777}
+        .see-all-wrap{text-align:center;margin-top:25px}
+        .see-all-btn{padding:12px 28px;background:#1a237e;color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:15px;font-weight:700;transition:background .3s}
+        .see-all-btn:hover{background:#ff6f00}
+        .see-all-btn .arrow{display:inline-block;transition:transform .3s;margin-left:6px}
+        .see-all-btn.expanded .arrow{transform:rotate(180deg)}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -96,13 +109,20 @@
     </div>
     <div class="categories" id="categories">
         <h2>Shop by Category</h2>
-        <div class="category-grid">
+        <div class="category-grid" id="categoryGrid">
+            <!-- The 6 fixed category cards -->
             <div class="category-card" onclick="shopByCategory('Brakes')"><i class="fas fa-car-battery"></i><h3>Brakes</h3><p>Brake Pads, Rotors</p></div>
             <div class="category-card" onclick="shopByCategory('Suspension')"><i class="fas fa-car"></i><h3>Suspension</h3><p>Struts, Springs</p></div>
             <div class="category-card" onclick="shopByCategory('Filters')"><i class="fas fa-oil-can"></i><h3>Filters</h3><p>Oil, Air Filters</p></div>
             <div class="category-card" onclick="shopByCategory('Electrical')"><i class="fas fa-bolt"></i><h3>Electrical</h3><p>Alternators, Plugs</p></div>
             <div class="category-card" onclick="shopByCategory('Engine')"><i class="fas fa-cogs"></i><h3>Engine</h3><p>Timing Belts, Pumps</p></div>
             <div class="category-card" onclick="shopByCategory('Cooling')"><i class="fas fa-fan"></i><h3>Cooling</h3><p>Radiators, Water Pumps</p></div>
+            <!-- Extra categories will be inserted here by JavaScript -->
+        </div>
+        <div class="see-all-wrap">
+            <button class="see-all-btn" id="seeAllBtn" onclick="toggleAllCategories()">
+                <span id="seeAllText">See all categories</span><span class="arrow">▾</span>
+            </button>
         </div>
     </div>
     <div class="products" id="products">
@@ -190,6 +210,65 @@ const DEFAULT_BRANDS = [
     "PFI","FROTIS","MECHANGING","TYD","YTM","555","Nisshinbo","Advics",
     "NTN","NSK","Taiho","NPR","Musashi","Exedy","Other"
 ];
+
+// ==================== CATEGORY DISPLAY HELPERS ====================
+// The 6 fixed categories shown as big cards (do not change order)
+const FIXED_CATEGORIES = ["Brakes","Suspension","Filters","Electrical","Engine","Cooling"];
+
+// Small descriptions for each category (used on the small cards)
+const CATEGORY_DESCRIPTIONS = {
+    "Brakes":"Pads, Rotors",
+    "Suspension":"Struts, Springs",
+    "Filters":"Oil, Air Filters",
+    "Electrical":"Alternators, Plugs",
+    "Engine":"Belts, Pumps",
+    "Cooling":"Radiators, Pumps",
+    "Transmission":"Gearbox, Clutch",
+    "Body & Exterior":"Panels, Mirrors",
+    "Interior":"Seats, Trim",
+    "Lighting":"Bulbs, Lamps",
+    "Steering":"Racks, Tie Rods",
+    "Fuel System":"Pumps, Injectors",
+    "Exhaust":"Mufflers, Pipes",
+    "Air Conditioning":"Compressors, Fans",
+    "Belts & Hoses":"Drive Belts, Hoses",
+    "Bearings":"Wheel, Hub",
+    "Clutch":"Discs, Covers",
+    "Ignition":"Coils, Plugs",
+    "Sensors":"O2, MAP, MAF",
+    "Other":"Misc. Parts"
+};
+
+// Icons for each category (Font Awesome)
+const CATEGORY_ICONS = {
+    "Brakes":"fa-car-battery",
+    "Suspension":"fa-car",
+    "Filters":"fa-oil-can",
+    "Electrical":"fa-bolt",
+    "Engine":"fa-cogs",
+    "Cooling":"fa-fan",
+    "Transmission":"fa-cog",
+    "Body & Exterior":"fa-car-side",
+    "Interior":"fa-chair",
+    "Lighting":"fa-lightbulb",
+    "Steering":"fa-dharmachakra",
+    "Fuel System":"fa-gas-pump",
+    "Exhaust":"fa-smog",
+    "Air Conditioning":"fa-snowflake",
+    "Belts & Hoses":"fa-link",
+    "Bearings":"fa-circle-notch",
+    "Clutch":"fa-compact-disc",
+    "Ignition":"fa-fire",
+    "Sensors":"fa-satellite-dish",
+    "Other":"fa-cog"
+};
+
+function getCategoryDescription(cat){
+    return CATEGORY_DESCRIPTIONS[cat] || "Browse parts";
+}
+function getCategoryIcon(cat){
+    return CATEGORY_ICONS[cat] || "fa-cog";
+}
 
 // ==================== COMPLETE TOYOTA DATABASE ====================
 const toyotaModelCodes={
@@ -662,7 +741,6 @@ async function saveOptionsToGitHub(){
     }
     try {
         const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${OPTIONS_FILE}`;
-        // Try to get the current SHA. If the file doesn't exist yet, GitHub returns 404 — we handle that by creating it.
         let sha = null;
         try {
             const getRes = await axios.get(apiBase, {
@@ -675,7 +753,6 @@ async function saveOptionsToGitHub(){
             sha = getRes.data.sha;
         } catch (getErr){
             if(getErr.response && getErr.response.status === 404){
-                // File doesn't exist yet — that's fine, we'll create it (no sha needed)
                 sha = null;
             } else {
                 throw getErr;
@@ -996,9 +1073,42 @@ function searchProducts(){
 
 function shopByCategory(category){const filtered=products.filter(p=>p.category===category);displayFilteredProducts(filtered,`${category} Products`)}
 
+// ==================== EXTRA CATEGORIES (See all) ====================
+function buildExtraCategoryCards(){
+    const grid = document.getElementById('categoryGrid');
+    // Remove any existing extra cards first (so refresh works)
+    grid.querySelectorAll('.extra-category').forEach(el => el.remove());
+
+    const extras = categories.filter(c => !FIXED_CATEGORIES.includes(c));
+    extras.sort((a,b) => a.localeCompare(b));
+
+    extras.forEach(cat => {
+        const icon = getCategoryIcon(cat);
+        const desc = getCategoryDescription(cat);
+        const card = document.createElement('div');
+        card.className = 'category-card extra-category small';
+        card.onclick = () => shopByCategory(cat);
+        card.innerHTML = `<i class="fas ${icon}"></i><h3>${cat}</h3><p>${desc}</p>`;
+        grid.appendChild(card);
+    });
+
+    // Update button label
+    const total = FIXED_CATEGORIES.length + extras.length;
+    document.getElementById('seeAllText').textContent = `See all ${total} categories`;
+}
+
+function toggleAllCategories(){
+    const grid = document.getElementById('categoryGrid');
+    const btn = document.getElementById('seeAllBtn');
+    const isExpanded = grid.classList.toggle('expanded');
+    btn.classList.toggle('expanded', isExpanded);
+    document.getElementById('seeAllText').textContent = isExpanded
+        ? 'Show fewer categories'
+        : `See all ${FIXED_CATEGORIES.length + grid.querySelectorAll('.extra-category').length} categories`;
+}
+
 // ==================== COMBO (dropdown + add new) HELPERS ====================
 function buildComboHTML(idPrefix, label, options, currentValue, placeholderNew){
-    // Ensure currentValue is in options; if not, add it so it appears as selected
     let opts = [...options];
     if(currentValue && !opts.includes(currentValue)){ opts.push(currentValue); }
 
@@ -1043,26 +1153,10 @@ function getComboValue(idPrefix){
     return sel.value;
 }
 
-async function rememberNewOption(kind, value){
-    // kind = 'category' or 'brand'
-    if(!value) return;
-    if(kind === 'category'){
-        if(!categories.includes(value)){
-            categories.push(value);
-        }
-    } else if(kind === 'brand'){
-        if(!brands.includes(value)){
-            brands.push(value);
-        }
-    }
-    await saveOptionsToGitHub();
-}
-
 // ==================== QUICK ADD ====================
 function openQuickAdd(){
     if(!adminLoggedIn){ alert('Please log in via the Admin Panel first.'); return; }
 
-    // Sort category and brand options alphabetically for the dropdowns
     const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
     const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
 
@@ -1104,19 +1198,13 @@ async function saveQuickAdd(){
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
 
-    // If they added new options, remember them and push options.json
     let newOptionsAdded = false;
-    if(!brands.includes(brandVal)){
-        brands.push(brandVal);
-        newOptionsAdded = true;
-    }
-    if(!categories.includes(catVal)){
-        categories.push(catVal);
-        newOptionsAdded = true;
-    }
+    if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
+    if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){
         showNotification('⏳ Saving new brand/category...');
         await saveOptionsToGitHub();
+        buildExtraCategoryCards();
     }
 
     const newProduct = {
@@ -1293,13 +1381,13 @@ async function addNewProduct(){
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
 
-    // Remember new options
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){
         showNotification('⏳ Saving new brand/category...');
         await saveOptionsToGitHub();
+        buildExtraCategoryCards();
     }
 
     const newProduct={
@@ -1376,6 +1464,7 @@ async function init(){
     await fetchProductsFromGitHub();
     await fetchOptionsFromGitHub();
     loadProducts();
+    buildExtraCategoryCards();
     updateFloatingWhatsApp();
     updateCartCount();
 }
