@@ -104,6 +104,25 @@
         .img-picker-status.error{color:#f44336;font-weight:700}
         .img-picker-emoji{width:80px;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:20px;text-align:center;margin-top:8px}
         .img-picker-hint{font-size:11px;color:#888;margin-top:6px}
+
+        /* === ORDERS LIST === */
+        .order-card{border:1px solid #ddd;border-radius:8px;padding:15px;margin-bottom:12px;background:#fff}
+        .order-card.status-new{border-left:5px solid #2196f3}
+        .order-card.status-confirmed{border-left:5px solid #ff9800}
+        .order-card.status-delivered{border-left:5px solid #4caf50}
+        .order-card.status-cancelled{border-left:5px solid #f44336;opacity:.6}
+        .order-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+        .order-number{font-weight:700;color:#1a237e;font-size:16px}
+        .order-date{font-size:12px;color:#888}
+        .order-customer{font-size:14px;color:#333;margin:4px 0}
+        .order-customer strong{color:#1a237e}
+        .order-items{background:#f9f9f9;padding:10px;border-radius:5px;font-size:13px;color:#444;margin:8px 0;line-height:1.6}
+        .order-total{font-weight:700;color:#ff6f00;font-size:16px;text-align:right;margin-top:4px}
+        .order-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+        .order-actions button{padding:8px 14px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:700;color:#fff}
+        .order-actions .btn-print{background:#1a237e}
+        .order-actions .btn-send{background:#25D366}
+        .order-actions select{padding:8px;border-radius:5px;font-size:13px;border:1px solid #ccc;background:#fff;cursor:pointer}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -206,14 +225,18 @@
     <div class="cart-modal" id="cartModal">
         <h2 style="color:#1a237e;margin-bottom:20px;">🛒 Your Cart</h2>
         <div id="cartItems"></div>
-        <div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd;">
-            <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:bold;margin-bottom:15px;">
-                <span>Total:</span>
-                <span id="cartTotal" style="color:#ff6f00;">KSh 0</span>
-            </div>
-            <div id="cartWhatsAppButtons" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-            <button onclick="closeCart()" style="width:100%;padding:10px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>
+        <div style="margin-top:15px;padding-top:15px;border-top:1px solid #ddd;">
+            <label style="font-size:13px;font-weight:700;display:block;margin-bottom:4px;">Your Name *</label>
+            <input type="text" id="custName" placeholder="e.g. John Mwangi" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;margin-bottom:10px;">
+            <label style="font-size:13px;font-weight:700;display:block;margin-bottom:4px;">Your Phone *</label>
+            <input type="tel" id="custPhone" placeholder="e.g. 0712345678" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;margin-bottom:10px;">
         </div>
+        <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:bold;margin:15px 0;">
+            <span>Total:</span>
+            <span id="cartTotal" style="color:#ff6f00;">KSh 0</span>
+        </div>
+        <div id="cartWhatsAppButtons" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <button onclick="closeCart()" style="width:100%;padding:10px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>
     </div>
 
     <script>
@@ -223,10 +246,12 @@ const GITHUB_REPO  = 'A-S-autoparts-msa';
 const GITHUB_FILE  = 'products.json';
 const OPTIONS_FILE = 'options.json';
 const AVAILABILITY_FILE = 'availability.json';
+const ORDERS_FILE  = 'orders.json';
 const GITHUB_BRANCH = 'main';
 const PRODUCTS_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${GITHUB_FILE}`;
 const OPTIONS_URL  = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${OPTIONS_FILE}`;
 const AVAILABILITY_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${AVAILABILITY_FILE}`;
+const ORDERS_URL   = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${ORDERS_FILE}`;
 const IMAGES_FOLDER = 'images';
 
 // ==================== DEFAULT OPTIONS (fallback) ====================
@@ -473,7 +498,8 @@ let availability = {adil:true, suhayl:true};
 let cart = JSON.parse(localStorage.getItem('A & SCart')) || [];
 let adminLoggedIn = false;
 let adminSearchTerm = '';
-let pendingImageUploads = {}; // { targetKey: 'images/xyz.jpg' }
+let cachedOrders = [];
+let orderRefreshTimer = null;
 
 function saveCart(){localStorage.setItem('A & SCart', JSON.stringify(cart))}
 function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
@@ -487,25 +513,20 @@ function isImageReference(val){
     if(!val || typeof val !== 'string') return false;
     const v = val.trim();
     if(!v) return false;
-    // http(s) URL
     if(/^https?:\/\//i.test(v)) return true;
-    // path in images folder
     if(/^images\//i.test(v)) return true;
-    // any string ending in common image extension
     if(/\.(jpe?g|png|webp|gif|bmp|svg)$/i.test(v)) return true;
     return false;
 }
 function renderImageHTML(product){
     const raw = product.image || '🔧';
     if(isImageReference(raw)){
-        const src = raw.startsWith('http') ? raw : (raw.startsWith('images/') ? raw : raw);
-        return `<img src="${src}" alt="${(product.name||'').replace(/"/g,'&quot;')}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='📦';">`;
+        return `<img src="${raw}" alt="${(product.name||'').replace(/"/g,'&quot;')}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='📦';">`;
     }
     return raw;
 }
 
 // ==================== IMAGE UPLOAD TO GITHUB ====================
-// Shrinks the file client-side, then pushes as base64 to GitHub
 function shrinkImage(file, maxWidth, quality){
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -521,7 +542,6 @@ function shrinkImage(file, maxWidth, quality){
                 canvas.width = w;
                 canvas.height = h;
                 const ctx = canvas.getContext('2d');
-                // white background (in case of PNG transparency)
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, w, h);
                 ctx.drawImage(img, 0, 0, w, h);
@@ -529,7 +549,6 @@ function shrinkImage(file, maxWidth, quality){
                     if(!blob){ reject(new Error('Could not compress image')); return; }
                     const newReader = new FileReader();
                     newReader.onload = (ev) => {
-                        // ev.target.result is "data:image/jpeg;base64,...."
                         const base64 = ev.target.result.split(',')[1];
                         resolve({ base64, ext: 'jpg', blobSize: blob.size });
                     };
@@ -572,7 +591,7 @@ async function uploadImageToGitHub(base64, ext, baseName){
     return path;
 }
 
-// ==================== GITHUB SYNC (products / options / availability) ====================
+// ==================== GITHUB SYNC ====================
 function getToken(){ return localStorage.getItem('A & SGitHubToken') || ''; }
 function setToken(t){ localStorage.setItem('A & SGitHubToken', t); }
 function clearToken(){ localStorage.removeItem('A & SGitHubToken'); }
@@ -615,6 +634,17 @@ async function fetchAvailabilityFromGitHub(){
     } catch (err){
         console.warn('Could not load availability.json — defaulting to both available. Error:', err.message);
         availability = {adil:true, suhayl:true};
+        return false;
+    }
+}
+async function fetchOrdersFromGitHub(){
+    try {
+        const res = await axios.get(ORDERS_URL + '?t=' + Date.now());
+        if(Array.isArray(res.data)){ cachedOrders = res.data; return true; }
+        throw new Error('orders.json did not return an array');
+    } catch (err){
+        console.warn('Could not load orders.json. Error:', err.message);
+        cachedOrders = [];
         return false;
     }
 }
@@ -681,6 +711,59 @@ async function saveAvailabilityToGitHub(){
     } catch (err){
         console.error('Availability save failed:', err);
         alert('❌ Save availability to GitHub failed:\n\n' + (err.response?.data?.message || err.message));
+        return false;
+    }
+}
+async function appendOrderToGitHub(order){
+    const token = getToken();
+    if(!token){ console.warn('No token — order not saved'); return false; }
+    try {
+        const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ORDERS_FILE}`;
+        let sha = null, existing = [];
+        try {
+            const getRes = await axios.get(apiBase, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, params: { ref: GITHUB_BRANCH } });
+            sha = getRes.data.sha;
+            const decoded = decodeURIComponent(escape(atob(getRes.data.content.replace(/\s/g, ''))));
+            existing = JSON.parse(decoded);
+            if(!Array.isArray(existing)) existing = [];
+        } catch (getErr){
+            if(getErr.response && getErr.response.status === 404){ sha = null; existing = []; } else { throw getErr; }
+        }
+        // newest first
+        existing.unshift(order);
+        // cap at 500 orders to keep file reasonable
+        if(existing.length > 500) existing = existing.slice(0, 500);
+        const content = JSON.stringify(existing, null, 2);
+        const base64Content = btoa(unescape(encodeURIComponent(content)));
+        const putBody = { message: `New order ${order.id}`, content: base64Content, branch: GITHUB_BRANCH };
+        if(sha){ putBody.sha = sha; }
+        await axios.put(apiBase, putBody, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } });
+        cachedOrders = existing;
+        return true;
+    } catch (err){
+        console.error('Failed to save order:', err);
+        return false;
+    }
+}
+async function saveOrdersToGitHub(){
+    const token = getToken();
+    if(!token){ alert('⚠️ No GitHub token saved.'); return false; }
+    try {
+        const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ORDERS_FILE}`;
+        let sha = null;
+        try {
+            const getRes = await axios.get(apiBase, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, params: { ref: GITHUB_BRANCH } });
+            sha = getRes.data.sha;
+        } catch (getErr){ if(getErr.response && getErr.response.status === 404){ sha = null; } else { throw getErr; } }
+        const content = JSON.stringify(cachedOrders, null, 2);
+        const base64Content = btoa(unescape(encodeURIComponent(content)));
+        const putBody = { message: `Update orders.json — ${new Date().toISOString()}`, content: base64Content, branch: GITHUB_BRANCH };
+        if(sha){ putBody.sha = sha; }
+        await axios.put(apiBase, putBody, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } });
+        return true;
+    } catch (err){
+        console.error('Orders save failed:', err);
+        alert('❌ Save orders failed:\n\n' + (err.response?.data?.message || err.message));
         return false;
     }
 }
@@ -768,29 +851,67 @@ function increaseQuantity(index){cart[index].quantity++;saveCart();updateCartCou
 function decreaseQuantity(index){if(cart[index].quantity>1){cart[index].quantity--}else{cart.splice(index,1)}saveCart();updateCartCount();viewCart();}
 function removeFromCart(index){cart.splice(index,1);saveCart();updateCartCount();viewCart();}
 function closeCart(){document.getElementById('cartModal').style.display='none';}
-function checkoutCart(brother){
+
+async function checkoutCart(brother){
+    // Validate customer fields
+    const nameEl = document.getElementById('custName');
+    const phoneEl = document.getElementById('custPhone');
+    const custName = (nameEl ? nameEl.value : '').trim();
+    const custPhone = (phoneEl ? phoneEl.value : '').trim();
+    if(!custName){ alert('Please enter your name before ordering.'); if(nameEl) nameEl.focus(); return; }
+    if(!custPhone){ alert('Please enter your phone number before ordering.'); if(phoneEl) phoneEl.focus(); return; }
+
     const isAway = (brother === 'adil' && !availability.adil) || (brother === 'suhayl' && !availability.suhayl);
     const phoneNumber=brother==='adil'?'254713349554':'254752763924';
     const brotherName=brother==='adil'?'ADIL':'SUHAYL';
+
+    // Build order record
+    const orderId = 'A' + Date.now().toString().slice(-8);
+    const orderTotal = cart.reduce((s,i)=>s + i.price*i.quantity, 0);
+    const order = {
+        id: orderId,
+        date: new Date().toISOString(),
+        customerName: custName,
+        customerPhone: custPhone,
+        handledBy: brother,
+        handledByName: brotherName,
+        status: 'new',
+        items: cart.map(i => ({ name: i.name, sku: i.sku, price: i.price, quantity: i.quantity, subtotal: i.price*i.quantity })),
+        total: orderTotal
+    };
+
+    // Save order to GitHub (no wait if it fails)
+    showNotification('⏳ Saving order...');
+    const savedOk = await appendOrderToGitHub(order);
+    if(savedOk){ showNotification('✅ Order saved to records'); }
+    else { showNotification('⚠️ Order saved locally only — WhatsApp still works'); }
+
+    // Build WhatsApp message
     let message;
     if(isAway){
-        message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\nI want to order:\n\n`;
+        message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\n`;
     } else {
-        message=`Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n`;
+        message=`Hello ${brotherName} (A & S AUTOPARTS),\n\n`;
     }
-    let total=0;
+    message += `NEW ORDER #${orderId}\n`;
+    message += `Customer: ${custName}\n`;
+    message += `Phone: ${custPhone}\n\n`;
+    message += `I want to order:\n\n`;
     cart.forEach(item=>{
         const itemTotal=item.price*item.quantity;
-        total+=itemTotal;
         message+=`📦 ${item.name}\n   Qty: ${item.quantity}\n   Price: ${formatPrice(item.price)} each\n   Subtotal: ${formatPrice(itemTotal)}\n\n`;
     });
-    message+=`💰 TOTAL: ${formatPrice(total)}\n\nPlease confirm availability and delivery.`;
+    message+=`💰 TOTAL: ${formatPrice(orderTotal)}\n\nPlease confirm availability and delivery.`;
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
+
+    // Clear cart after a short delay
     setTimeout(() => {
         cart = [];
         saveCart();
         updateCartCount();
         closeCart();
+        if(nameEl) nameEl.value = '';
+        if(phoneEl) phoneEl.value = '';
         showNotification('✅ Order sent — cart cleared');
     }, 500);
 }
@@ -1009,7 +1130,6 @@ function buildImagePickerHTML(targetKey, currentValue, productName){
     `;
 }
 function triggerImagePick(targetKey, productName){
-    // pre-store the product name for naming the uploaded file
     window['_imgPickerName_' + targetKey] = productName || 'product';
     const el = document.getElementById('imgFile_' + targetKey);
     if(el) el.click();
@@ -1019,35 +1139,17 @@ async function handleImageFile(ev, targetKey, productName){
     if(!file) return;
     const statusEl = document.getElementById('imgStatus_' + targetKey);
     const setStatus = (msg, cls) => { if(statusEl){ statusEl.textContent = msg; statusEl.className = 'img-picker-status ' + (cls||''); } };
-
-    // check token
-    if(!getToken()){
-        setStatus('❌ No GitHub token. Save your token first.', 'error');
-        ev.target.value = '';
-        return;
-    }
-
+    if(!getToken()){ setStatus('❌ No GitHub token. Save your token first.', 'error'); ev.target.value = ''; return; }
     setStatus('⏳ Reading photo...');
-
     try {
-        // check size — anything under 10MB is fine to attempt shrink
-        if(file.size > 15 * 1024 * 1024){
-            setStatus('❌ Photo is too large (over 15 MB). Try a smaller one.', 'error');
-            ev.target.value = '';
-            return;
-        }
-
+        if(file.size > 15 * 1024 * 1024){ setStatus('❌ Photo is too large (over 15 MB).', 'error'); ev.target.value = ''; return; }
         setStatus('⏳ Shrinking photo...');
         const { base64, ext, blobSize } = await shrinkImage(file, 800, 0.75);
-
         setStatus(`⏳ Uploading (${Math.round(blobSize/1024)} KB)...`);
         const path = await uploadImageToGitHub(base64, ext, productName || file.name);
-
-        // save into hidden value + preview
         document.getElementById('imgValue_' + targetKey).value = path;
         document.getElementById('imgEmoji_' + targetKey).value = '';
         document.getElementById('imgPreview_' + targetKey).innerHTML = `<img src="${path}" alt="">`;
-
         setStatus('✅ Uploaded! Now click Save on the product.', 'success');
     } catch(err){
         console.error(err);
@@ -1060,10 +1162,7 @@ function promptImageUrl(targetKey){
     const url = prompt('Paste the image URL (must start with http:// or https://):');
     if(!url) return;
     const clean = url.trim();
-    if(!/^https?:\/\//i.test(clean)){
-        alert('URL must start with http:// or https://');
-        return;
-    }
+    if(!/^https?:\/\//i.test(clean)){ alert('URL must start with http:// or https://'); return; }
     document.getElementById('imgValue_' + targetKey).value = clean;
     document.getElementById('imgEmoji_' + targetKey).value = '';
     document.getElementById('imgPreview_' + targetKey).innerHTML = `<img src="${clean}" alt="" onerror="this.style.display='none';this.parentElement.textContent='⚠️';this.parentElement.title='Image failed to load';">`;
@@ -1164,11 +1263,168 @@ function renderAdminProductCards(){
 function handleAdminSearch(value){ adminSearchTerm = value.trim().toLowerCase(); renderAdminProductCards(); }
 function clearAdminSearch(){ adminSearchTerm = ''; const input = document.getElementById('adminSearchInput'); if(input){ input.value = ''; } renderAdminProductCards(); }
 
+// ==================== ORDERS UI ====================
+function formatOrderDate(iso){
+    try {
+        const d = new Date(iso);
+        return d.toLocaleString('en-KE', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch(e){ return iso; }
+}
+function statusLabel(s){
+    return ({ new: 'New', confirmed: 'Confirmed', delivered: 'Delivered', cancelled: 'Cancelled' })[s] || 'New';
+}
+function renderOrdersList(){
+    const container = document.getElementById('ordersList');
+    if(!container) return;
+    if(!cachedOrders || cachedOrders.length === 0){
+        container.innerHTML = `<div class="admin-no-results">No orders yet. Orders appear here as customers place them.</div>`;
+        const cnt = document.getElementById('ordersCount');
+        if(cnt) cnt.textContent = '0 orders';
+        return;
+    }
+    let html = '';
+    cachedOrders.forEach(o => {
+        const itemsLines = (o.items||[]).map(i => `• ${i.name} × ${i.quantity} — ${formatPrice(i.subtotal)}`).join('<br>');
+        html += `<div class="order-card status-${o.status||'new'}">
+            <div class="order-head">
+                <div>
+                    <div class="order-number">#${o.id}</div>
+                    <div class="order-date">${formatOrderDate(o.date)}</div>
+                </div>
+                <select onchange="changeOrderStatus('${o.id}', this.value)">
+                    <option value="new" ${o.status==='new'?'selected':''}>New</option>
+                    <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
+                    <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+                    <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+                </select>
+            </div>
+            <div class="order-customer"><strong>${(o.customerName||'').replace(/</g,'&lt;')}</strong> · ${(o.customerPhone||'').replace(/</g,'&lt;')}</div>
+            <div class="order-customer">Handled by: <strong>${(o.handledByName||o.handledBy||'').toUpperCase()}</strong> · Status: <strong>${statusLabel(o.status)}</strong></div>
+            <div class="order-items">${itemsLines}</div>
+            <div class="order-total">Total: ${formatPrice(o.total)}</div>
+            <div class="order-actions">
+                <button class="btn-print" onclick="printOrder('${o.id}')"><i class="fas fa-print"></i> Print</button>
+                <button class="btn-send" onclick="sendOrderToCustomer('${o.id}')"><i class="fab fa-whatsapp"></i> Send to customer</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+    const cnt = document.getElementById('ordersCount');
+    if(cnt) cnt.textContent = `${cachedOrders.length} order${cachedOrders.length===1?'':'s'}`;
+}
+function findOrderById(id){
+    return cachedOrders.find(o => o.id === id) || null;
+}
+async function changeOrderStatus(id, newStatus){
+    const o = findOrderById(id);
+    if(!o) return;
+    o.status = newStatus;
+    // Optimistic UI refresh
+    renderOrdersList();
+    // Push to GitHub
+    const token = getToken();
+    if(!token){ alert('No GitHub token saved. Status changed on this device only.'); return; }
+    showNotification('⏳ Saving status...');
+    await saveOrdersToGitHub();
+    showNotification('✅ Status updated');
+}
+function buildReceiptText(o){
+    const lines = [];
+    lines.push(`A & S AUTOPARTS — RECEIPT`);
+    lines.push(`Order #${o.id}`);
+    lines.push(`Date: ${formatOrderDate(o.date)}`);
+    lines.push(`Customer: ${o.customerName}`);
+    lines.push(`Phone: ${o.customerPhone}`);
+    lines.push(`Handled by: ${(o.handledByName||o.handledBy||'').toUpperCase()}`);
+    lines.push(`Status: ${statusLabel(o.status)}`);
+    lines.push(``);
+    lines.push(`Items:`);
+    (o.items||[]).forEach(i => {
+        lines.push(`  • ${i.name}`);
+        lines.push(`      Qty: ${i.quantity} x ${formatPrice(i.price)} = ${formatPrice(i.subtotal)}`);
+    });
+    lines.push(``);
+    lines.push(`TOTAL: ${formatPrice(o.total)}`);
+    lines.push(``);
+    lines.push(`Thank you for your business.`);
+    lines.push(`ADIL: 0713349554 | SUHAYL: 0752763924`);
+    lines.push(`Mombasa, Kenya`);
+    return lines.join('\n');
+}
+function printOrder(id){
+    const o = findOrderById(id);
+    if(!o){ alert('Order not found'); return; }
+    const itemsRows = (o.items||[]).map(i => `<tr><td>${escapeHtml(i.name)}</td><td style="text-align:center">${i.quantity}</td><td style="text-align:right">${formatPrice(i.price)}</td><td style="text-align:right">${formatPrice(i.subtotal)}</td></tr>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt #${o.id}</title>
+    <style>
+        body{font-family:Arial,sans-serif;padding:20px;max-width:480px;margin:0 auto;color:#222}
+        h1{color:#1a237e;text-align:center;margin-bottom:4px}
+        .sub{text-align:center;color:#666;font-size:13px;margin-bottom:20px}
+        .meta{border:1px solid #ddd;padding:12px;border-radius:6px;margin-bottom:15px;font-size:14px}
+        .meta div{margin-bottom:4px}
+        table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:13px}
+        th{background:#f0f0f0;padding:8px;text-align:left;border-bottom:2px solid #1a237e}
+        td{padding:8px;border-bottom:1px solid #eee}
+        .total{font-size:18px;font-weight:bold;text-align:right;color:#ff6f00;padding-top:8px}
+        .footer{text-align:center;font-size:12px;color:#666;margin-top:30px;padding-top:12px;border-top:1px solid #ddd}
+        @media print { body{padding:0} }
+    </style></head><body>
+        <h1>A & S AUTOPARTS</h1>
+        <div class="sub">Mombasa, Kenya · ADIL: 0713349554 · SUHAYL: 0752763924</div>
+        <div class="meta">
+            <div><strong>Order:</strong> #${o.id}</div>
+            <div><strong>Date:</strong> ${formatOrderDate(o.date)}</div>
+            <div><strong>Customer:</strong> ${escapeHtml(o.customerName)}</div>
+            <div><strong>Phone:</strong> ${escapeHtml(o.customerPhone)}</div>
+            <div><strong>Handled by:</strong> ${(o.handledByName||o.handledBy||'').toUpperCase()}</div>
+            <div><strong>Status:</strong> ${statusLabel(o.status)}</div>
+        </div>
+        <table>
+            <thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Price</th><th style="text-align:right">Subtotal</th></tr></thead>
+            <tbody>${itemsRows}</tbody>
+        </table>
+        <div class="total">TOTAL: ${formatPrice(o.total)}</div>
+        <div class="footer">Thank you for your business — A & S AUTOPARTS</div>
+        <script>window.onload = function(){ setTimeout(function(){ window.print(); }, 300); }<\/script>
+    </body></html>`;
+    const w = window.open('', '_blank');
+    if(!w){ alert('Pop-up blocked. Allow pop-ups to print receipts.'); return; }
+    w.document.write(html);
+    w.document.close();
+}
+function sendOrderToCustomer(id){
+    const o = findOrderById(id);
+    if(!o){ alert('Order not found'); return; }
+    let digits = String(o.customerPhone||'').replace(/\D/g,'');
+    if(digits.startsWith('0')){ digits = '254' + digits.slice(1); }
+    else if(digits.startsWith('7') || digits.startsWith('1')){ digits = '254' + digits; }
+    if(!digits){ alert('No valid phone number on this order.'); return; }
+    const msg = buildReceiptText(o);
+    window.open(`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+function escapeHtml(s){
+    return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+async function refreshOrdersFromGitHub(){
+    showNotification('⏳ Refreshing orders...');
+    await fetchOrdersFromGitHub();
+    renderOrdersList();
+    showNotification('✅ Orders refreshed');
+}
+
+// ==================== ADMIN PANEL ====================
 function showAdminPanel(){
     const tokenSaved = getToken() ? '✅ Saved' : '⚠️ Not saved yet';
     let html=`<div id="adminPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:0 30px 30px 30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:2000;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
         <button onclick="closeAdminPanel()" title="Close" style="position:sticky;top:0;float:right;margin:12px 0 0 0;width:36px;height:36px;border-radius:50%;background:#f44336;color:#fff;border:none;cursor:pointer;font-size:18px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:10;">✕</button>
         <h2 style="color:#1a237e;margin:20px 0;">🔧 Admin Panel</h2>
+
+        <div style="background:#e3f2fd;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #2196f3;">
+            <h3 style="color:#1565c0;margin-bottom:8px;">📋 Orders <span id="ordersCount" style="font-size:13px;font-weight:400;color:#666;"></span></h3>
+            <button onclick="refreshOrdersFromGitHub()" style="width:100%;padding:10px;background:#2196f3;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;margin-bottom:10px;">🔄 Refresh Orders</button>
+            <div id="ordersList" style="max-height:300px;overflow-y:auto;"></div>
+        </div>
+
         <div class="admin-search-wrap">
             <h3>🔍 Search Parts</h3>
             <div class="admin-search-row">
@@ -1177,6 +1433,7 @@ function showAdminPanel(){
             </div>
             <div class="admin-search-count" id="adminSearchCount"></div>
         </div>
+
         <div style="background:#fff3e0;padding:15px;border-radius:5px;margin-bottom:20px;border-left:4px solid #ff6f00;">
             <h3 style="color:#e65100;margin-bottom:10px;">🔑 GitHub Token</h3>
             <p style="font-size:13px;color:#555;margin-bottom:10px;">Status: <strong>${tokenSaved}</strong><br>Paste your GitHub Personal Access Token below. It stays on this device only.</p>
@@ -1186,16 +1443,19 @@ function showAdminPanel(){
                 <button onclick="clearTokenFromPanel()" style="flex:1;padding:10px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">🗑️ Clear Token</button>
             </div>
         </div>
+
         <div style="background:#e8f5e9;padding:15px;border-radius:5px;margin-bottom:20px;">
             <h3 style="color:#2e7d32;margin-bottom:10px;">☁️ Sync with GitHub</h3>
             <p style="font-size:13px;color:#555;margin-bottom:10px;">Push all local changes to <code>products.json</code>, <code>options.json</code> and <code>availability.json</code>.</p>
             <button onclick="pushAllToGitHub()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">⬆️ Push All Changes to GitHub</button>
         </div>
+
         <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
             <h3>Session</h3>
             <p style="font-size:13px;color:#555;margin-top:8px;">You are logged in as admin. Close the tab or click Log Out below to lock the panel.</p>
             <button onclick="logOutAdmin()" style="margin-top:10px;padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">🔒 Log Out</button>
         </div>
+
         <div style="background:#f0f0f0;padding:15px;border-radius:5px;margin-bottom:20px;">
             <h3>Availability Status</h3>
             <p style="font-size:13px;color:#555;margin-top:6px;">Green = Available. Grey = Away (customers can still order). Changes push to GitHub in ~1 minute.</p>
@@ -1204,6 +1464,7 @@ function showAdminPanel(){
                 <button onclick="toggleAvailability('suhayl')" style="padding:10px 20px;background:${availability.suhayl?'#4caf50':'#9e9e9e'};color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">SUHAYL: ${availability.suhayl?'Available':'Away'}</button>
             </div>
         </div>
+
         <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;width:100%;font-size:16px;">➕ ADD NEW PRODUCT (Full Form)</button>
         <div id="addProductForm"></div>
         <div id="adminProductList"></div>
@@ -1211,6 +1472,11 @@ function showAdminPanel(){
     </div>`;
     document.body.insertAdjacentHTML('beforeend',html);
     renderAdminProductCards();
+    renderOrdersList();
+    // Refresh orders from GitHub in background
+    if(!cachedOrders || cachedOrders.length === 0){
+        fetchOrdersFromGitHub().then(() => renderOrdersList());
+    }
 }
 function saveTokenFromPanel(){ const t = document.getElementById('tokenInput').value.trim(); if(!t){ alert('Please paste a token.'); return; } setToken(t); alert('✅ Token saved on this device.'); closeAdminPanel(); showAdminPanel(); }
 function clearTokenFromPanel(){ if(confirm('Clear the saved GitHub token from this device?')){ clearToken(); alert('🗑️ Token cleared.'); closeAdminPanel(); showAdminPanel(); } }
@@ -1308,6 +1574,7 @@ async function init(){
     await fetchProductsFromGitHub();
     await fetchOptionsFromGitHub();
     await fetchAvailabilityFromGitHub();
+    await fetchOrdersFromGitHub();
     loadProducts();
     buildExtraCategoryCards();
     updateFloatingWhatsApp();
