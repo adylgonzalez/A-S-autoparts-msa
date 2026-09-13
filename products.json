@@ -287,5 +287,22 @@
     "image": "images/alternator-1789123527469.jpg",
     "description": "",
     "sku": "SKU-1789066296841"
+  },
+  {
+    "name": "PRESSURE PLATE TD27",
+    "price": 75000,
+    "partNo": "NSC545",
+    "oem": "NSC545",
+    "application": "Universal",
+    "category": "Clutch",
+    "brand": "Exedy",
+    "image": "images/new-part-1789289443827.jpg",
+    "vehicleMake": "Nissan",
+    "vehicleModel": "All Models",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 2,
+    "description": "",
+    "sku": "SKU-1789289451614"
   }
 ]
