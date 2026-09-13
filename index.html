@@ -123,6 +123,22 @@
         .order-actions .btn-print{background:#1a237e}
         .order-actions .btn-send{background:#25D366}
         .order-actions select{padding:8px;border-radius:5px;font-size:13px;border:1px solid #ccc;background:#fff;cursor:pointer}
+
+        /* === DIRECT ORDER POPUP === */
+        .direct-order-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:25px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35);z-index:6000;max-width:420px;width:92%;display:none}
+        .direct-order-modal.show{display:block}
+        .direct-order-modal h3{color:#1a237e;margin-bottom:6px;font-size:20px}
+        .direct-order-modal .sub{color:#666;font-size:13px;margin-bottom:15px}
+        .direct-order-modal label{font-size:13px;font-weight:700;display:block;margin-bottom:4px;color:#333}
+        .direct-order-modal input{width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;font-size:15px;margin-bottom:12px}
+        .direct-order-modal .item-preview{background:#f0f4ff;padding:10px;border-radius:6px;font-size:13px;color:#333;margin-bottom:15px;line-height:1.5}
+        .direct-order-modal .item-preview strong{color:#1a237e}
+        .direct-order-modal .modal-buttons{display:flex;gap:10px}
+        .direct-order-modal .modal-buttons button{flex:1;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:15px}
+        .direct-order-modal .btn-continue{background:#25D366;color:#fff}
+        .direct-order-modal .btn-cancel{background:#e0e0e0;color:#333}
+        .direct-order-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:5999;display:none}
+        .direct-order-overlay.show{display:block}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -237,6 +253,22 @@
         </div>
         <div id="cartWhatsAppButtons" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
         <button onclick="closeCart()" style="width:100%;padding:10px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>
+    </div>
+
+    <!-- DIRECT ORDER POPUP -->
+    <div class="direct-order-overlay" id="directOrderOverlay" onclick="closeDirectOrder()"></div>
+    <div class="direct-order-modal" id="directOrderModal">
+        <h3>Quick Order</h3>
+        <p class="sub">Just two quick details to send your order.</p>
+        <div class="item-preview" id="directOrderPreview"></div>
+        <label>Your Name *</label>
+        <input type="text" id="directOrderName" placeholder="e.g. John Mwangi">
+        <label>Your Phone *</label>
+        <input type="tel" id="directOrderPhone" placeholder="e.g. 0712345678">
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeDirectOrder()">Cancel</button>
+            <button class="btn-continue" onclick="confirmDirectOrder()"><i class="fab fa-whatsapp"></i> Continue to WhatsApp</button>
+        </div>
     </div>
 
     <script>
@@ -499,7 +531,7 @@ let cart = JSON.parse(localStorage.getItem('A & SCart')) || [];
 let adminLoggedIn = false;
 let adminSearchTerm = '';
 let cachedOrders = [];
-let orderRefreshTimer = null;
+let pendingDirectOrder = null;
 
 function saveCart(){localStorage.setItem('A & SCart', JSON.stringify(cart))}
 function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
@@ -729,9 +761,7 @@ async function appendOrderToGitHub(order){
         } catch (getErr){
             if(getErr.response && getErr.response.status === 404){ sha = null; existing = []; } else { throw getErr; }
         }
-        // newest first
         existing.unshift(order);
-        // cap at 500 orders to keep file reasonable
         if(existing.length > 500) existing = existing.slice(0, 500);
         const content = JSON.stringify(existing, null, 2);
         const base64Content = btoa(unescape(encodeURIComponent(content)));
@@ -853,7 +883,6 @@ function removeFromCart(index){cart.splice(index,1);saveCart();updateCartCount()
 function closeCart(){document.getElementById('cartModal').style.display='none';}
 
 async function checkoutCart(brother){
-    // Validate customer fields
     const nameEl = document.getElementById('custName');
     const phoneEl = document.getElementById('custPhone');
     const custName = (nameEl ? nameEl.value : '').trim();
@@ -865,7 +894,6 @@ async function checkoutCart(brother){
     const phoneNumber=brother==='adil'?'254713349554':'254752763924';
     const brotherName=brother==='adil'?'ADIL':'SUHAYL';
 
-    // Build order record
     const orderId = 'A' + Date.now().toString().slice(-8);
     const orderTotal = cart.reduce((s,i)=>s + i.price*i.quantity, 0);
     const order = {
@@ -876,17 +904,16 @@ async function checkoutCart(brother){
         handledBy: brother,
         handledByName: brotherName,
         status: 'new',
+        source: 'cart',
         items: cart.map(i => ({ name: i.name, sku: i.sku, price: i.price, quantity: i.quantity, subtotal: i.price*i.quantity })),
         total: orderTotal
     };
 
-    // Save order to GitHub (no wait if it fails)
     showNotification('⏳ Saving order...');
     const savedOk = await appendOrderToGitHub(order);
     if(savedOk){ showNotification('✅ Order saved to records'); }
     else { showNotification('⚠️ Order saved locally only — WhatsApp still works'); }
 
-    // Build WhatsApp message
     let message;
     if(isAway){
         message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\n`;
@@ -904,7 +931,6 @@ async function checkoutCart(brother){
     message+=`💰 TOTAL: ${formatPrice(orderTotal)}\n\nPlease confirm availability and delivery.`;
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
 
-    // Clear cart after a short delay
     setTimeout(() => {
         cart = [];
         saveCart();
@@ -950,20 +976,98 @@ function loadProducts(){
     products.forEach(product=>{ productGrid.appendChild(renderProductCard(product)); });
 }
 
-// ==================== ORDER VIA WHATSAPP ====================
-function orderViaWhatsApp(index,brother){
-    const product=products[index];
+// ==================== DIRECT ORDER POPUP ====================
+function openDirectOrder(index, brother){
+    const product = products[index];
+    if(!product) return;
     const isAway = (brother === 'adil' && !availability.adil) || (brother === 'suhayl' && !availability.suhayl);
+    if(isAway){
+        // if unavailable, just do the old behaviour (no popup)
+        openDirectOrderWhatsApp(index, brother, '', '', true);
+        return;
+    }
+    pendingDirectOrder = { index, brother };
+    const partNo = product.partNo || product.oem || 'N/A';
+    document.getElementById('directOrderPreview').innerHTML =
+        `<strong>${product.name}</strong><br>Part No: ${partNo} · ${product.brand||''}<br>Price: ${formatPrice(product.price)}`;
+    document.getElementById('directOrderName').value = '';
+    document.getElementById('directOrderPhone').value = '';
+    document.getElementById('directOrderOverlay').classList.add('show');
+    document.getElementById('directOrderModal').classList.add('show');
+    setTimeout(()=>{ document.getElementById('directOrderName').focus(); }, 100);
+}
+function closeDirectOrder(){
+    pendingDirectOrder = null;
+    document.getElementById('directOrderOverlay').classList.remove('show');
+    document.getElementById('directOrderModal').classList.remove('show');
+}
+async function confirmDirectOrder(){
+    if(!pendingDirectOrder){ return; }
+    const nameEl = document.getElementById('directOrderName');
+    const phoneEl = document.getElementById('directOrderPhone');
+    const custName = (nameEl.value || '').trim();
+    const custPhone = (phoneEl.value || '').trim();
+    if(!custName){ alert('Please enter your name.'); nameEl.focus(); return; }
+    if(!custPhone){ alert('Please enter your phone number.'); phoneEl.focus(); return; }
+    const { index, brother } = pendingDirectOrder;
+    closeDirectOrder();
+    await openDirectOrderWhatsApp(index, brother, custName, custPhone, false);
+}
+async function openDirectOrderWhatsApp(index, brother, custName, custPhone, isAway){
+    const product=products[index];
     const phoneNumber=brother==='adil'?'254713349554':'254752763924';
     const brotherName=brother==='adil'?'ADIL':'SUHAYL';
     const partNo = product.partNo || product.oem || 'N/A';
+
+    // Save order if we have customer details
+    let orderId = null;
+    if(custName && custPhone){
+        orderId = 'A' + Date.now().toString().slice(-8);
+        const order = {
+            id: orderId,
+            date: new Date().toISOString(),
+            customerName: custName,
+            customerPhone: custPhone,
+            handledBy: brother,
+            handledByName: brotherName,
+            status: 'new',
+            source: 'direct',
+            items: [{ name: product.name, sku: product.sku, price: product.price, quantity: 1, subtotal: product.price }],
+            total: product.price
+        };
+        showNotification('⏳ Saving order...');
+        const savedOk = await appendOrderToGitHub(order);
+        if(savedOk){ showNotification('✅ Order saved to records'); }
+        else { showNotification('⚠️ Order saved locally only'); }
+    }
+
     let message;
     if(isAway){
-        message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Part No: ${partNo}\n🏷️ Brand: ${product.brand}\n🚗 Fits: ${product.application||product.vehicleModel||''}\n💰 Price: ${formatPrice(product.price)}\n\nPlease confirm availability.`;
+        message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\n`;
     } else {
-        message=`Hello ${brotherName} (A & S AUTOPARTS),\n\nI want to order:\n\n📦 Product: ${product.name}\n🔧 Part No: ${partNo}\n🏷️ Brand: ${product.brand}\n🚗 Fits: ${product.application||product.vehicleModel||''}\n💰 Price: ${formatPrice(product.price)}\n\nPlease confirm availability.`;
+        message=`Hello ${brotherName} (A & S AUTOPARTS),\n\n`;
     }
+    if(orderId){ message += `NEW ORDER #${orderId}\n`; }
+    if(custName){ message += `Customer: ${custName}\n`; }
+    if(custPhone){ message += `Phone: ${custPhone}\n`; }
+    if(custName || custPhone){ message += `\n`; }
+    message += `I want to order:\n\n`;
+    message += `📦 Product: ${product.name}\n🔧 Part No: ${partNo}\n🏷️ Brand: ${product.brand}\n🚗 Fits: ${product.application||product.vehicleModel||''}\n💰 Price: ${formatPrice(product.price)}\n\nPlease confirm availability.`;
+
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
+}
+
+// ==================== ORDER VIA WHATSAPP ====================
+function orderViaWhatsApp(index,brother){
+    // If available, show the popup first (to collect name + phone)
+    const isAway = (brother === 'adil' && !availability.adil) || (brother === 'suhayl' && !availability.suhayl);
+    if(isAway){
+        // Away — skip popup, just open WhatsApp (order can't be saved without details)
+        openDirectOrderWhatsApp(index, brother, '', '', true);
+    } else {
+        // Available — show popup to capture customer details
+        openDirectOrder(index, brother);
+    }
 }
 
 // ==================== VIN SEARCH ====================
@@ -1285,10 +1389,11 @@ function renderOrdersList(){
     let html = '';
     cachedOrders.forEach(o => {
         const itemsLines = (o.items||[]).map(i => `• ${i.name} × ${i.quantity} — ${formatPrice(i.subtotal)}`).join('<br>');
+        const sourceLabel = o.source === 'direct' ? ' (direct)' : '';
         html += `<div class="order-card status-${o.status||'new'}">
             <div class="order-head">
                 <div>
-                    <div class="order-number">#${o.id}</div>
+                    <div class="order-number">#${o.id}${sourceLabel}</div>
                     <div class="order-date">${formatOrderDate(o.date)}</div>
                 </div>
                 <select onchange="changeOrderStatus('${o.id}', this.value)">
@@ -1319,9 +1424,7 @@ async function changeOrderStatus(id, newStatus){
     const o = findOrderById(id);
     if(!o) return;
     o.status = newStatus;
-    // Optimistic UI refresh
     renderOrdersList();
-    // Push to GitHub
     const token = getToken();
     if(!token){ alert('No GitHub token saved. Status changed on this device only.'); return; }
     showNotification('⏳ Saving status...');
@@ -1473,7 +1576,6 @@ function showAdminPanel(){
     document.body.insertAdjacentHTML('beforeend',html);
     renderAdminProductCards();
     renderOrdersList();
-    // Refresh orders from GitHub in background
     if(!cachedOrders || cachedOrders.length === 0){
         fetchOrdersFromGitHub().then(() => renderOrdersList());
     }
