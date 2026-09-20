@@ -321,5 +321,22 @@
     "stock": 15,
     "description": "",
     "sku": "SKU-1789935028369"
+  },
+  {
+    "name": "Air Filter ",
+    "price": 650,
+    "partNo": "17801-21050",
+    "oem": "17801-21050",
+    "application": "Probox/Allison/Ractis/Sienta/Wish/Voxy/Noah/Vitz",
+    "category": "Engine",
+    "brand": "BOSCH",
+    "image": "🔧",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "NZT260/ZRT260/NCP160/NCP120/ZRR70/ZRR80/NCP131/ZSA44/ZGE20",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 50,
+    "description": "",
+    "sku": "SKU-1789935603019"
   }
 ]
