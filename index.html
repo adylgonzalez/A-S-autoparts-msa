@@ -536,7 +536,7 @@ let cart = JSON.parse(localStorage.getItem('A & SCart')) || [];
 let adminLoggedIn = false;
 let adminSearchTerm = '';
 let cachedOrders = [];
-let filtersActive = false; // NEW: track if a filter/search is active
+let filtersActive = false;
 
 function saveCart(){localStorage.setItem('A & SCart', JSON.stringify(cart))}
 function formatPrice(price){return 'KSh '+price.toLocaleString('en-KE')}
@@ -695,7 +695,6 @@ async function putFileToGitHub(filePath, contentObject, commitMessage){
     const token = getToken();
     if(!token){ throw new Error('No GitHub token saved'); }
     const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
-    // Always fetch fresh SHA right before PUT to avoid 409 conflicts
     let sha = null;
     try {
         const getRes = await axios.get(apiBase, {
@@ -758,7 +757,6 @@ async function appendOrderToGitHub(order){
     const token = getToken();
     if(!token){ console.warn('No token — order not saved'); return false; }
     try {
-        // Always re-fetch the latest orders before appending, to avoid clobbering
         const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ORDERS_FILE}`;
         let sha = null, existing = [];
         try {
@@ -796,7 +794,6 @@ async function saveOrdersToGitHub(){
     if(!token){ alert('⚠️ No GitHub token saved.'); return false; }
     try {
         const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ORDERS_FILE}`;
-        // Re-fetch the LATEST orders from GitHub (don't trust cachedOrders)
         let latest = [];
         try {
             const getRes = await axios.get(apiBase, {
@@ -810,15 +807,12 @@ async function saveOrdersToGitHub(){
             if(getErr.response && getErr.response.status === 404){ latest = []; }
             else { throw getErr; }
         }
-        // Merge: our cached status changes win, but new orders from GitHub are kept
         const latestById = new Map(latest.map(o => [o.id, o]));
         cachedOrders.forEach(local => {
             if(latestById.has(local.id)){
-                // Apply our local status change on top of the latest record
                 const remote = latestById.get(local.id);
                 remote.status = local.status;
             } else {
-                // Local order not on remote yet — keep it
                 latestById.set(local.id, local);
             }
         });
@@ -826,7 +820,6 @@ async function saveOrdersToGitHub(){
         cachedOrders = merged;
         const content = JSON.stringify(merged, null, 2);
         const base64Content = btoa(unescape(encodeURIComponent(content)));
-        // Fetch fresh SHA right before PUT
         let sha = null;
         try {
             const shaRes = await axios.get(apiBase, {
@@ -1028,7 +1021,6 @@ function loadProducts(){
     const productGrid=document.getElementById('productGrid');
     productGrid.innerHTML='';
     products.forEach(product=>{ productGrid.appendChild(renderProductCard(product)); });
-    // Reset filter button
     const resetBtn = document.getElementById('resetFiltersBtn');
     if(resetBtn) resetBtn.classList.remove('show');
     filtersActive = false;
@@ -1037,20 +1029,16 @@ function loadProducts(){
 // ==================== RESET FILTERS ====================
 function resetFilters(){
     filtersActive = false;
-    // Clear search inputs
     const searchInput = document.getElementById('searchInput');
     if(searchInput) searchInput.value = '';
     const vinInput = document.getElementById('vinInput');
     if(vinInput) vinInput.value = '';
     const vinResults = document.getElementById('vinResults');
     if(vinResults){ vinResults.style.display = 'none'; vinResults.innerHTML = ''; }
-    // Reset vehicle selector
     document.getElementById('vehicleYear').value = '';
     document.getElementById('vehicleMake').value = '';
     document.getElementById('vehicleModel').innerHTML = '<option value="">Select Model</option>';
-    // Reload all products
     loadProducts();
-    // Update heading
     document.querySelector('#products h2').textContent = 'Featured Products';
     document.getElementById('products').scrollIntoView({behavior:'smooth'});
 }
@@ -1068,7 +1056,6 @@ function searchByVIN(){
         vinResults.innerHTML=`<button class="vin-results-close" onclick="closeVinResults()" title="Close">✕</button><div style="background:#fff3e0;padding:15px;border-radius:5px;"><strong>Vehicle not found</strong><p>VIN: ${escapeAttr(vin)}</p><a href="https://partsouq.com/en/catalog/genuine/locate?vin=${encodeURIComponent(vin)}" target="_blank" style="display:inline-block;padding:10px 20px;background:#1a237e;color:#fff;text-decoration:none;border-radius:5px;margin-top:10px;">Check PartSouq Catalog</a></div>`;
         return;
     }
-    // Strict VIN filter: exact make, model OR All Models, year range overlap
     const matchingProducts=products.filter(p=>{
         if(p.vehicleMake==="Universal")return true;
         if(p.vehicleMake!==matchedVehicle.make)return false;
@@ -1108,12 +1095,10 @@ function buildSourceItFallback(){
 }
 
 // ==================== MODEL NAME NORMALIZATION ====================
-// Strips slashes, lowercases, trims — so "Mazda3/Axela" becomes "mazda3" for exact comparison
 function normalizeModelName(model){
     if(!model) return '';
     return String(model).toLowerCase().split('/')[0].trim();
 }
-// Check if a product model matches a selected model (exact on normalized primary name)
 function modelMatches(productModel, selectedModel){
     if(productModel === "All Models") return true;
     return normalizeModelName(productModel) === normalizeModelName(selectedModel);
@@ -1137,17 +1122,12 @@ function findParts(){
         return;
     }
     const filtered = products.filter(p => {
-        // Universal parts always fit
         if(p.vehicleMake === "Universal") return true;
-        // Must match make exactly
         if(p.vehicleMake !== make) return false;
-        // Model must match exactly (on normalized primary name) or be "All Models"
         if(!modelMatches(p.vehicleModel, model)) return false;
-        // Year check — only if the product has a year range defined
         if(p.yearStart > 0 && p.yearEnd > 0){
             return year >= p.yearStart && year <= p.yearEnd;
         }
-        // Product has no year range → fits all years of that make/model
         return true;
     });
     displayFilteredProducts(filtered, `Parts for ${year} ${make} ${model}`);
@@ -1321,25 +1301,103 @@ function openQuickAdd(){
     const catCombo = buildComboHTML('qa_cat', 'Category', catOptions, '', 'Type new category name');
     const brandCombo = buildComboHTML('qa_br', 'Brand', brandOptions, '', 'Type new brand name');
     const imgPicker = buildImagePickerHTML('qa_img', '🔧', 'new-part');
-    const html = `<div id="quickAddModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:5000;max-width:480px;width:95%;max-height:90vh;overflow-y:auto;"><h2 style="color:#1a237e;margin-bottom:20px;">➕ Quick Add Part</h2><label style="font-size:13px;font-weight:700;">Part Name *</label><input type="text" id="qa_name" placeholder="e.g. Brake Pads - Toyota Hilux" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;"><label style="font-size:13px;font-weight:700;">Part No / OEM</label><input type="text" id="qa_partNo" placeholder="e.g. 04465-0K340" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;"><label style="font-size:13px;font-weight:700;">Fits (Application)</label><input type="text" id="qa_application" placeholder="e.g. Toyota Hilux 2015-2023" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">${brandCombo}<label style="font-size:13px;font-weight:700;">Price (KSh) *</label><input type="number" id="qa_price" placeholder="e.g. 5000" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">${catCombo}<label style="font-size:13px;font-weight:700;">Image</label>${imgPicker}<div style="display:flex;gap:10px;margin-top:10px;"><button onclick="saveQuickAdd()" style="flex:1;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">💾 Save & Push to GitHub</button><button onclick="document.getElementById('quickAddModal').remove()" style="flex:1;padding:12px;background:#ccc;color:#333;border:none;border-radius:5px;cursor:pointer;font-weight:700;">Cancel</button></div></div>`;
+    const makeList = Object.keys(vehicleModels).sort();
+    const allModels = [...new Set(Object.values(vehicleModels).flat())].sort();
+    const html = `<div id="quickAddModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:5000;max-width:480px;width:95%;max-height:90vh;overflow-y:auto;">
+        <h2 style="color:#1a237e;margin-bottom:20px;">➕ Quick Add Part</h2>
+
+        <label style="font-size:13px;font-weight:700;">Part Name *</label>
+        <input type="text" id="qa_name" placeholder="e.g. Brake Pads - Toyota Hilux" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+
+        <label style="font-size:13px;font-weight:700;">Part No / OEM</label>
+        <input type="text" id="qa_partNo" placeholder="e.g. 04465-0K340" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+
+        <label style="font-size:13px;font-weight:700;">Fits (Application)</label>
+        <input type="text" id="qa_application" placeholder="e.g. Toyota Hilux 2015-2023" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+                <label style="font-size:13px;font-weight:700;">Vehicle Make *</label>
+                <input type="text" id="qa_vmake" list="qa_make_list" placeholder="e.g. Toyota" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                <datalist id="qa_make_list">${makeList.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+            </div>
+            <div>
+                <label style="font-size:13px;font-weight:700;">Vehicle Model *</label>
+                <input type="text" id="qa_vmodel" list="qa_model_list" placeholder="e.g. Hilux" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                <datalist id="qa_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+            </div>
+        </div>
+        <div style="font-size:11px;color:#888;margin:4px 0 12px;">Use "Universal" for make + "All Models" for model if it fits anything.</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+                <label style="font-size:13px;font-weight:700;">Year Start</label>
+                <input type="number" id="qa_ystart" placeholder="e.g. 2015" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+            </div>
+            <div>
+                <label style="font-size:13px;font-weight:700;">Year End</label>
+                <input type="number" id="qa_yend" placeholder="e.g. 2023" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+            </div>
+        </div>
+
+        ${brandCombo}
+
+        <label style="font-size:13px;font-weight:700;">Price (KSh) *</label>
+        <input type="number" id="qa_price" placeholder="e.g. 5000" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+
+        ${catCombo}
+
+        <label style="font-size:13px;font-weight:700;">Image</label>
+        ${imgPicker}
+
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <button onclick="saveQuickAdd()" style="flex:1;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">💾 Save & Push to GitHub</button>
+            <button onclick="document.getElementById('quickAddModal').remove()" style="flex:1;padding:12px;background:#ccc;color:#333;border:none;border-radius:5px;cursor:pointer;font-weight:700;">Cancel</button>
+        </div>
+    </div>`;
     document.body.insertAdjacentHTML('beforeend', html);
 }
+
 async function saveQuickAdd(){
     const name = document.getElementById('qa_name').value.trim();
     const price = parseInt(document.getElementById('qa_price').value);
     if(!name || !price){ alert('Please enter at least a name and price.'); return; }
+
     const partNo = document.getElementById('qa_partNo').value.trim();
     const application = document.getElementById('qa_application').value.trim();
     const brandVal = getComboValue('qa_br');
     const catVal = getComboValue('qa_cat');
     const imgVal = readImagePickerValue('qa_img') || '🔧';
+
+    const vMake = (document.getElementById('qa_vmake').value || '').trim() || 'Universal';
+    const vModel = (document.getElementById('qa_vmodel').value || '').trim() || 'All Models';
+    const yStart = parseInt(document.getElementById('qa_ystart').value) || 0;
+    const yEnd = parseInt(document.getElementById('qa_yend').value) || 0;
+
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
+
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){ showNotification('⏳ Saving new brand/category...'); await saveOptionsToGitHub(); buildExtraCategoryCards(); }
-    const newProduct = { name, price, partNo: partNo || 'N/A', oem: partNo || 'N/A', application: application || 'Universal', brand: brandVal, category: catVal, image: imgVal, description: name, vehicleMake: 'Universal', vehicleModel: 'All Models', yearStart: 0, yearEnd: 0, sku: 'QA-' + Date.now(), stock: 1 };
+
+    const newProduct = {
+        name, price,
+        partNo: partNo || 'N/A',
+        oem: partNo || 'N/A',
+        application: application || `${vMake} ${vModel}`.trim(),
+        brand: brandVal,
+        category: catVal,
+        image: imgVal,
+        description: name,
+        vehicleMake: vMake,
+        vehicleModel: vModel,
+        yearStart: yStart,
+        yearEnd: yEnd,
+        sku: 'QA-' + Date.now(),
+        stock: 1
+    };
     products.push(newProduct);
     loadProducts();
     document.getElementById('quickAddModal').remove();
@@ -1373,12 +1431,45 @@ function renderAdminProductCards(){
     }
     const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
     const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
+    const makeList = Object.keys(vehicleModels).sort();
+    const allModels = [...new Set(Object.values(vehicleModels).flat())].sort();
     let html = '';
     list.forEach(({product, index})=>{
         const catCombo = buildComboHTML(`edit_cat_${index}`, 'Category', catOptions, product.category || '', 'Type new category name');
         const brandCombo = buildComboHTML(`edit_br_${index}`, 'Brand', brandOptions, product.brand || '', 'Type new brand name');
         const imgPicker = buildImagePickerHTML(`edit_img_${index}`, product.image || '🔧', product.name || 'product');
-        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;"><label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Product Name (editable):</label><input type="text" id="name_${index}" value="${escapeAttr(product.name||'')}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-weight:700;font-size:15px;margin-bottom:6px;"><small>Part No: ${escapeAttr(product.partNo||product.oem||'N/A')} | SKU: ${escapeAttr(product.sku)}</small><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;"><div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div><div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock||0}" style="width:100%;padding:5px;"></div><div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${escapeAttr(product.partNo||product.oem||'')}" style="width:100%;padding:5px;"></div><div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${escapeAttr(product.application||'')}" style="width:100%;padding:5px;"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div><div style="margin-top:10px;"><label style="font-size:12px;font-weight:700;">Image (photo, URL, or emoji):</label>${imgPicker}</div><div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${escapeAttr(product.description||'')}</textarea></div><div style="margin-top:10px;display:flex;gap:10px;"><button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">💾 Save</button><button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button></div></div>`;
+        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
+            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Product Name (editable):</label>
+            <input type="text" id="name_${index}" value="${escapeAttr(product.name||'')}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-weight:700;font-size:15px;margin-bottom:6px;">
+            <small>Part No: ${escapeAttr(product.partNo||product.oem||'N/A')} | SKU: ${escapeAttr(product.sku)}</small>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                <div><label style="font-size:12px;">Price (KSh):</label><input type="number" id="price_${index}" value="${product.price}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Stock:</label><input type="number" id="stock_${index}" value="${product.stock||0}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Part No:</label><input type="text" id="partNo_${index}" value="${escapeAttr(product.partNo||product.oem||'')}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Fits (Application):</label><input type="text" id="application_${index}" value="${escapeAttr(product.application||'')}" style="width:100%;padding:5px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                <div>
+                    <label style="font-size:12px;font-weight:700;">Vehicle Make:</label>
+                    <input type="text" id="vmake_${index}" list="edit_make_list_${index}" value="${escapeAttr(product.vehicleMake||'')}" placeholder="e.g. Toyota" style="width:100%;padding:5px;border:1px solid #ccc;border-radius:5px;">
+                    <datalist id="edit_make_list_${index}">${makeList.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                </div>
+                <div>
+                    <label style="font-size:12px;font-weight:700;">Vehicle Model:</label>
+                    <input type="text" id="vmodel_${index}" list="edit_model_list_${index}" value="${escapeAttr(product.vehicleModel||'')}" placeholder="e.g. Hilux" style="width:100%;padding:5px;border:1px solid #ccc;border-radius:5px;">
+                    <datalist id="edit_model_list_${index}">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                </div>
+                <div><label style="font-size:12px;">Year Start:</label><input type="number" id="ystart_${index}" value="${product.yearStart||0}" style="width:100%;padding:5px;"></div>
+                <div><label style="font-size:12px;">Year End:</label><input type="number" id="yend_${index}" value="${product.yearEnd||0}" style="width:100%;padding:5px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div>
+            <div style="margin-top:10px;"><label style="font-size:12px;font-weight:700;">Image (photo, URL, or emoji):</label>${imgPicker}</div>
+            <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${escapeAttr(product.description||'')}</textarea></div>
+            <div style="margin-top:10px;display:flex;gap:10px;">
+                <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
+                <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
+            </div>
+        </div>`;
     });
     container.innerHTML = html;
     const countEl = document.getElementById('adminSearchCount');
@@ -1615,7 +1706,35 @@ function showAddProductForm(){
     const catCombo = buildComboHTML('new_cat', 'Category', catOptions, '', 'Type new category name');
     const brandCombo = buildComboHTML('new_br', 'Brand', brandOptions, '', 'Type new brand name');
     const imgPicker = buildImagePickerHTML('new_img', '🔧', 'new-part');
-    const formHTML=`<div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;"><h3 style="color:#2e7d32;">➕ Add New Product (Full Form)</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;"><div><label>Product Name:</label><input type="text" id="new_name" style="width:100%;padding:5px;"></div><div><label>Price (KSh):</label><input type="number" id="new_price" style="width:100%;padding:5px;"></div><div><label>Part No / OEM:</label><input type="text" id="new_oem" style="width:100%;padding:5px;"></div><div><label>Fits (Application):</label><input type="text" id="new_application" style="width:100%;padding:5px;" placeholder="e.g. Toyota Hilux 2015-2023"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;"><div><label>Vehicle Make:</label><input type="text" id="new_vmake" style="width:100%;padding:5px;" placeholder="Toyota, Universal..."></div><div><label>Vehicle Model:</label><input type="text" id="new_vmodel" style="width:100%;padding:5px;" placeholder="Camry, All Models..."></div><div><label>Stock:</label><input type="number" id="new_stock" value="0" style="width:100%;padding:5px;"></div></div><div style="margin-top:10px;"><label style="font-weight:700;">Image (photo, URL, or emoji):</label>${imgPicker}</div><div style="margin-top:10px;"><label>Description:</label><textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea></div><button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button></div>`;
+    const makeList = Object.keys(vehicleModels).sort();
+    const allModels = [...new Set(Object.values(vehicleModels).flat())].sort();
+    const formHTML=`<div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;"><h3 style="color:#2e7d32;">➕ Add New Product (Full Form)</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div><label>Product Name:</label><input type="text" id="new_name" style="width:100%;padding:5px;"></div>
+            <div><label>Price (KSh):</label><input type="number" id="new_price" style="width:100%;padding:5px;"></div>
+            <div><label>Part No / OEM:</label><input type="text" id="new_oem" style="width:100%;padding:5px;"></div>
+            <div><label>Fits (Application):</label><input type="text" id="new_application" style="width:100%;padding:5px;" placeholder="e.g. Toyota Hilux 2015-2023"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div>
+                <label>Vehicle Make:</label>
+                <input type="text" id="new_vmake" list="new_make_list" style="width:100%;padding:5px;" placeholder="Toyota, Universal...">
+                <datalist id="new_make_list">${makeList.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+            </div>
+            <div>
+                <label>Vehicle Model:</label>
+                <input type="text" id="new_vmodel" list="new_model_list" style="width:100%;padding:5px;" placeholder="Hilux, All Models...">
+                <datalist id="new_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+            </div>
+            <div><label>Year Start:</label><input type="number" id="new_ystart" value="0" style="width:100%;padding:5px;"></div>
+            <div><label>Year End:</label><input type="number" id="new_yend" value="0" style="width:100%;padding:5px;"></div>
+            <div><label>Stock:</label><input type="number" id="new_stock" value="0" style="width:100%;padding:5px;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div>
+        <div style="margin-top:10px;"><label style="font-weight:700;">Image (photo, URL, or emoji):</label>${imgPicker}</div>
+        <div style="margin-top:10px;"><label>Description:</label><textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea></div>
+        <button onclick="addNewProduct()" style="padding:10px 20px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">➕ Add Product</button>
+    </div>`;
     document.getElementById('addProductForm').innerHTML=formHTML;
 }
 async function addNewProduct(){
@@ -1630,7 +1749,23 @@ async function addNewProduct(){
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){ showNotification('⏳ Saving new brand/category...'); await saveOptionsToGitHub(); buildExtraCategoryCards(); }
-    const newProduct={ name:document.getElementById('new_name').value, price:parseInt(document.getElementById('new_price').value), partNo: partNo || 'N/A', oem: partNo || 'N/A', application: application || 'Universal', category: catVal, brand: brandVal, image: imgVal, vehicleMake:document.getElementById('new_vmake').value||'Universal', vehicleModel:document.getElementById('new_vmodel').value||'All Models', yearStart:0,yearEnd:0, stock:parseInt(document.getElementById('new_stock').value)||0, description:document.getElementById('new_description').value, sku:'SKU-'+Date.now() };
+    const newProduct={
+        name:document.getElementById('new_name').value,
+        price:parseInt(document.getElementById('new_price').value),
+        partNo: partNo || 'N/A',
+        oem: partNo || 'N/A',
+        application: application || 'Universal',
+        category: catVal,
+        brand: brandVal,
+        image: imgVal,
+        vehicleMake:(document.getElementById('new_vmake').value||'Universal').trim(),
+        vehicleModel:(document.getElementById('new_vmodel').value||'All Models').trim(),
+        yearStart:parseInt(document.getElementById('new_ystart').value)||0,
+        yearEnd:parseInt(document.getElementById('new_yend').value)||0,
+        stock:parseInt(document.getElementById('new_stock').value)||0,
+        description:document.getElementById('new_description').value,
+        sku:'SKU-'+Date.now()
+    };
     if(!newProduct.name||!newProduct.price){alert('Please enter product name and price');return}
     products.push(newProduct);
     loadProducts();
@@ -1648,6 +1783,13 @@ async function updateProduct(index){
     products[index].application=document.getElementById(`application_${index}`).value;
     products[index].description=document.getElementById(`desc_${index}`).value;
     products[index].image = readImagePickerValue(`edit_img_${index}`) || '🔧';
+
+    // NEW: Vehicle make, model, year range
+    products[index].vehicleMake = (document.getElementById(`vmake_${index}`).value || 'Universal').trim();
+    products[index].vehicleModel = (document.getElementById(`vmodel_${index}`).value || 'All Models').trim();
+    products[index].yearStart = parseInt(document.getElementById(`ystart_${index}`).value) || 0;
+    products[index].yearEnd = parseInt(document.getElementById(`yend_${index}`).value) || 0;
+
     const newBrandVal = getComboValue(`edit_br_${index}`);
     const newCatVal = getComboValue(`edit_cat_${index}`);
     if(!newBrandVal){ alert('Please select or add a brand.'); return; }
@@ -1692,7 +1834,6 @@ function logOutAdmin(){
 // ==================== INITIALIZE ====================
 async function init(){
     document.getElementById('quickAddFab').classList.remove('show');
-    // Show loading state
     const grid = document.getElementById('productGrid');
     grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><div>Loading parts from GitHub...</div></div>`;
     await fetchProductsFromGitHub();
