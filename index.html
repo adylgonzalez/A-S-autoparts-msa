@@ -967,7 +967,18 @@ function searchByVIN(){
         vinResults.innerHTML=`<button class="vin-results-close" onclick="closeVinResults()" title="Close">✕</button><div style="background:#fff3e0;padding:15px;border-radius:5px;"><strong>Vehicle not found</strong><p>VIN: ${vin}</p><a href="https://partsouq.com/en/catalog/genuine/locate?vin=${vin}" target="_blank" style="display:inline-block;padding:10px 20px;background:#1a237e;color:#fff;text-decoration:none;border-radius:5px;margin-top:10px;">Check PartSouq Catalog</a></div>`;
         return;
     }
-    const matchingProducts=products.filter(p=>{if(p.vehicleMake==="Universal")return true;if(p.vehicleMake===matchedVehicle.make){if(p.vehicleModel==="All Models")return true;const pm=p.vehicleModel.toLowerCase(),mm=matchedVehicle.model.toLowerCase();if(pm.includes(mm)||mm.includes(pm))return true}return false});
+    // Strict VIN filter: only match exact make, and model or All Models, and year range (if set)
+    const matchingProducts=products.filter(p=>{
+        if(p.vehicleMake==="Universal")return true;
+        if(p.vehicleMake!==matchedVehicle.make)return false;
+        const pm=(p.vehicleModel||'').toLowerCase(), mm=matchedVehicle.model.toLowerCase();
+        if(p.vehicleModel!=="All Models" && !pm.includes(mm) && !mm.includes(pm))return false;
+        if(p.yearStart>0 && p.yearEnd>0){
+            // For VIN search, check if any year in the vehicle's range overlaps the product's range
+            return matchedVehicle.years[1] >= p.yearStart && matchedVehicle.years[0] <= p.yearEnd;
+        }
+        return true;
+    });
     vinResults.style.display='block';
     let resultsHTML=`<div style="background:#e8f5e9;padding:15px;border-radius:5px;"><strong>✅ ${matchedVehicle.make} ${matchedVehicle.model}</strong><br><small>Code: ${matchedCode} | Years: ${matchedVehicle.years[0]}-${matchedVehicle.years[1]}</small>${matchingProducts.length>0?`<p>Found ${matchingProducts.length} compatible parts:</p>`:'<p>No matching parts in stock.</p>'}</div>`;
     if(matchingProducts.length>0){
@@ -1002,14 +1013,34 @@ document.getElementById('vehicleMake').addEventListener('change',function(){
     modelSelect.innerHTML='<option value="">Select Model</option>';
     if(make&&vehicleModels[make]){vehicleModels[make].forEach(model=>{const option=document.createElement('option');option.value=model;option.textContent=model;modelSelect.appendChild(option)})}
 });
+
+// ---------- FIXED findParts ----------
 function findParts(){
-    const year=parseInt(document.getElementById('vehicleYear').value);
-    const make=document.getElementById('vehicleMake').value;
-    const model=document.getElementById('vehicleModel').value;
-    if(!year||!make||!model){alert('Please select year, make, and model');return}
-    const filtered=products.filter(p=>{if(p.vehicleMake==="Universal")return true;if(p.vehicleMake!==make)return false;if(p.vehicleModel!==model&&p.vehicleModel!=="All Models")return false;if(p.yearStart>0&&p.yearEnd>0){return year>=p.yearStart&&year<=p.yearEnd}return true});
-    displayFilteredProducts(filtered,`Parts for ${year} ${make} ${model}`);
+    const year = parseInt(document.getElementById('vehicleYear').value);
+    const make = document.getElementById('vehicleMake').value;
+    const model = document.getElementById('vehicleModel').value;
+    if(!year || !make || !model){
+        alert('Please select year, make, and model');
+        return;
+    }
+    const filtered = products.filter(p => {
+        // Universal parts always fit
+        if(p.vehicleMake === "Universal") return true;
+        // Must match make exactly
+        if(p.vehicleMake !== make) return false;
+        // Model must match, or be "All Models"
+        if(p.vehicleModel !== model && p.vehicleModel !== "All Models") return false;
+        // Year check — only if the product has a year range defined
+        if(p.yearStart > 0 && p.yearEnd > 0){
+            return year >= p.yearStart && year <= p.yearEnd;
+        }
+        // Product has no year range → fits all years of that make/model
+        return true;
+    });
+    displayFilteredProducts(filtered, `Parts for ${year} ${make} ${model}`);
 }
+// ---------- END FIXED findParts ----------
+
 function displayFilteredProducts(list,title){
     const grid=document.getElementById('productGrid');
     grid.innerHTML='';
