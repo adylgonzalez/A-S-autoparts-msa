@@ -287,5 +287,22 @@
     "image": "images/alternator-1789123527469.jpg",
     "description": "",
     "sku": "SKU-1789066296841"
+  },
+  {
+    "name": "Radiator",
+    "price": 13500,
+    "partNo": "N/A",
+    "oem": "N/A",
+    "application": "Toyota Crown, Mark X, Lexus IS250/IS350",
+    "brand": "Tongshi",
+    "category": "Cooling",
+    "image": "images/new-part-1789922536279.jpg",
+    "description": "Radiator",
+    "vehicleMake": "Universal",
+    "vehicleModel": "All Models",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "sku": "QA-1789922547253",
+    "stock": 1
   }
 ]
