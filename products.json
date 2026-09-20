@@ -304,5 +304,22 @@
     "yearEnd": 0,
     "sku": "QA-1789922547253",
     "stock": 1
+  },
+  {
+    "name": "Front Brake Pads",
+    "price": 14800,
+    "partNo": "04465-35290/04465-60320/04465-60210/04465-0K580/04465-YZZJ2/04465-YZZE1/4605A72",
+    "oem": "04465-35290/04465-60320/04465-60210/04465-0K580/04465-YZZJ2/04465-YZZE1/4605A72",
+    "application": "Prado 120/150/Hilux/Pajero/Fortuner/LexusGX400/Surf/Fjcruiserr ",
+    "category": "Brakes",
+    "brand": "TOYOTA Genuine",
+    "image": "🔧",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "TRJ120/KDJ120/VZJ121/TRJ125/TRJ150/KDJ150/LJ150/GDJ150/KUN25/KUN125/KUN135/GSJ15",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 15,
+    "description": "",
+    "sku": "SKU-1789935028369"
   }
 ]
