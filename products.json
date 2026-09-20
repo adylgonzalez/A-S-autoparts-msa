@@ -338,5 +338,22 @@
     "stock": 50,
     "description": "",
     "sku": "SKU-1789935603019"
+  },
+  {
+    "name": "SPARK PLUGS -  IRIDIUM TT",
+    "price": 25000,
+    "partNo": "IKBH20TT",
+    "oem": "IKBH20TT",
+    "application": "All 4gr Engines",
+    "category": "Ignition",
+    "brand": "DENSO",
+    "image": "images/new-part-1789937846021.jpg",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Crown grs180,grs182,grs200, Mark x, Lexus IS250, Lexus GS250",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 10,
+    "description": "",
+    "sku": "SKU-1789937851009"
   }
 ]
