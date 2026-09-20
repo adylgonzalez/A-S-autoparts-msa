@@ -355,5 +355,22 @@
     "stock": 10,
     "description": "",
     "sku": "SKU-1789937851009"
+  },
+  {
+    "name": "Front Lip",
+    "price": 15000,
+    "partNo": "N/A",
+    "oem": "N/A",
+    "application": "GRS180, 182, 184",
+    "category": "Accessories",
+    "brand": "Other",
+    "image": "images/new-part-1789938936002.jpg",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Crown",
+    "yearStart": 2004,
+    "yearEnd": 2008,
+    "stock": 5,
+    "description": "",
+    "sku": "SKU-1789938960916"
   }
 ]
