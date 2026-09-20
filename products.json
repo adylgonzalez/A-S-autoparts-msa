@@ -357,7 +357,7 @@
     "sku": "SKU-1789937851009"
   },
   {
-    "name": "Front Lip",
+    "name": "Toyota Crown - Front Lip",
     "price": 15000,
     "partNo": "N/A",
     "oem": "N/A",
@@ -371,6 +371,9 @@
     "yearEnd": 2008,
     "stock": 5,
     "description": "",
-    "sku": "SKU-1789938960916"
+    "sku": "SKU-1789938960916",
+    "images": [
+      "images/new-part-1789938936002.jpg"
+    ]
   }
 ]
