@@ -145,6 +145,9 @@
         .order-actions .btn-print{background:#1a237e}
         .order-actions .btn-send{background:#25D366}
         .order-actions select{padding:8px;border-radius:5px;font-size:13px;border:1px solid #ccc;background:#fff;cursor:pointer}
+
+        /* === MULTI-MODEL HINT === */
+        .multi-model-hint{font-size:11px;color:#888;margin-top:4px}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -788,7 +791,6 @@ async function appendOrderToGitHub(order){
         return false;
     }
 }
-// ---------- SAFE ORDER STATUS UPDATE: re-fetch, merge, PUT ----------
 async function saveOrdersToGitHub(){
     const token = getToken();
     if(!token){ alert('⚠️ No GitHub token saved.'); return false; }
@@ -1059,9 +1061,7 @@ function searchByVIN(){
     const matchingProducts=products.filter(p=>{
         if(p.vehicleMake==="Universal")return true;
         if(p.vehicleMake!==matchedVehicle.make)return false;
-        const pModelNorm = normalizeModelName(p.vehicleModel);
-        const mModelNorm = normalizeModelName(matchedVehicle.model);
-        if(p.vehicleModel !== "All Models" && pModelNorm !== mModelNorm) return false;
+        if(!modelMatches(p.vehicleModel, matchedVehicle.model)) return false;
         if(p.yearStart>0 && p.yearEnd>0){
             return matchedVehicle.years[1] >= p.yearStart && matchedVehicle.years[0] <= p.yearEnd;
         }
@@ -1094,14 +1094,27 @@ function buildSourceItFallback(){
     return `<div class="source-it-box" style="margin-top:20px;"><h3>🔍 We don't have this listed — but we can source it.</h3><p>Send us the part number or your car details on WhatsApp and we'll quote you within the hour.</p><div class="source-buttons"><a href="https://wa.me/254713349554?text=Hi%20ADIL%2C%20I%27m%20looking%20for%20a%20part%20you%20don%27t%20have%20listed.%20Can%20you%20source%20it%3F" target="_blank" class="adil"><i class="fab fa-whatsapp"></i> WhatsApp ADIL</a><a href="https://wa.me/254752763924?text=Hi%20SUHAYL%2C%20I%27m%20looking%20for%20a%20part%20you%20don%27t%20have%20listed.%20Can%20you%20source%20it%3F" target="_blank" class="suhayl"><i class="fab fa-whatsapp"></i> WhatsApp SUHAYL</a></div></div>`;
 }
 
-// ==================== MODEL NAME NORMALIZATION ====================
+// ==================== MODEL NAME NORMALIZATION & MULTI-MODEL MATCHING ====================
 function normalizeModelName(model){
     if(!model) return '';
-    return String(model).toLowerCase().split('/')[0].trim();
+    return String(model).toLowerCase().trim();
 }
+
+// Splits a product's model field on commas or slashes and checks if selected model is in the list.
+// Examples:
+//   productModel "Hilux"                          selected "Hilux"   → true
+//   productModel "Hilux, Fortuner, Innova"        selected "Fortuner" → true
+//   productModel "Corolla/Vios/Yaris"             selected "Vios"    → true
+//   productModel "All Models"                     any selected       → true
 function modelMatches(productModel, selectedModel){
+    if(!productModel) return false;
     if(productModel === "All Models") return true;
-    return normalizeModelName(productModel) === normalizeModelName(selectedModel);
+    const productModels = String(productModel)
+        .split(/[,\/]/)
+        .map(s => normalizeModelName(s))
+        .filter(Boolean);
+    const sel = normalizeModelName(selectedModel);
+    return productModels.includes(sel);
 }
 
 // ==================== VEHICLE SELECTOR ====================
@@ -1112,7 +1125,7 @@ document.getElementById('vehicleMake').addEventListener('change',function(){
     if(make&&vehicleModels[make]){vehicleModels[make].forEach(model=>{const option=document.createElement('option');option.value=model;option.textContent=model;modelSelect.appendChild(option)})}
 });
 
-// ---------- FIXED findParts: exact model match, strict make/year filter ----------
+// ---------- FIXED findParts: exact model match with multi-model support ----------
 function findParts(){
     const year = parseInt(document.getElementById('vehicleYear').value);
     const make = document.getElementById('vehicleMake').value;
@@ -1323,8 +1336,9 @@ function openQuickAdd(){
             </div>
             <div>
                 <label style="font-size:13px;font-weight:700;">Vehicle Model *</label>
-                <input type="text" id="qa_vmodel" list="qa_model_list" placeholder="e.g. Hilux" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                <input type="text" id="qa_vmodel" list="qa_model_list" placeholder="e.g. Hilux, Fortuner, Prado" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
                 <datalist id="qa_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                <div class="multi-model-hint">Separate multiple models with commas — e.g. Hilux, Fortuner, Prado</div>
             </div>
         </div>
         <div style="font-size:11px;color:#888;margin:4px 0 12px;">Use "Universal" for make + "All Models" for model if it fits anything.</div>
@@ -1456,8 +1470,9 @@ function renderAdminProductCards(){
                 </div>
                 <div>
                     <label style="font-size:12px;font-weight:700;">Vehicle Model:</label>
-                    <input type="text" id="vmodel_${index}" list="edit_model_list_${index}" value="${escapeAttr(product.vehicleModel||'')}" placeholder="e.g. Hilux" style="width:100%;padding:5px;border:1px solid #ccc;border-radius:5px;">
+                    <input type="text" id="vmodel_${index}" list="edit_model_list_${index}" value="${escapeAttr(product.vehicleModel||'')}" placeholder="e.g. Hilux, Fortuner" style="width:100%;padding:5px;border:1px solid #ccc;border-radius:5px;">
                     <datalist id="edit_model_list_${index}">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                    <div class="multi-model-hint">Separate multiple models with commas</div>
                 </div>
                 <div><label style="font-size:12px;">Year Start:</label><input type="number" id="ystart_${index}" value="${product.yearStart||0}" style="width:100%;padding:5px;"></div>
                 <div><label style="font-size:12px;">Year End:</label><input type="number" id="yend_${index}" value="${product.yearEnd||0}" style="width:100%;padding:5px;"></div>
@@ -1723,8 +1738,9 @@ function showAddProductForm(){
             </div>
             <div>
                 <label>Vehicle Model:</label>
-                <input type="text" id="new_vmodel" list="new_model_list" style="width:100%;padding:5px;" placeholder="Hilux, All Models...">
+                <input type="text" id="new_vmodel" list="new_model_list" style="width:100%;padding:5px;" placeholder="Hilux, Fortuner, Prado">
                 <datalist id="new_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                <div class="multi-model-hint">Separate multiple models with commas</div>
             </div>
             <div><label>Year Start:</label><input type="number" id="new_ystart" value="0" style="width:100%;padding:5px;"></div>
             <div><label>Year End:</label><input type="number" id="new_yend" value="0" style="width:100%;padding:5px;"></div>
@@ -1784,7 +1800,6 @@ async function updateProduct(index){
     products[index].description=document.getElementById(`desc_${index}`).value;
     products[index].image = readImagePickerValue(`edit_img_${index}`) || '🔧';
 
-    // NEW: Vehicle make, model, year range
     products[index].vehicleMake = (document.getElementById(`vmake_${index}`).value || 'Universal').trim();
     products[index].vehicleModel = (document.getElementById(`vmodel_${index}`).value || 'All Models').trim();
     products[index].yearStart = parseInt(document.getElementById(`ystart_${index}`).value) || 0;
