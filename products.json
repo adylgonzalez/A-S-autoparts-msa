@@ -298,12 +298,15 @@
     "category": "Cooling",
     "image": "images/new-part-1789922536279.jpg",
     "description": "Radiator",
-    "vehicleMake": "Universal",
-    "vehicleModel": "All Models",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Mark X, Crown, Lexus IS250",
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "QA-1789922547253",
-    "stock": 1
+    "stock": 1,
+    "images": [
+      "images/new-part-1789922536279.jpg"
+    ]
   },
   {
     "name": "Front Brake Pads",
