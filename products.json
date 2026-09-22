@@ -378,5 +378,22 @@
     "images": [
       "images/new-part-1789938936002.jpg"
     ]
+  },
+  {
+    "name": "Coolant bypass Pipe Aluminium",
+    "price": 6000,
+    "partNo": "SH20-15-290A",
+    "oem": "SH20-15-290A",
+    "application": "Mazda Diesel",
+    "category": "Cooling",
+    "brand": "Local",
+    "image": "images/new-part-1790078181841.jpg",
+    "vehicleMake": "Mazda",
+    "vehicleModel": "Mazda3/5&CX5",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 5,
+    "description": "",
+    "sku": "SKU-1790078198325"
   }
 ]
