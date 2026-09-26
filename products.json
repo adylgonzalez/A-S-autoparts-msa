@@ -435,5 +435,25 @@
     "stock": 5,
     "description": "",
     "sku": "SKU-1790436480789"
+  },
+  {
+    "name": "SPARK PLUGS -  DENSO TOUGH",
+    "price": 7000,
+    "partNo": "VFKB16",
+    "oem": "VFKB16",
+    "application": "TOYOTA 1NZ-FXE - Vitz, Sienta, Aqua, Prius, Fielder, Probox",
+    "category": "Ignition",
+    "brand": "DENSO",
+    "image": "images/new-part-1790441162156.jpg",
+    "images": [
+      "images/new-part-1790441162156.jpg"
+    ],
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Vitz, Sienta, Aqua, Prius, Fielder, Probox",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 2,
+    "description": "",
+    "sku": "SKU-1790441177399"
   }
 ]
