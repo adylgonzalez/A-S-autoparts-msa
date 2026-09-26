@@ -455,5 +455,25 @@
     "stock": 2,
     "description": "",
     "sku": "SKU-1790441177399"
+  },
+  {
+    "name": "Oil Filter",
+    "price": 1000,
+    "partNo": "F103301",
+    "oem": "F103301",
+    "application": "Mazda Demio",
+    "category": "Engine",
+    "brand": "Kamoka",
+    "image": "images/new-part-1790442078100.jpg",
+    "images": [
+      "images/new-part-1790442078100.jpg"
+    ],
+    "vehicleMake": "Mazda",
+    "vehicleModel": "Demio",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 5,
+    "description": "",
+    "sku": "SKU-1790442101493"
   }
 ]
