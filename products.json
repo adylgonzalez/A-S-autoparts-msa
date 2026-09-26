@@ -417,23 +417,23 @@
     "sku": "SKU-1790436025358"
   },
   {
-    "name": "Oil Filter- Mazda Demio",
-    "price": 1000,
-    "partNo": "F103301",
-    "oem": "F103301",
-    "application": "Mazda Demio",
-    "category": "Engine",
-    "brand": "Kamoka",
-    "image": "images/new-part-1790436281497.jpg",
+    "name": "Brake Shoe",
+    "price": 14500,
+    "partNo": "04495-60070",
+    "oem": "04495-60070",
+    "application": "Toyota Landcruiser",
+    "category": "Brakes",
+    "brand": "TOYOTA Genuine",
+    "image": "images/new-part-1790436476646.jpg",
     "images": [
-      "images/new-part-1790436281497.jpg"
+      "images/new-part-1790436476646.jpg"
     ],
-    "vehicleMake": "Mazda",
-    "vehicleModel": "Demio",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "HZJ75/HZJ79",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 5,
     "description": "",
-    "sku": "SKU-1790436286689"
+    "sku": "SKU-1790436480789"
   }
 ]
