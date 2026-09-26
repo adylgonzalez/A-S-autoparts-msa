@@ -40,11 +40,6 @@
         .lwu-whatsapp a.suhayl{background:#128C7E}
         @media(max-width:768px){.lwu-whatsapp a{min-width:100%}.list-with-us h2{font-size:28px}}
 
-        /* === QUICK ADD BUTTON — HIDDEN BY DEFAULT === */
-        .quick-add-fab{position:fixed;top:80px;right:20px;background:#4caf50;color:#fff;border:none;border-radius:50px;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:1500;display:none !important;align-items:center;gap:8px}
-        .quick-add-fab.show{display:flex !important}
-        .quick-add-fab:hover{background:#388e3c}
-
         /* === SOURCE-IT FALLBACK === */
         .source-it-box{grid-column:1/-1;background:#fff3e0;border:2px dashed #ff6f00;border-radius:12px;padding:30px 25px;text-align:center;max-width:600px;margin:0 auto}
         .source-it-box h3{color:#e65100;font-size:22px;margin-bottom:12px}
@@ -118,6 +113,8 @@
         .img-slot-preview{width:90px;height:90px;background:#fff;border:2px solid #e0e0e0;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:40px;transition:border-color .2s}
         .img-slot.main .img-slot-preview{border-color:#4caf50}
         .img-slot-preview img{max-width:100%;max-height:100%;object-fit:cover}
+        .img-slot-preview.pending{background:#fff8e1;border-color:#ffc107}
+        .img-slot-preview.pending .pending-text{font-size:9px;color:#e65100;font-weight:700;text-align:center;line-height:1.1;padding:0 4px}
         .img-slot-label{font-size:10px;font-weight:700;text-align:center;margin-top:4px;color:#4caf50;height:12px}
         .img-slot.main .img-slot-label{color:#4caf50}
         .img-slot:not(.main) .img-slot-label{color:#bbb}
@@ -132,6 +129,7 @@
         .img-picker-status{font-size:12px;color:#666;margin-top:8px;min-height:16px}
         .img-picker-status.success{color:#4caf50;font-weight:700}
         .img-picker-status.error{color:#f44336;font-weight:700}
+        .img-picker-status.pending{color:#e65100;font-weight:700}
         .img-picker-hint{font-size:11px;color:#888;margin-top:6px}
 
         /* === IMAGE CHOOSER MENU === */
@@ -189,6 +187,10 @@
         .dup-banner .dup-actions .open{background:#1a237e}
         .dup-banner .dup-actions .confirm{background:#4caf50}
         .dup-banner .dup-actions .cancel{background:#9e9e9e}
+
+        /* === RELOAD PRODUCTS BUTTON === */
+        .reload-products-btn{width:100%;padding:10px;background:#1a237e;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;margin-bottom:10px}
+        .reload-products-btn:hover{background:#ff6f00}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -204,8 +206,6 @@
         <a onclick="viewCart()">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
         <a onclick="showListWithUs()">🤝 List With Us</a>
     </div>
-
-    <button class="quick-add-fab" id="quickAddFab" onclick="openQuickAdd()">➕ Quick Add Part</button>
 
     <div class="search-section" id="vin">
         <div class="vin-search">
@@ -342,10 +342,11 @@ const OPTIONS_FILE = 'options.json';
 const AVAILABILITY_FILE = 'availability.json';
 const ORDERS_FILE  = 'orders.json';
 const GITHUB_BRANCH = 'main';
-const PRODUCTS_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${GITHUB_FILE}`;
-const OPTIONS_URL  = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${OPTIONS_FILE}`;
-const AVAILABILITY_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${AVAILABILITY_FILE}`;
-const ORDERS_URL   = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/${ORDERS_FILE}`;
+const PAGES_BASE = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
+const PRODUCTS_URL = `${PAGES_BASE}/${GITHUB_FILE}`;
+const OPTIONS_URL  = `${PAGES_BASE}/${OPTIONS_FILE}`;
+const AVAILABILITY_URL = `${PAGES_BASE}/${AVAILABILITY_FILE}`;
+const ORDERS_URL   = `${PAGES_BASE}/${ORDERS_FILE}`;
 const IMAGES_FOLDER = 'images';
 
 // ==================== DEFAULT OPTIONS (fallback) ====================
@@ -605,28 +606,23 @@ function handleBackToTopVisibility(){const btn=document.getElementById('backToTo
 window.addEventListener('scroll', handleBackToTopVisibility);
 
 // ==================== DUPLICATE DETECTION ====================
-// Normalizes a string for comparison: lowercase, trim, collapse multiple spaces,
-// remove all non-alphanumeric characters (so "04465-0K340" == "044650K340").
 function normalizeForCompare(str){
     if(!str) return '';
     return String(str)
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, ' ')          // collapse whitespace
-        .replace(/[^a-z0-9 ]/g, '');   // strip punctuation
+        .replace(/\s+/g, ' ')
+        .replace(/[^a-z0-9 ]/g, '');
 }
 function normalizePartNo(str){
     if(!str) return '';
     return String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
 }
-// Fuzzy name similarity: ratio of shared normalized characters.
-// Returns 0..1 — 1 means identical after normalization.
 function nameSimilarity(a, b){
     const A = normalizeForCompare(a);
     const B = normalizeForCompare(b);
     if(!A || !B) return 0;
     if(A === B) return 1;
-    // Simple character bigram similarity
     const bigrams = (s) => {
         const set = new Map();
         for(let i = 0; i < s.length - 1; i++){
@@ -643,38 +639,27 @@ function nameSimilarity(a, b){
         total += count;
     });
     B2.forEach((count) => { total += count; });
-    // total is double counted, so divide
     return (2 * intersection) / total;
 }
-
-// Find a duplicate of {name, partNo, sku} excluding a given index (for edits).
-// Returns { type: 'block'|'warn', match: product, reason: string } or null.
 function findDuplicate({name, partNo, sku}, excludeIndex = -1){
     const nName = normalizeForCompare(name);
     const nPart = normalizePartNo(partNo);
     const nSku = (sku || '').trim();
-
     for(let i = 0; i < products.length; i++){
         if(i === excludeIndex) continue;
         const p = products[i];
         const pName = normalizeForCompare(p.name);
         const pPart = normalizePartNo(p.partNo || p.oem || '');
         const pSku = (p.sku || '').trim();
-
-        // SKU exact match → block (shouldn't happen normally)
         if(nSku && pSku && nSku === pSku){
             return { type:'block', match:p, reason:'Same SKU' };
         }
-        // Same part no AND same name → block
         if(nPart && pPart && nPart === pPart && nName && pName && nName === pName){
             return { type:'block', match:p, reason:'Same Part No and Name' };
         }
-        // Same part no, different name → warn
         if(nPart && pPart && nPart === pPart && nName !== pName){
             return { type:'warn', match:p, reason:'Same Part No, different Name' };
         }
-        // Same name, same part no already caught. Same name but fuzzy with same part no caught.
-        // Fuzzy name + same part no → warn
         if(nPart && pPart && nPart === pPart){
             const sim = nameSimilarity(name, p.name);
             if(sim >= 0.85){
@@ -684,15 +669,10 @@ function findDuplicate({name, partNo, sku}, excludeIndex = -1){
     }
     return null;
 }
-
-// Show a duplicate banner inside a form. Returns a Promise that resolves
-// to true if the user chooses to proceed (warn case), false to cancel.
 function showDuplicateBanner(formEl, dup, onOpenExisting){
     return new Promise((resolve) => {
-        // Remove any existing banner
         const existing = formEl.querySelector('.dup-banner');
         if(existing) existing.remove();
-
         const banner = document.createElement('div');
         banner.className = 'dup-banner ' + (dup.type === 'block' ? 'block' : 'warn');
         const title = dup.type === 'block' ? '❌ Duplicate part detected' : '⚠️ Possible duplicate';
@@ -708,25 +688,17 @@ function showDuplicateBanner(formEl, dup, onOpenExisting){
                 <button type="button" class="cancel">Cancel</button>
             </div>
         `;
-        // Prepend to the top of the form
         formEl.insertBefore(banner, formEl.firstChild);
         banner.classList.add('show');
         banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
         banner.querySelector('.open').onclick = () => {
             if(typeof onOpenExisting === 'function') onOpenExisting(dup.match);
+            banner.remove();
+            resolve(false);
         };
-        const cancelBtn = banner.querySelector('.cancel');
-        cancelBtn.onclick = () => { banner.remove(); resolve(false); };
+        banner.querySelector('.cancel').onclick = () => { banner.remove(); resolve(false); };
         if(dup.type === 'warn'){
             banner.querySelector('.confirm').onclick = () => { banner.remove(); resolve(true); };
-        } else {
-            // Block: no confirm button, resolve false after open is clicked
-            banner.querySelector('.open').onclick = () => {
-                if(typeof onOpenExisting === 'function') onOpenExisting(dup.match);
-                banner.remove();
-                resolve(false);
-            };
         }
     });
 }
@@ -744,13 +716,22 @@ function isImageReference(val){
     if(/\.(jpe?g|png|webp|gif|bmp|svg)$/i.test(v)) return true;
     return false;
 }
+// Convert relative images/ paths to absolute pages URLs. Leaves http(s) and emojis alone.
+function toAbsoluteImageUrl(img){
+    if(!img) return img;
+    const v = String(img).trim();
+    if(!v) return v;
+    if(/^https?:\/\//i.test(v)) return v;
+    if(/^images\//i.test(v)) return `${PAGES_BASE}/${v}`;
+    return v;
+}
 function getProductImages(product){
     const list = [];
     if(Array.isArray(product.images) && product.images.length > 0){
-        product.images.forEach(img => { if(img && String(img).trim()) list.push(String(img).trim()); });
+        product.images.forEach(img => { if(img && String(img).trim()) list.push(toAbsoluteImageUrl(String(img).trim())); });
         return list;
     }
-    if(product.image && String(product.image).trim()) list.push(String(product.image).trim());
+    if(product.image && String(product.image).trim()) list.push(toAbsoluteImageUrl(String(product.image).trim()));
     return list;
 }
 function renderImageHTML(product){
@@ -807,7 +788,6 @@ function shrinkImage(file, maxWidth, quality){
         reader.readAsDataURL(file);
     });
 }
-
 function slugify(str){
     return String(str||'')
         .toLowerCase()
@@ -815,7 +795,6 @@ function slugify(str){
         .replace(/^-+|-+$/g, '')
         .slice(0, 40) || 'image';
 }
-
 async function uploadImageToGitHub(base64, ext, baseName){
     const token = getToken();
     if(!token) throw new Error('No GitHub token saved');
@@ -850,6 +829,22 @@ async function fetchProductsFromGitHub(){
         products = defaultProducts;
         return false;
     }
+}
+// Retry loop: after a save, GitHub Pages needs 30-90s to deploy. Try a few times.
+// Checks if the newest expected SKU is present in the fetched list.
+async function fetchProductsWithRetry(expectedSku, attempts = 4, delayMs = 15000){
+    let lastCount = 0;
+    for(let i = 0; i < attempts; i++){
+        await fetchProductsFromGitHub();
+        lastCount = products.length;
+        if(!expectedSku){ return true; }
+        if(products.some(p => p.sku === expectedSku)){ return true; }
+        if(i < attempts - 1){
+            console.log(`Waiting for GitHub Pages to catch up (attempt ${i+1}/${attempts})...`);
+            await new Promise(r => setTimeout(r, delayMs));
+        }
+    }
+    return false;
 }
 async function fetchOptionsFromGitHub(){
     try {
@@ -917,19 +912,44 @@ async function putFileToGitHub(filePath, contentObject, commitMessage){
     });
     return true;
 }
+// Read back via GitHub API (not Pages) to verify the save landed
+async function verifyProductsOnGitHub(expectedSku){
+    const token = getToken();
+    if(!token) return false;
+    try {
+        const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+        const res = await axios.get(apiBase, {
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' },
+            params: { ref: GITHUB_BRANCH, t: Date.now() }
+        });
+        const decoded = decodeURIComponent(escape(atob(res.data.content.replace(/\s/g, ''))));
+        const remote = JSON.parse(decoded);
+        if(!Array.isArray(remote)) return false;
+        if(!expectedSku) return true;
+        return remote.some(p => p.sku === expectedSku);
+    } catch (err){
+        console.warn('Verify failed:', err.message);
+        return false;
+    }
+}
 
 function syncProductMainImage(product){
     if(Array.isArray(product.images) && product.images.length > 0){
         product.image = product.images[0];
     }
 }
-
-async function saveProductsToGitHub(){
+async function saveProductsToGitHub(expectedSku){
     if(!getToken()){ alert('⚠️ No GitHub token saved.\n\nOpen the Admin Panel and paste your token first.'); return false; }
     try {
         products.forEach(syncProductMainImage);
         await putFileToGitHub(GITHUB_FILE, products, `Update products.json — ${new Date().toISOString()}`);
-        showNotification('✅ Saved to GitHub! Live in ~1 minute.');
+        // Verify via API read-back
+        const verified = expectedSku ? await verifyProductsOnGitHub(expectedSku) : true;
+        if(verified){
+            showNotification('✅ Saved to GitHub! Site updates in ~1 min.');
+        } else {
+            showNotification('⚠️ Saved but not verified yet — try "Reload Products" in 1 min');
+        }
         return true;
     } catch (err){
         console.error('GitHub save failed:', err);
@@ -1211,7 +1231,7 @@ function showNotification(message){
     notification.style.cssText=`position:fixed;top:20px;right:20px;background:#4caf50;color:#fff;padding:15px 20px;border-radius:5px;z-index:4000;box-shadow:0 4px 10px rgba(0,0,0,.3);`;
     notification.textContent=message;
     document.body.appendChild(notification);
-    setTimeout(()=>{notification.remove()},3000);
+    setTimeout(()=>{notification.remove()},3500);
 }
 
 // ==================== RENDER PRODUCTS ====================
@@ -1255,12 +1275,9 @@ function openGallery(productIndex){
 function renderGallery(product){
     const main = document.getElementById('galleryMainContent');
     main.innerHTML = renderSingleImage(galleryImages[galleryIndex]);
-
     document.getElementById('galleryCounter').textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
-
     document.getElementById('galleryPrev').disabled = (galleryIndex === 0);
     document.getElementById('galleryNext').disabled = (galleryIndex === galleryImages.length - 1);
-
     const thumbs = document.getElementById('galleryThumbs');
     if(galleryImages.length <= 1){
         thumbs.style.display = 'none';
@@ -1274,7 +1291,6 @@ function renderGallery(product){
             return `<div class="gallery-thumb${active}" onclick="galleryGoTo(${i})">${inner}</div>`;
         }).join('');
     }
-
     document.getElementById('galleryInfo').innerHTML = `
         <div class="pname">${escapeAttr(product.name || '')}</div>
         <div class="pmeta">
@@ -1412,7 +1428,6 @@ document.getElementById('vehicleMake').addEventListener('change',function(){
     modelSelect.innerHTML='<option value="">Select Model</option>';
     if(make&&vehicleModels[make]){vehicleModels[make].forEach(model=>{const option=document.createElement('option');option.value=model;option.textContent=model;modelSelect.appendChild(option)})}
 });
-
 function findParts(){
     const year = parseInt(document.getElementById('vehicleYear').value);
     const make = document.getElementById('vehicleMake').value;
@@ -1432,7 +1447,6 @@ function findParts(){
     });
     displayFilteredProducts(filtered, `Parts for ${year} ${make} ${model}`);
 }
-
 function displayFilteredProducts(list,title){
     const grid=document.getElementById('productGrid');
     grid.innerHTML='';
@@ -1521,7 +1535,6 @@ function getImagesForPicker(key, initial){
     }
     return multiImgState[key].images;
 }
-
 function buildImagePickerHTML(targetKey, currentValueOrArray, productName){
     let initial = [];
     if(Array.isArray(currentValueOrArray)){
@@ -1540,7 +1553,6 @@ function buildImagePickerHTML(targetKey, currentValueOrArray, productName){
         </div>
     `;
 }
-
 function renderMultiImagePicker(targetKey){
     const list = document.getElementById('imgList_' + targetKey);
     const addArea = document.getElementById('imgAddArea_' + targetKey);
@@ -1553,12 +1565,20 @@ function renderMultiImagePicker(targetKey){
     } else {
         list.innerHTML = imgs.map((img, i) => {
             const isImg = isImageReference(img);
-            const inner = isImg
-                ? `<img src="${escapeAttr(img)}" alt="" onerror="this.style.display='none';this.parentElement.textContent='⚠️';">`
-                : `<span>${escapeAttr(img)}</span>`;
+            const isPending = isImg && state.pending && state.pending[i];
+            let inner;
+            if(isPending){
+                inner = `<div class="pending-text">Uploading…<br>1 min</div>`;
+            } else if(isImg){
+                const abs = toAbsoluteImageUrl(img);
+                inner = `<img src="${escapeAttr(abs)}" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\\'pending-text\\'>Photo added<br>Loading…</div>';">`;
+            } else {
+                inner = `<span>${escapeAttr(img)}</span>`;
+            }
             const isMain = (i === 0);
+            const pendingClass = isPending ? ' pending' : '';
             return `<div class="img-slot${isMain?' main':''}">
-                <div class="img-slot-preview">${inner}</div>
+                <div class="img-slot-preview${pendingClass}">${inner}</div>
                 <div class="img-slot-label">${isMain ? 'MAIN' : '#' + (i+1)}</div>
                 <button type="button" class="img-slot-remove" onclick="removeMultiImage('${targetKey}', ${i})" title="Remove">✕</button>
                 <div class="img-slot-move">
@@ -1568,10 +1588,8 @@ function renderMultiImagePicker(targetKey){
             </div>`;
         }).join('');
     }
-
     addArea.innerHTML = `<button type="button" class="img-add-btn" onclick="openImageChoiceMenu('${targetKey}')"><i class="fas fa-plus"></i> Add Image</button>`;
 }
-
 function openImageChoiceMenu(targetKey){
     document.querySelectorAll('.img-choice-menu').forEach(el => el.remove());
     const addArea = document.getElementById('imgAddArea_' + targetKey);
@@ -1588,9 +1606,7 @@ function openImageChoiceMenu(targetKey){
     </div>`;
     addArea.insertAdjacentHTML('afterbegin', menuHTML);
 }
-function chooseFromDevice(targetKey){
-    document.getElementById('imgFile_' + targetKey).click();
-}
+function chooseFromDevice(targetKey){ document.getElementById('imgFile_' + targetKey).click(); }
 async function handleMultiImageFile(ev, targetKey, productName){
     const file = ev.target.files && ev.target.files[0];
     if(!file) return;
@@ -1605,10 +1621,19 @@ async function handleMultiImageFile(ev, targetKey, productName){
         setStatus(`⏳ Uploading (${Math.round(blobSize/1024)} KB)...`);
         const path = await uploadImageToGitHub(base64, ext, productName || file.name);
         const state = multiImgState[targetKey] || { images: [] };
+        if(!state.pending) state.pending = {};
+        const newIndex = state.images.length;
         state.images.push(path);
+        state.pending[newIndex] = true;
         multiImgState[targetKey] = state;
         renderMultiImagePicker(targetKey);
-        setStatus('✅ Uploaded! Add more or save the product.', 'success');
+        setStatus('✅ Uploaded. GitHub Pages shows it in ~1 min.', 'success');
+        // After 45s, mark as no-longer-pending and re-render so it tries the real URL
+        setTimeout(() => {
+            const st = multiImgState[targetKey];
+            if(st && st.pending){ delete st.pending[newIndex]; }
+            renderMultiImagePicker(targetKey);
+        }, 45000);
     } catch(err){
         console.error(err);
         setStatus('❌ ' + (err.message || 'Upload failed'), 'error');
@@ -1647,6 +1672,7 @@ function promptMultiEmoji(targetKey){
 function removeMultiImage(targetKey, index){
     const state = multiImgState[targetKey] || { images: [] };
     state.images.splice(index, 1);
+    if(state.pending){ delete state.pending[index]; }
     multiImgState[targetKey] = state;
     renderMultiImagePicker(targetKey);
     const statusEl = document.getElementById('imgStatus_' + targetKey);
@@ -1740,36 +1766,29 @@ function cancelQuickAdd(){
     if(modal) modal.remove();
     delete multiImgState['qa_img'];
 }
-
 async function saveQuickAdd(){
     const form = document.getElementById('qaForm');
     const name = document.getElementById('qa_name').value.trim();
     const price = parseInt(document.getElementById('qa_price').value);
     if(!name || !price){ alert('Please enter at least a name and price.'); return; }
-
     const partNo = document.getElementById('qa_partNo').value.trim();
     const application = document.getElementById('qa_application').value.trim();
     const brandVal = getComboValue('qa_br');
     const catVal = getComboValue('qa_cat');
     const images = readImagePickerValue('qa_img');
     const imgVal = images.length > 0 ? images[0] : '🔧';
-
     const vMake = (document.getElementById('qa_vmake').value || '').trim() || 'Universal';
     const vModel = (document.getElementById('qa_vmodel').value || '').trim() || 'All Models';
     const yStart = parseInt(document.getElementById('qa_ystart').value) || 0;
     const yEnd = parseInt(document.getElementById('qa_yend').value) || 0;
-
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
 
-    // DUPLICATE CHECK
     const dup = findDuplicate({ name, partNo, sku: null }, -1);
     if(dup){
         const proceed = await showDuplicateBanner(form, dup, (match) => {
-            // Open the existing product in admin
             cancelQuickAdd();
             if(adminLoggedIn) showAdminPanel();
-            // Scroll to and highlight the existing product if possible
             const idx = products.indexOf(match);
             if(idx >= 0){
                 setTimeout(() => {
@@ -1780,12 +1799,12 @@ async function saveQuickAdd(){
         });
         if(!proceed) return;
     }
-
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){ showNotification('⏳ Saving new brand/category...'); await saveOptionsToGitHub(); buildExtraCategoryCards(); }
 
+    const newSku = 'QA-' + Date.now();
     const newProduct = {
         name, price,
         partNo: partNo || 'N/A',
@@ -1800,22 +1819,21 @@ async function saveQuickAdd(){
         vehicleModel: vModel,
         yearStart: yStart,
         yearEnd: yEnd,
-        sku: 'QA-' + Date.now(),
+        sku: newSku,
         stock: 1
     };
     products.push(newProduct);
     loadProducts();
     cancelQuickAdd();
     showNotification('⏳ Pushing product to GitHub...');
-    const ok = await saveProductsToGitHub();
-    if(ok){ showNotification('✅ Part added! Live on site in ~1 minute.'); }
+    await saveProductsToGitHub(newSku);
 }
 
 // ==================== ADMIN PANEL ====================
 function openAdminPanel(){
     if(adminLoggedIn){ showAdminPanel(); return; }
     const password=prompt("Enter Admin Password:");
-    if(password==="1234"){ adminLoggedIn = true; document.getElementById('quickAddFab').classList.add('show'); showAdminPanel(); }
+    if(password==="1234"){ adminLoggedIn = true; showAdminPanel(); }
     else { alert("Wrong password!"); }
 }
 function adminMatchesSearch(product){
@@ -1881,10 +1899,7 @@ function renderAdminProductCards(){
     container.innerHTML = html;
     const countEl = document.getElementById('adminSearchCount');
     if(countEl){ countEl.textContent = adminSearchTerm ? `${list.length} of ${products.length} parts shown` : `${products.length} parts total`; }
-
-    list.forEach(({index})=>{
-        renderMultiImagePicker('edit_img_' + index);
-    });
+    list.forEach(({index})=>{ renderMultiImagePicker('edit_img_' + index); });
 }
 function handleAdminSearch(value){ adminSearchTerm = value.trim().toLowerCase(); renderAdminProductCards(); }
 function clearAdminSearch(){ adminSearchTerm = ''; const input = document.getElementById('adminSearchInput'); if(input){ input.value = ''; } renderAdminProductCards(); }
@@ -1938,9 +1953,7 @@ function renderOrdersList(){
     const cnt = document.getElementById('ordersCount');
     if(cnt) cnt.textContent = `${cachedOrders.length} order${cachedOrders.length===1?'':'s'}`;
 }
-function findOrderById(id){
-    return cachedOrders.find(o => o.id === id) || null;
-}
+function findOrderById(id){ return cachedOrders.find(o => o.id === id) || null; }
 async function changeOrderStatus(id, newStatus){
     const o = findOrderById(id);
     if(!o) return;
@@ -2089,6 +2102,8 @@ function showAdminPanel(){
             </div>
         </div>
 
+        <button onclick="reloadProductsFromGitHub()" class="reload-products-btn">🔄 Reload Products from GitHub</button>
+
         <button onclick="showAddProductForm()" style="padding:10px 20px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-bottom:20px;width:100%;font-size:16px;">➕ ADD NEW PRODUCT (Full Form)</button>
         <div id="addProductForm"></div>
         <div id="adminProductList"></div>
@@ -2110,6 +2125,14 @@ async function pushAllToGitHub(){
     const okOptions = await saveOptionsToGitHub();
     const okAvail = await saveAvailabilityToGitHub();
     if(okProducts && okOptions && okAvail){ showNotification('✅ All changes pushed! Live in ~1 minute.'); }
+}
+async function reloadProductsFromGitHub(){
+    showNotification('⏳ Reloading products...');
+    await fetchProductsFromGitHub();
+    loadProducts();
+    buildExtraCategoryCards();
+    closeAdminPanel(); showAdminPanel();
+    showNotification(`✅ Loaded ${products.length} products`);
 }
 function showAddProductForm(){
     const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
@@ -2160,8 +2183,6 @@ async function addNewProduct(){
     const nameVal = document.getElementById('new_name').value;
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
-
-    // DUPLICATE CHECK
     const dup = findDuplicate({ name: nameVal, partNo: partNo, sku: null }, -1);
     if(dup){
         const proceed = await showDuplicateBanner(form, dup, (match) => {
@@ -2177,11 +2198,11 @@ async function addNewProduct(){
         });
         if(!proceed) return;
     }
-
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){ showNotification('⏳ Saving new brand/category...'); await saveOptionsToGitHub(); buildExtraCategoryCards(); }
+    const newSku = 'SKU-' + Date.now();
     const newProduct={
         name:nameVal,
         price:parseInt(document.getElementById('new_price').value),
@@ -2198,14 +2219,14 @@ async function addNewProduct(){
         yearEnd:parseInt(document.getElementById('new_yend').value)||0,
         stock:parseInt(document.getElementById('new_stock').value)||0,
         description:document.getElementById('new_description').value,
-        sku:'SKU-'+Date.now()
+        sku:newSku
     };
     if(!newProduct.name||!newProduct.price){alert('Please enter product name and price');return}
     products.push(newProduct);
     loadProducts();
     closeAdminPanel(); showAdminPanel();
     showNotification('⏳ Pushing to GitHub...');
-    await saveProductsToGitHub();
+    await saveProductsToGitHub(newSku);
 }
 async function updateProduct(index){
     const card = document.getElementById('adminCard_' + index);
@@ -2217,26 +2238,20 @@ async function updateProduct(index){
     products[index].oem=products[index].partNo;
     products[index].application=document.getElementById(`application_${index}`).value;
     products[index].description=document.getElementById(`desc_${index}`).value;
-
     const images = readImagePickerValue(`edit_img_${index}`);
     products[index].images = images;
     products[index].image = images.length > 0 ? images[0] : '🔧';
-
     products[index].vehicleMake = (document.getElementById(`vmake_${index}`).value || 'Universal').trim();
     products[index].vehicleModel = (document.getElementById(`vmodel_${index}`).value || 'All Models').trim();
     products[index].yearStart = parseInt(document.getElementById(`ystart_${index}`).value) || 0;
     products[index].yearEnd = parseInt(document.getElementById(`yend_${index}`).value) || 0;
-
     const newBrandVal = getComboValue(`edit_br_${index}`);
     const newCatVal = getComboValue(`edit_cat_${index}`);
     if(!newBrandVal){ alert('Please select or add a brand.'); return; }
     if(!newCatVal){ alert('Please select or add a category.'); return; }
-
-    // DUPLICATE CHECK on edit (exclude self)
     const dup = findDuplicate({ name: products[index].name, partNo: products[index].partNo, sku: products[index].sku }, index);
     if(dup){
         const proceed = await showDuplicateBanner(card, dup, (match) => {
-            // Just highlight the match
             const midx = products.indexOf(match);
             if(midx >= 0){
                 const el = document.getElementById('name_' + midx);
@@ -2245,7 +2260,6 @@ async function updateProduct(index){
         });
         if(!proceed) return;
     }
-
     let newOptionsAdded = false;
     if(newBrandVal && !brands.includes(newBrandVal)){ brands.push(newBrandVal); newOptionsAdded = true; }
     if(newCatVal && !categories.includes(newCatVal)){ categories.push(newCatVal); newOptionsAdded = true; }
@@ -2255,12 +2269,11 @@ async function updateProduct(index){
     loadProducts();
     closeAdminPanel(); showAdminPanel();
     showNotification('⏳ Pushing to GitHub...');
-    await saveProductsToGitHub();
+    await saveProductsToGitHub(products[index].sku);
 }
 function duplicateProduct(index){
     const p = products[index];
     if(!p) return;
-    // Build a prefill object with everything except brand, price, images
     const prefill = {
         name: p.name,
         partNo: p.partNo || p.oem || '',
@@ -2271,18 +2284,18 @@ function duplicateProduct(index){
         yearStart: p.yearStart || 0,
         yearEnd: p.yearEnd || 0
     };
-    // Close admin, open Quick Add with prefill
     closeAdminPanel();
     openQuickAdd(prefill);
     showNotification('📋 Duplicated — change the brand and price, then save.');
 }
 async function deleteProduct(index){
     if(confirm('Are you sure you want to delete this product?')){
+        const sku = products[index].sku;
         products.splice(index,1);
         loadProducts();
         closeAdminPanel(); showAdminPanel();
         showNotification('⏳ Pushing to GitHub...');
-        await saveProductsToGitHub();
+        await saveProductsToGitHub(sku);
     }
 }
 async function toggleAvailability(brother){
@@ -2297,14 +2310,12 @@ function closeAdminPanel(){ const panel=document.getElementById('adminPanel'); i
 function logOutAdmin(){
     adminLoggedIn = false;
     adminSearchTerm = '';
-    document.getElementById('quickAddFab').classList.remove('show');
     closeAdminPanel();
-    alert('🔒 Logged out. The Quick Add button is now hidden.');
+    alert('🔒 Logged out.');
 }
 
 // ==================== INITIALIZE ====================
 async function init(){
-    document.getElementById('quickAddFab').classList.remove('show');
     const grid = document.getElementById('productGrid');
     grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><div>Loading parts from GitHub...</div></div>`;
     await fetchProductsFromGitHub();
