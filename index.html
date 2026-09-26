@@ -134,15 +134,15 @@
         .img-picker-status.error{color:#f44336;font-weight:700}
         .img-picker-hint{font-size:11px;color:#888;margin-top:6px}
 
-        /* === IMAGE CHOOSER MENU (Choose / URL / Emoji) === */
+        /* === IMAGE CHOOSER MENU === */
         .img-choice-menu{background:#fff;border:2px solid #1a237e;border-radius:8px;padding:12px;margin-top:10px;text-align:center}
         .img-choice-menu .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+        .img-choice-menu .row:last-child{margin-bottom:0}
         .img-choice-menu button{padding:8px 14px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:700;color:#fff}
         .img-choice-menu button.choose{background:#4caf50}
         .img-choice-menu button.url{background:#1a237e}
         .img-choice-menu button.emoji{background:#ff6f00}
         .img-choice-menu button.cancel{background:#9e9e9e}
-        .img-choice-emoji-input{width:80px;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:20px;text-align:center}
 
         /* === GALLERY MODAL === */
         .gallery-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:3500;display:none;align-items:center;justify-content:center;padding:20px}
@@ -176,6 +176,19 @@
 
         /* === MULTI-MODEL HINT === */
         .multi-model-hint{font-size:11px;color:#888;margin-top:4px}
+
+        /* === DUPLICATE WARNING / ERROR === */
+        .dup-banner{padding:14px 16px;border-radius:8px;margin-bottom:15px;font-size:14px;line-height:1.5;display:none}
+        .dup-banner.show{display:block}
+        .dup-banner.block{background:#ffebee;border-left:5px solid #f44336;color:#b71c1c}
+        .dup-banner.warn{background:#fff8e1;border-left:5px solid #ffc107;color:#e65100}
+        .dup-banner strong{display:block;font-size:15px;margin-bottom:6px}
+        .dup-banner .dup-row{margin:3px 0}
+        .dup-banner .dup-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+        .dup-banner .dup-actions button{padding:8px 14px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:700;color:#fff}
+        .dup-banner .dup-actions .open{background:#1a237e}
+        .dup-banner .dup-actions .confirm{background:#4caf50}
+        .dup-banner .dup-actions .cancel{background:#9e9e9e}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -306,7 +319,6 @@
         <button onclick="closeCart()" style="width:100%;padding:10px;background:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:10px;">Close</button>
     </div>
 
-    <!-- GALLERY MODAL -->
     <div class="gallery-modal" id="galleryModal" onclick="if(event.target===this)closeGallery()">
         <div class="gallery-inner">
             <button class="gallery-close" onclick="closeGallery()" title="Close (Esc)">✕</button>
@@ -582,8 +594,6 @@ let adminLoggedIn = false;
 let adminSearchTerm = '';
 let cachedOrders = [];
 let filtersActive = false;
-
-// Gallery state
 let galleryImages = [];
 let galleryIndex = 0;
 
@@ -593,6 +603,133 @@ function scrollToSection(id){document.getElementById(id).scrollIntoView({behavio
 function scrollToTop(){window.scrollTo({top:0, behavior:'smooth'});}
 function handleBackToTopVisibility(){const btn=document.getElementById('backToTopBtn');if(!btn)return;if(window.scrollY>300){btn.classList.add('show');}else{btn.classList.remove('show');}}
 window.addEventListener('scroll', handleBackToTopVisibility);
+
+// ==================== DUPLICATE DETECTION ====================
+// Normalizes a string for comparison: lowercase, trim, collapse multiple spaces,
+// remove all non-alphanumeric characters (so "04465-0K340" == "044650K340").
+function normalizeForCompare(str){
+    if(!str) return '';
+    return String(str)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')          // collapse whitespace
+        .replace(/[^a-z0-9 ]/g, '');   // strip punctuation
+}
+function normalizePartNo(str){
+    if(!str) return '';
+    return String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+// Fuzzy name similarity: ratio of shared normalized characters.
+// Returns 0..1 — 1 means identical after normalization.
+function nameSimilarity(a, b){
+    const A = normalizeForCompare(a);
+    const B = normalizeForCompare(b);
+    if(!A || !B) return 0;
+    if(A === B) return 1;
+    // Simple character bigram similarity
+    const bigrams = (s) => {
+        const set = new Map();
+        for(let i = 0; i < s.length - 1; i++){
+            const g = s.substring(i, i + 2);
+            set.set(g, (set.get(g) || 0) + 1);
+        }
+        return set;
+    };
+    const A2 = bigrams(A), B2 = bigrams(B);
+    let intersection = 0, total = 0;
+    A2.forEach((count, g) => {
+        const bCount = B2.get(g) || 0;
+        intersection += Math.min(count, bCount);
+        total += count;
+    });
+    B2.forEach((count) => { total += count; });
+    // total is double counted, so divide
+    return (2 * intersection) / total;
+}
+
+// Find a duplicate of {name, partNo, sku} excluding a given index (for edits).
+// Returns { type: 'block'|'warn', match: product, reason: string } or null.
+function findDuplicate({name, partNo, sku}, excludeIndex = -1){
+    const nName = normalizeForCompare(name);
+    const nPart = normalizePartNo(partNo);
+    const nSku = (sku || '').trim();
+
+    for(let i = 0; i < products.length; i++){
+        if(i === excludeIndex) continue;
+        const p = products[i];
+        const pName = normalizeForCompare(p.name);
+        const pPart = normalizePartNo(p.partNo || p.oem || '');
+        const pSku = (p.sku || '').trim();
+
+        // SKU exact match → block (shouldn't happen normally)
+        if(nSku && pSku && nSku === pSku){
+            return { type:'block', match:p, reason:'Same SKU' };
+        }
+        // Same part no AND same name → block
+        if(nPart && pPart && nPart === pPart && nName && pName && nName === pName){
+            return { type:'block', match:p, reason:'Same Part No and Name' };
+        }
+        // Same part no, different name → warn
+        if(nPart && pPart && nPart === pPart && nName !== pName){
+            return { type:'warn', match:p, reason:'Same Part No, different Name' };
+        }
+        // Same name, same part no already caught. Same name but fuzzy with same part no caught.
+        // Fuzzy name + same part no → warn
+        if(nPart && pPart && nPart === pPart){
+            const sim = nameSimilarity(name, p.name);
+            if(sim >= 0.85){
+                return { type:'warn', match:p, reason:'Very similar Name and same Part No' };
+            }
+        }
+    }
+    return null;
+}
+
+// Show a duplicate banner inside a form. Returns a Promise that resolves
+// to true if the user chooses to proceed (warn case), false to cancel.
+function showDuplicateBanner(formEl, dup, onOpenExisting){
+    return new Promise((resolve) => {
+        // Remove any existing banner
+        const existing = formEl.querySelector('.dup-banner');
+        if(existing) existing.remove();
+
+        const banner = document.createElement('div');
+        banner.className = 'dup-banner ' + (dup.type === 'block' ? 'block' : 'warn');
+        const title = dup.type === 'block' ? '❌ Duplicate part detected' : '⚠️ Possible duplicate';
+        const p = dup.match;
+        banner.innerHTML = `
+            <strong>${title}</strong>
+            <div class="dup-row"><b>Existing:</b> ${escapeAttr(p.name || '')}</div>
+            <div class="dup-row"><b>Part No:</b> ${escapeAttr(p.partNo || p.oem || 'N/A')} &nbsp;|&nbsp; <b>Brand:</b> ${escapeAttr(p.brand || '')}</div>
+            <div class="dup-row"><b>Reason:</b> ${escapeAttr(dup.reason)}</div>
+            <div class="dup-actions">
+                <button type="button" class="open">Open existing</button>
+                ${dup.type === 'warn' ? '<button type="button" class="confirm">Add anyway</button>' : ''}
+                <button type="button" class="cancel">Cancel</button>
+            </div>
+        `;
+        // Prepend to the top of the form
+        formEl.insertBefore(banner, formEl.firstChild);
+        banner.classList.add('show');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        banner.querySelector('.open').onclick = () => {
+            if(typeof onOpenExisting === 'function') onOpenExisting(dup.match);
+        };
+        const cancelBtn = banner.querySelector('.cancel');
+        cancelBtn.onclick = () => { banner.remove(); resolve(false); };
+        if(dup.type === 'warn'){
+            banner.querySelector('.confirm').onclick = () => { banner.remove(); resolve(true); };
+        } else {
+            // Block: no confirm button, resolve false after open is clicked
+            banner.querySelector('.open').onclick = () => {
+                if(typeof onOpenExisting === 'function') onOpenExisting(dup.match);
+                banner.remove();
+                resolve(false);
+            };
+        }
+    });
+}
 
 // ==================== IMAGE HELPERS (XSS-SAFE) ====================
 function escapeAttr(str){
@@ -607,7 +744,6 @@ function isImageReference(val){
     if(/\.(jpe?g|png|webp|gif|bmp|svg)$/i.test(v)) return true;
     return false;
 }
-// Returns array of image strings for a product (backward compatible)
 function getProductImages(product){
     const list = [];
     if(Array.isArray(product.images) && product.images.length > 0){
@@ -626,7 +762,6 @@ function renderImageHTML(product){
     }
     return escapeAttr(first);
 }
-// Render a single image string as html (used in gallery)
 function renderSingleImage(img){
     if(!img) return '📦';
     if(isImageReference(img)){
@@ -783,7 +918,6 @@ async function putFileToGitHub(filePath, contentObject, commitMessage){
     return true;
 }
 
-// Ensures product.image = first of product.images (for backward compat)
 function syncProductMainImage(product){
     if(Array.isArray(product.images) && product.images.length > 0){
         product.image = product.images[0];
@@ -1091,7 +1225,6 @@ function renderProductCard(product){
     const card=document.createElement('div');
     card.className='product-card';
     card.onclick = (ev) => {
-        // Don't open gallery when clicking buttons
         if(ev.target.closest('button')) return;
         openGallery(idx);
     };
@@ -1120,18 +1253,14 @@ function openGallery(productIndex){
     document.body.style.overflow = 'hidden';
 }
 function renderGallery(product){
-    // Main image
     const main = document.getElementById('galleryMainContent');
     main.innerHTML = renderSingleImage(galleryImages[galleryIndex]);
 
-    // Counter
     document.getElementById('galleryCounter').textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
 
-    // Nav buttons
     document.getElementById('galleryPrev').disabled = (galleryIndex === 0);
     document.getElementById('galleryNext').disabled = (galleryIndex === galleryImages.length - 1);
 
-    // Thumbnails
     const thumbs = document.getElementById('galleryThumbs');
     if(galleryImages.length <= 1){
         thumbs.style.display = 'none';
@@ -1146,7 +1275,6 @@ function renderGallery(product){
         }).join('');
     }
 
-    // Info
     document.getElementById('galleryInfo').innerHTML = `
         <div class="pname">${escapeAttr(product.name || '')}</div>
         <div class="pmeta">
@@ -1160,7 +1288,6 @@ function renderGallery(product){
 function galleryGoTo(i){
     if(i < 0 || i >= galleryImages.length) return;
     galleryIndex = i;
-    // Find the product again to rebuild info (we only need it once, but keep it simple)
     const product = products.find(p => getProductImages(p)[0] === galleryImages[0]) || null;
     if(product) renderGallery(product);
 }
@@ -1177,7 +1304,6 @@ document.addEventListener('keydown', function(ev){
     else if(ev.key === 'ArrowLeft'){ galleryPrev(); }
     else if(ev.key === 'ArrowRight'){ galleryNext(); }
 });
-// Swipe on mobile
 (function(){
     let startX = 0, startY = 0;
     const main = document.getElementById('galleryMain');
@@ -1384,12 +1510,10 @@ function getComboValue(idPrefix){
 }
 
 // ==================== MULTI-IMAGE PICKER ====================
-// State: multiImgState[key] = { images: [] }
 const multiImgState = {};
 
 function getImagesForPicker(key, initial){
     if(!multiImgState[key]) multiImgState[key] = { images: [] };
-    // If initial provided and state is empty, seed from initial
     if(initial && multiImgState[key].images.length === 0 && !multiImgState[key].initialized){
         const seeded = Array.isArray(initial) ? initial.slice() : (initial ? [initial] : []);
         multiImgState[key].images = seeded.filter(x => x && String(x).trim());
@@ -1411,7 +1535,7 @@ function buildImagePickerHTML(targetKey, currentValueOrArray, productName){
             <div class="img-list" id="imgList_${targetKey}"></div>
             <div id="imgAddArea_${targetKey}"></div>
             <div class="img-picker-status" id="imgStatus_${targetKey}"></div>
-            <div class="img-picker-hint">Add one or more photos. First image is the main one shown on the card. Drag buttons to reorder.</div>
+            <div class="img-picker-hint">Add one or more photos. First image is the main one shown on the card. Use ◀ ▶ to reorder.</div>
             <input type="file" accept="image/*" id="imgFile_${targetKey}" style="display:none" onchange="handleMultiImageFile(event, '${targetKey}', '${escapeAttr((productName||'').replace(/'/g,"\\'"))}')">
         </div>
     `;
@@ -1445,11 +1569,10 @@ function renderMultiImagePicker(targetKey){
         }).join('');
     }
 
-    addArea.innerHTML = `<button type="button" class="img-add-btn" onclick="openImageChoiceMenu('${targetKey}', '${escapeAttr((targetKey||'').replace(/'/g,"\\'"))}')"><i class="fas fa-plus"></i> Add Image</button>`;
+    addArea.innerHTML = `<button type="button" class="img-add-btn" onclick="openImageChoiceMenu('${targetKey}')"><i class="fas fa-plus"></i> Add Image</button>`;
 }
 
 function openImageChoiceMenu(targetKey){
-    // Remove any existing menu
     document.querySelectorAll('.img-choice-menu').forEach(el => el.remove());
     const addArea = document.getElementById('imgAddArea_' + targetKey);
     if(!addArea) return;
@@ -1544,71 +1667,69 @@ function readImagePickerValue(targetKey){
     const state = multiImgState[targetKey] || { images: [] };
     return state.images.slice();
 }
-function resetImagePicker(targetKey, initial){
-    multiImgState[targetKey] = { images: [], initialized: false };
-    getImagesForPicker(targetKey, initial);
-}
 
 // ==================== QUICK ADD ====================
-function openQuickAdd(){
+function openQuickAdd(prefill){
     if(!adminLoggedIn){ alert('Please log in via the Admin Panel first.'); return; }
     const catOptions = [...categories].sort((a,b)=>a.localeCompare(b));
     const brandOptions = [...brands].sort((a,b)=>a.localeCompare(b));
-    const catCombo = buildComboHTML('qa_cat', 'Category', catOptions, '', 'Type new category name');
+    const catCombo = buildComboHTML('qa_cat', 'Category', catOptions, prefill?.category || '', 'Type new category name');
     const brandCombo = buildComboHTML('qa_br', 'Brand', brandOptions, '', 'Type new brand name');
     const makeList = Object.keys(vehicleModels).sort();
     const allModels = [...new Set(Object.values(vehicleModels).flat())].sort();
+    const p = prefill || {};
     const html = `<div id="quickAddModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:5000;max-width:520px;width:95%;max-height:90vh;overflow-y:auto;">
-        <h2 style="color:#1a237e;margin-bottom:20px;">➕ Quick Add Part</h2>
+        <h2 style="color:#1a237e;margin-bottom:20px;">➕ ${prefill ? 'Duplicate Part' : 'Quick Add Part'}</h2>
+        <div id="qaForm">
+            <label style="font-size:13px;font-weight:700;">Part Name *</label>
+            <input type="text" id="qa_name" value="${escapeAttr(p.name||'')}" placeholder="e.g. Brake Pads - Toyota Hilux" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
 
-        <label style="font-size:13px;font-weight:700;">Part Name *</label>
-        <input type="text" id="qa_name" placeholder="e.g. Brake Pads - Toyota Hilux" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+            <label style="font-size:13px;font-weight:700;">Part No / OEM</label>
+            <input type="text" id="qa_partNo" value="${escapeAttr(p.partNo||p.oem||'')}" placeholder="e.g. 04465-0K340" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
 
-        <label style="font-size:13px;font-weight:700;">Part No / OEM</label>
-        <input type="text" id="qa_partNo" placeholder="e.g. 04465-0K340" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+            <label style="font-size:13px;font-weight:700;">Fits (Application)</label>
+            <input type="text" id="qa_application" value="${escapeAttr(p.application||'')}" placeholder="e.g. Toyota Hilux 2015-2023" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
 
-        <label style="font-size:13px;font-weight:700;">Fits (Application)</label>
-        <input type="text" id="qa_application" placeholder="e.g. Toyota Hilux 2015-2023" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div>
-                <label style="font-size:13px;font-weight:700;">Vehicle Make *</label>
-                <input type="text" id="qa_vmake" list="qa_make_list" placeholder="e.g. Toyota" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
-                <datalist id="qa_make_list">${makeList.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                    <label style="font-size:13px;font-weight:700;">Vehicle Make *</label>
+                    <input type="text" id="qa_vmake" list="qa_make_list" value="${escapeAttr(p.vehicleMake||'')}" placeholder="e.g. Toyota" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                    <datalist id="qa_make_list">${makeList.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                </div>
+                <div>
+                    <label style="font-size:13px;font-weight:700;">Vehicle Model *</label>
+                    <input type="text" id="qa_vmodel" list="qa_model_list" value="${escapeAttr(p.vehicleModel||'')}" placeholder="e.g. Hilux, Fortuner, Prado" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                    <datalist id="qa_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
+                    <div class="multi-model-hint">Separate multiple models with commas — e.g. Hilux, Fortuner, Prado</div>
+                </div>
             </div>
-            <div>
-                <label style="font-size:13px;font-weight:700;">Vehicle Model *</label>
-                <input type="text" id="qa_vmodel" list="qa_model_list" placeholder="e.g. Hilux, Fortuner, Prado" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
-                <datalist id="qa_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
-                <div class="multi-model-hint">Separate multiple models with commas — e.g. Hilux, Fortuner, Prado</div>
+            <div style="font-size:11px;color:#888;margin:4px 0 12px;">Use "Universal" for make + "All Models" for model if it fits anything.</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                    <label style="font-size:13px;font-weight:700;">Year Start</label>
+                    <input type="number" id="qa_ystart" value="${p.yearStart||''}" placeholder="e.g. 2015" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                </div>
+                <div>
+                    <label style="font-size:13px;font-weight:700;">Year End</label>
+                    <input type="number" id="qa_yend" value="${p.yearEnd||''}" placeholder="e.g. 2023" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+                </div>
             </div>
-        </div>
-        <div style="font-size:11px;color:#888;margin:4px 0 12px;">Use "Universal" for make + "All Models" for model if it fits anything.</div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div>
-                <label style="font-size:13px;font-weight:700;">Year Start</label>
-                <input type="number" id="qa_ystart" placeholder="e.g. 2015" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
+            ${brandCombo}
+
+            <label style="font-size:13px;font-weight:700;">Price (KSh) *</label>
+            <input type="number" id="qa_price" placeholder="e.g. 5000" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
+
+            ${catCombo}
+
+            <label style="font-size:13px;font-weight:700;">Images</label>
+            ${buildImagePickerHTML('qa_img', [], 'new-part')}
+
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button onclick="saveQuickAdd()" style="flex:1;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">💾 Save & Push to GitHub</button>
+                <button onclick="cancelQuickAdd()" style="flex:1;padding:12px;background:#ccc;color:#333;border:none;border-radius:5px;cursor:pointer;font-weight:700;">Cancel</button>
             </div>
-            <div>
-                <label style="font-size:13px;font-weight:700;">Year End</label>
-                <input type="number" id="qa_yend" placeholder="e.g. 2023" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
-            </div>
-        </div>
-
-        ${brandCombo}
-
-        <label style="font-size:13px;font-weight:700;">Price (KSh) *</label>
-        <input type="number" id="qa_price" placeholder="e.g. 5000" style="width:100%;padding:10px;margin:5px 0 15px;border:1px solid #ccc;border-radius:5px;">
-
-        ${catCombo}
-
-        <label style="font-size:13px;font-weight:700;">Images</label>
-        ${buildImagePickerHTML('qa_img', [], 'new-part')}
-
-        <div style="display:flex;gap:10px;margin-top:10px;">
-            <button onclick="saveQuickAdd()" style="flex:1;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">💾 Save & Push to GitHub</button>
-            <button onclick="cancelQuickAdd()" style="flex:1;padding:12px;background:#ccc;color:#333;border:none;border-radius:5px;cursor:pointer;font-weight:700;">Cancel</button>
         </div>
     </div>`;
     document.body.insertAdjacentHTML('beforeend', html);
@@ -1621,6 +1742,7 @@ function cancelQuickAdd(){
 }
 
 async function saveQuickAdd(){
+    const form = document.getElementById('qaForm');
     const name = document.getElementById('qa_name').value.trim();
     const price = parseInt(document.getElementById('qa_price').value);
     if(!name || !price){ alert('Please enter at least a name and price.'); return; }
@@ -1639,6 +1761,25 @@ async function saveQuickAdd(){
 
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
+
+    // DUPLICATE CHECK
+    const dup = findDuplicate({ name, partNo, sku: null }, -1);
+    if(dup){
+        const proceed = await showDuplicateBanner(form, dup, (match) => {
+            // Open the existing product in admin
+            cancelQuickAdd();
+            if(adminLoggedIn) showAdminPanel();
+            // Scroll to and highlight the existing product if possible
+            const idx = products.indexOf(match);
+            if(idx >= 0){
+                setTimeout(() => {
+                    const el = document.getElementById('name_' + idx);
+                    if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background 0.5s'; el.style.background='#fff3e0'; setTimeout(()=>el.style.background='', 1500); }
+                }, 300);
+            }
+        });
+        if(!proceed) return;
+    }
 
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
@@ -1702,7 +1843,7 @@ function renderAdminProductCards(){
         const catCombo = buildComboHTML(`edit_cat_${index}`, 'Category', catOptions, product.category || '', 'Type new category name');
         const brandCombo = buildComboHTML(`edit_br_${index}`, 'Brand', brandOptions, product.brand || '', 'Type new brand name');
         const imgPicker = buildImagePickerHTML(`edit_img_${index}`, getProductImages(product), product.name || 'product');
-        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;">
+        html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;" id="adminCard_${index}">
             <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Product Name (editable):</label>
             <input type="text" id="name_${index}" value="${escapeAttr(product.name||'')}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-weight:700;font-size:15px;margin-bottom:6px;">
             <small>Part No: ${escapeAttr(product.partNo||product.oem||'N/A')} | SKU: ${escapeAttr(product.sku)}</small>
@@ -1730,8 +1871,9 @@ function renderAdminProductCards(){
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div>
             <div style="margin-top:10px;"><label style="font-size:12px;font-weight:700;">Images (photos, URLs, or emojis):</label>${imgPicker}</div>
             <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${escapeAttr(product.description||'')}</textarea></div>
-            <div style="margin-top:10px;display:flex;gap:10px;">
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
                 <button onclick="updateProduct(${index})" style="padding:8px 15px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">💾 Save</button>
+                <button onclick="duplicateProduct(${index})" style="padding:8px 15px;background:#ff6f00;color:#fff;border:none;border-radius:3px;cursor:pointer;">📋 Duplicate</button>
                 <button onclick="deleteProduct(${index})" style="padding:8px 15px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️ Delete</button>
             </div>
         </div>`;
@@ -1740,7 +1882,6 @@ function renderAdminProductCards(){
     const countEl = document.getElementById('adminSearchCount');
     if(countEl){ countEl.textContent = adminSearchTerm ? `${list.length} of ${products.length} parts shown` : `${products.length} parts total`; }
 
-    // Now render each image picker (must run after DOM is inserted)
     list.forEach(({index})=>{
         renderMultiImagePicker('edit_img_' + index);
     });
@@ -1977,7 +2118,7 @@ function showAddProductForm(){
     const brandCombo = buildComboHTML('new_br', 'Brand', brandOptions, '', 'Type new brand name');
     const makeList = Object.keys(vehicleModels).sort();
     const allModels = [...new Set(Object.values(vehicleModels).flat())].sort();
-    const formHTML=`<div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;"><h3 style="color:#2e7d32;">➕ Add New Product (Full Form)</h3>
+    const formHTML=`<div style="background:#e8f5e9;padding:20px;border-radius:5px;margin-bottom:20px;" id="newProductForm"><h3 style="color:#2e7d32;">➕ Add New Product (Full Form)</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
             <div><label>Product Name:</label><input type="text" id="new_name" style="width:100%;padding:5px;"></div>
             <div><label>Price (KSh):</label><input type="number" id="new_price" style="width:100%;padding:5px;"></div>
@@ -2009,20 +2150,40 @@ function showAddProductForm(){
     renderMultiImagePicker('new_img');
 }
 async function addNewProduct(){
+    const form = document.getElementById('newProductForm');
     const partNo = document.getElementById('new_oem').value;
     const application = document.getElementById('new_application').value;
     const brandVal = getComboValue('new_br');
     const catVal = getComboValue('new_cat');
     const images = readImagePickerValue('new_img');
     const imgVal = images.length > 0 ? images[0] : '🔧';
+    const nameVal = document.getElementById('new_name').value;
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
+
+    // DUPLICATE CHECK
+    const dup = findDuplicate({ name: nameVal, partNo: partNo, sku: null }, -1);
+    if(dup){
+        const proceed = await showDuplicateBanner(form, dup, (match) => {
+            if(adminLoggedIn) closeAdminPanel();
+            showAdminPanel();
+            const idx = products.indexOf(match);
+            if(idx >= 0){
+                setTimeout(() => {
+                    const el = document.getElementById('name_' + idx);
+                    if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background 0.5s'; el.style.background='#fff3e0'; setTimeout(()=>el.style.background='', 1500); }
+                }, 300);
+            }
+        });
+        if(!proceed) return;
+    }
+
     let newOptionsAdded = false;
     if(!brands.includes(brandVal)){ brands.push(brandVal); newOptionsAdded = true; }
     if(!categories.includes(catVal)){ categories.push(catVal); newOptionsAdded = true; }
     if(newOptionsAdded){ showNotification('⏳ Saving new brand/category...'); await saveOptionsToGitHub(); buildExtraCategoryCards(); }
     const newProduct={
-        name:document.getElementById('new_name').value,
+        name:nameVal,
         price:parseInt(document.getElementById('new_price').value),
         partNo: partNo || 'N/A',
         oem: partNo || 'N/A',
@@ -2047,6 +2208,7 @@ async function addNewProduct(){
     await saveProductsToGitHub();
 }
 async function updateProduct(index){
+    const card = document.getElementById('adminCard_' + index);
     const nameInput = document.getElementById(`name_${index}`);
     if(nameInput){ const newName = nameInput.value.trim(); if(newName){ products[index].name = newName; } }
     products[index].price=parseInt(document.getElementById(`price_${index}`).value);
@@ -2069,6 +2231,21 @@ async function updateProduct(index){
     const newCatVal = getComboValue(`edit_cat_${index}`);
     if(!newBrandVal){ alert('Please select or add a brand.'); return; }
     if(!newCatVal){ alert('Please select or add a category.'); return; }
+
+    // DUPLICATE CHECK on edit (exclude self)
+    const dup = findDuplicate({ name: products[index].name, partNo: products[index].partNo, sku: products[index].sku }, index);
+    if(dup){
+        const proceed = await showDuplicateBanner(card, dup, (match) => {
+            // Just highlight the match
+            const midx = products.indexOf(match);
+            if(midx >= 0){
+                const el = document.getElementById('name_' + midx);
+                if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background 0.5s'; el.style.background='#fff3e0'; setTimeout(()=>el.style.background='', 1500); }
+            }
+        });
+        if(!proceed) return;
+    }
+
     let newOptionsAdded = false;
     if(newBrandVal && !brands.includes(newBrandVal)){ brands.push(newBrandVal); newOptionsAdded = true; }
     if(newCatVal && !categories.includes(newCatVal)){ categories.push(newCatVal); newOptionsAdded = true; }
@@ -2079,6 +2256,25 @@ async function updateProduct(index){
     closeAdminPanel(); showAdminPanel();
     showNotification('⏳ Pushing to GitHub...');
     await saveProductsToGitHub();
+}
+function duplicateProduct(index){
+    const p = products[index];
+    if(!p) return;
+    // Build a prefill object with everything except brand, price, images
+    const prefill = {
+        name: p.name,
+        partNo: p.partNo || p.oem || '',
+        application: p.application || '',
+        category: p.category || '',
+        vehicleMake: p.vehicleMake || '',
+        vehicleModel: p.vehicleModel || '',
+        yearStart: p.yearStart || 0,
+        yearEnd: p.yearEnd || 0
+    };
+    // Close admin, open Quick Add with prefill
+    closeAdminPanel();
+    openQuickAdd(prefill);
+    showNotification('📋 Duplicated — change the brand and price, then save.');
 }
 async function deleteProduct(index){
     if(confirm('Are you sure you want to delete this product?')){
