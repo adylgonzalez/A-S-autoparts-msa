@@ -397,23 +397,23 @@
     "sku": "SKU-1790078198325"
   },
   {
-    "name": "Oil Filter - Mazda Demio",
-    "price": 1000,
-    "partNo": "F103301",
-    "oem": "F103301",
-    "application": "Mazda Demio",
+    "name": "Oil filter",
+    "price": 3500,
+    "partNo": "90915-30002",
+    "oem": "90915-30002",
+    "application": "HZJ75/HZJ76/HZJ78/HZJ79/HZJ105/HDJ80/HDJ100/",
     "category": "Engine",
-    "brand": "Kamoka",
-    "image": "images/new-part-1790435976355.jpg",
+    "brand": "TOYOTA Genuine",
+    "image": "images/new-part-1790436011688.jpg",
     "images": [
-      "images/new-part-1790435976355.jpg"
+      "images/new-part-1790436011688.jpg"
     ],
-    "vehicleMake": "Mazda",
-    "vehicleModel": "Demio",
+    "vehicleMake": "Toyota",
+    "vehicleModel": "HZJ75/HZJ76/HZJ78/HZJ79/HZJ105/HDJ80/HDJ100",
     "yearStart": 0,
     "yearEnd": 0,
-    "stock": 5,
+    "stock": 50,
     "description": "",
-    "sku": "SKU-1790435983147"
+    "sku": "SKU-1790436025358"
   }
 ]
