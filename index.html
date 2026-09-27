@@ -386,7 +386,7 @@ const DEFAULT_CATEGORIES = [
     "Brakes","Suspension","Filters","Electrical","Engine","Cooling",
     "Transmission","Body & Exterior","Interior","Lighting","Steering",
     "Fuel System","Exhaust","Air Conditioning","Belts & Hoses","Bearings",
-    "Clutch","Ignition","Sensors","Other"
+    "Clutch","Ignition","Sensors","Other","EX JAPAN"
 ];
 const DEFAULT_BRANDS = [
     "BOSCH","DENSO","NGK","KYB","AISIN","Gates","Akebono","ACDelco",
@@ -397,7 +397,7 @@ const DEFAULT_BRANDS = [
 ];
 
 // ==================== CATEGORY DISPLAY HELPERS ====================
-const FIXED_CATEGORIES = ["Brakes","Suspension","Filters","Electrical","Engine","Cooling"];
+const FIXED_CATEGORIES = ["Brakes","Suspension","Filters","Electrical","Engine","Cooling","EX JAPAN"];
 const CATEGORY_DESCRIPTIONS = {
     "Brakes":"Pads, Rotors","Suspension":"Struts, Springs","Filters":"Oil, Air Filters",
     "Electrical":"Alternators, Plugs","Engine":"Belts, Pumps","Cooling":"Radiators, Pumps",
@@ -405,14 +405,14 @@ const CATEGORY_DESCRIPTIONS = {
     "Lighting":"Bulbs, Lamps","Steering":"Racks, Tie Rods","Fuel System":"Pumps, Injectors",
     "Exhaust":"Mufflers, Pipes","Air Conditioning":"Compressors, Fans","Belts & Hoses":"Drive Belts, Hoses",
     "Bearings":"Wheel, Hub","Clutch":"Discs, Covers","Ignition":"Coils, Plugs","Sensors":"O2, MAP, MAF",
-    "Other":"Misc. Parts"
+    "Other":"Misc. Parts","EX JAPAN":"Engines, Gearbox, Rims, Sun Roof"
 };
 const CATEGORY_ICONS = {
     "Brakes":"fa-car-battery","Suspension":"fa-car","Filters":"fa-oil-can","Electrical":"fa-bolt",
     "Engine":"fa-cogs","Cooling":"fa-fan","Transmission":"fa-cog","Body & Exterior":"fa-car-side",
     "Interior":"fa-chair","Lighting":"fa-lightbulb","Steering":"fa-dharmachakra","Fuel System":"fa-gas-pump",
     "Exhaust":"fa-smog","Air Conditioning":"fa-snowflake","Belts & Hoses":"fa-link","Bearings":"fa-circle-notch",
-    "Clutch":"fa-compact-disc","Ignition":"fa-fire","Sensors":"fa-satellite-dish","Other":"fa-cog"
+    "Clutch":"fa-compact-disc","Ignition":"fa-fire","Sensors":"fa-satellite-dish","Other":"fa-cog","EX JAPAN":"fa-cogs"
 };
 function getCategoryDescription(cat){ return CATEGORY_DESCRIPTIONS[cat] || "Browse parts"; }
 function getCategoryIcon(cat){ return CATEGORY_ICONS[cat] || "fa-cog"; }
@@ -1202,32 +1202,8 @@ async function checkoutCart(brother){
     const orderId = 'A' + Date.now().toString().slice(-8);
     const orderTotal = cart.reduce((s,i)=>s + i.price*i.quantity, 0);
     const hasOnOrder = cart.some(i => normalizeStock(i.availability) === STOCK_ON_ORDER);
-    const order = {
-        id: orderId,
-        date: new Date().toISOString(),
-        customerName: custName,
-        customerPhone: custPhone,
-        handledBy: brother,
-        handledByName: brotherName,
-        status: 'new',
-        source: 'cart',
-        hasOnOrderItems: hasOnOrder,
-        items: cart.map(i => ({
-            name: i.name,
-            sku: i.sku,
-            price: i.price,
-            quantity: i.quantity,
-            subtotal: i.price*i.quantity,
-            availability: normalizeStock(i.availability)
-        })),
-        total: orderTotal
-    };
 
-    showNotification('⏳ Saving order...');
-    const savedOk = await appendOrderToGitHub(order);
-    if(savedOk){ showNotification('✅ Order saved to records'); }
-    else { showNotification('⚠️ Order saved locally only — WhatsApp still works'); }
-
+    // Build WhatsApp message BEFORE any await (keeps user gesture context intact)
     let message;
     if(isAway){
         message=`Hello ${brotherName} (A & S AUTOPARTS) — I know you may be away, please reply when you're back:\n\n`;
@@ -1249,17 +1225,59 @@ async function checkoutCart(brother){
         message+=`Note: Items marked [Shipped on Order] require a 50% deposit and arrive in ~2 weeks.\n\n`;
     }
     message+=`Please confirm availability and delivery.`;
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
 
-    setTimeout(() => {
-        cart = [];
-        saveCart();
-        updateCartCount();
-        closeCart();
-        if(nameEl) nameEl.value = '';
-        if(phoneEl) phoneEl.value = '';
-        showNotification('✅ Order sent — cart cleared');
-    }, 500);
+    // Open WhatsApp FIRST — this is still within the user's click gesture,
+    // so pop-up blockers won't stop it (that's why it was failing before).
+    const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const waWindow = window.open(waUrl, '_blank');
+
+    // Fallback: if the tab didn't open (blocked), make it a location change
+    if(!waWindow || waWindow.closed || typeof waWindow.closed === 'undefined'){
+        // Last resort - navigate current tab
+        // (unlikely since this is still a direct click handler, but just in case)
+        try { window.location.href = waUrl; } catch(e){}
+    }
+
+    // Snapshot the cart BEFORE clearing, so the background save keeps its data
+    const orderSnapshot = {
+        id: orderId,
+        date: new Date().toISOString(),
+        customerName: custName,
+        customerPhone: custPhone,
+        handledBy: brother,
+        handledByName: brotherName,
+        status: 'new',
+        source: 'cart',
+        hasOnOrderItems: hasOnOrder,
+        items: cart.map(i => ({
+            name: i.name,
+            sku: i.sku,
+            price: i.price,
+            quantity: i.quantity,
+            subtotal: i.price*i.quantity,
+            availability: normalizeStock(i.availability)
+        })),
+        total: orderTotal
+    };
+
+    // Clear the cart IMMEDIATELY so the customer sees a clean state
+    cart = [];
+    saveCart();
+    updateCartCount();
+    if(nameEl) nameEl.value = '';
+    if(phoneEl) phoneEl.value = '';
+    closeCart();
+
+    // Save the order to GitHub in the background (fire-and-forget)
+    // Customer doesn't wait — WhatsApp already opened
+    appendOrderToGitHub(orderSnapshot).then(savedOk => {
+        if(savedOk){
+            console.log('✅ Order saved to records');
+        } else {
+            console.warn('⚠️ Order not saved to GitHub (no token or network issue)');
+            // Optional: could retry later, but for now the WhatsApp message is the source of truth
+        }
+    });
 }
 
 // ==================== NOTIFICATION ====================
@@ -1569,7 +1587,6 @@ function getComboValue(idPrefix){
     if(sel.value === '__ADD_NEW__'){ return (newInput?.value || '').trim(); }
     return sel.value;
 }
-// Build a small stock selector
 function buildStockSelectHTML(id, currentValue){
     const v = normalizeStock(currentValue);
     return `<div class="combo-wrap"><label>Availability</label>
