@@ -92,8 +92,13 @@
         .floating-cart .cart-badge{position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;border-radius:50%;min-width:24px;height:24px;padding:0 6px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)}
         @media(max-width:768px){.floating-cart{width:54px;height:54px;font-size:20px;bottom:20px;right:20px}}
 
-        /* === UNIVERSAL BADGE === */
+        /* === BADGES === */
         .universal-badge{background:#9c27b0;color:#fff;display:inline-block;padding:3px 8px;border-radius:3px;font-size:11px;font-weight:700;margin-left:5px;vertical-align:middle}
+        .stock-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px;align-self:center}
+        .stock-badge.in-stock{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+        .stock-badge.on-order{background:#fff3e0;color:#e65100;border:1px solid #ffcc80}
+        .stock-badge.large{font-size:14px;padding:8px 16px;border-radius:20px}
+        .stock-note{font-size:12px;color:#e65100;margin-top:4px;font-style:italic}
 
         /* === RESET / SHOW ALL BUTTON === */
         .reset-filters-btn{display:none;margin:0 auto 20px;padding:10px 22px;background:#1a237e;color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:14px;font-weight:700;align-items:center;gap:8px}
@@ -191,6 +196,12 @@
         /* === RELOAD PRODUCTS BUTTON === */
         .reload-products-btn{width:100%;padding:10px;background:#1a237e;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;margin-bottom:10px}
         .reload-products-btn:hover{background:#ff6f00}
+
+        /* === CART ITEM STATUS INLINE === */
+        .cart-item-status{font-size:11px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:6px}
+        .cart-item-status.in-stock{background:#e8f5e9;color:#2e7d32}
+        .cart-item-status.on-order{background:#fff3e0;color:#e65100}
+        .cart-note{font-size:12px;color:#e65100;background:#fff8e1;padding:8px 12px;border-radius:5px;margin-top:10px;border-left:3px solid #ffc107}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
@@ -305,6 +316,7 @@
     <div class="cart-modal" id="cartModal">
         <h2 style="color:#1a237e;margin-bottom:20px;">🛒 Your Cart</h2>
         <div id="cartItems"></div>
+        <div id="cartNote"></div>
         <div style="margin-top:15px;padding-top:15px;border-top:1px solid #ddd;">
             <label style="font-size:13px;font-weight:700;display:block;margin-bottom:4px;">Your Name *</label>
             <input type="text" id="custName" placeholder="e.g. John Mwangi" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;margin-bottom:10px;">
@@ -348,6 +360,25 @@ const OPTIONS_URL  = `${PAGES_BASE}/${OPTIONS_FILE}`;
 const AVAILABILITY_URL = `${PAGES_BASE}/${AVAILABILITY_FILE}`;
 const ORDERS_URL   = `${PAGES_BASE}/${ORDERS_FILE}`;
 const IMAGES_FOLDER = 'images';
+
+// ==================== AVAILABILITY HELPERS ====================
+const STOCK_IN = 'in_stock';
+const STOCK_ON_ORDER = 'on_order';
+function normalizeStock(v){
+    if(v === STOCK_ON_ORDER || v === 'on_order' || v === 'on-order' || v === 'shipped_on_order') return STOCK_ON_ORDER;
+    return STOCK_IN;
+}
+function stockLabel(v){
+    return normalizeStock(v) === STOCK_ON_ORDER ? 'Shipped on Order ~2 weeks' : 'In Stock';
+}
+function stockLabelShort(v){
+    return normalizeStock(v) === STOCK_ON_ORDER ? 'Shipped on Order' : 'In Stock';
+}
+function stockBadgeHTML(v, large){
+    const cls = normalizeStock(v) === STOCK_ON_ORDER ? 'on-order' : 'in-stock';
+    const lbl = stockLabelShort(v);
+    return `<span class="stock-badge ${cls}${large?' large':''}">${lbl}</span>`;
+}
 
 // ==================== DEFAULT OPTIONS (fallback) ====================
 const DEFAULT_CATEGORIES = [
@@ -567,22 +598,22 @@ const audiModelCodes={
 
 // ==================== DEFAULT PRODUCTS (fallback) ====================
 const defaultProducts=[
-{name:"Brake Pads - Toyota Camry",price:4500,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-33470",partNo:"04465-33470",application:"Toyota Camry 2018-2023",description:"Front brake pads for Toyota Camry. Ceramic compound for smooth stopping.",vehicleMake:"Toyota",vehicleModel:"Camry",yearStart:2018,yearEnd:2023,sku:"BP-TC-1823",stock:25},
-{name:"Brake Pads - Toyota Corolla",price:3500,category:"Brakes",image:"🔧",brand:"Akebono",oem:"04465-02480",partNo:"04465-02480",application:"Toyota Corolla 2008-2023",description:"Front brake pads for Toyota Corolla. OEM quality.",vehicleMake:"Toyota",vehicleModel:"Corolla",yearStart:2008,yearEnd:2023,sku:"BP-TC-0823",stock:30},
-{name:"Brake Pads - Toyota Hilux",price:5000,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-0K340",partNo:"04465-0K340",application:"Toyota Hilux 2015-2023",description:"Heavy-duty brake pads for Toyota Hilux. Perfect for rough terrain.",vehicleMake:"Toyota",vehicleModel:"Hilux",yearStart:2015,yearEnd:2023,sku:"BP-TH-1523",stock:20},
-{name:"Brake Pads - Toyota Land Cruiser",price:6200,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-60310",partNo:"04465-60310",application:"Toyota Land Cruiser 2010-2023",description:"Heavy-duty brake pads for Land Cruiser. Maximum stopping power.",vehicleMake:"Toyota",vehicleModel:"Land Cruiser",yearStart:2010,yearEnd:2023,sku:"BP-TL-1023",stock:18},
-{name:"Oil Filter - Toyota",price:1500,category:"Filters",image:"🔩",brand:"TOYOTA Genuine",oem:"90915-YZZD2",partNo:"90915-YZZD2",application:"Toyota All Models",description:"Genuine Toyota oil filter. Traps 95% of contaminants.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-TY-ALL",stock:100},
-{name:"Air Filter - Toyota",price:2200,category:"Filters",image:"💨",brand:"DENSO",oem:"17801-0D050",partNo:"17801-0D050",application:"Toyota All Models",description:"Engine air filter for Toyota. Improves fuel efficiency.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"AF-TY-ALL",stock:50},
-{name:"Spark Plugs - Toyota (4 Pack)",price:2800,category:"Electrical",image:"⚡",brand:"NGK",oem:"90919-01253",partNo:"90919-01253",application:"Toyota All Models",description:"Iridium spark plugs for Toyota. Better combustion and performance.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"SP-TY-ALL",stock:60},
-{name:"Brake Pads - Honda Civic",price:3900,category:"Brakes",image:"🔧",brand:"ACDelco",oem:"45022-SNA-A01",partNo:"45022-SNA-A01",application:"Honda Civic 2016-2023",description:"Front brake pads for Honda Civic. Premium quality.",vehicleMake:"Honda",vehicleModel:"Civic",yearStart:2016,yearEnd:2023,sku:"BP-HC-1623",stock:25},
-{name:"Oil Filter - Honda",price:1200,category:"Filters",image:"🔩",brand:"HONDA Genuine",oem:"15400-PLM-A01",partNo:"15400-PLM-A01",application:"Honda All Models",description:"Genuine Honda oil filter. Perfect fit.",vehicleMake:"Honda",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-HN-ALL",stock:80},
-{name:"Brake Pads - Nissan X-Trail",price:4200,category:"Brakes",image:"🔧",brand:"Akebono",oem:"D1060-JD00A",partNo:"D1060-JD00A",application:"Nissan X-Trail 2010-2023",description:"Front brake pads for Nissan X-Trail. OEM specification.",vehicleMake:"Nissan",vehicleModel:"X-Trail",yearStart:2010,yearEnd:2023,sku:"BP-NX-1023",stock:20},
-{name:"Brake Pads - Mitsubishi Pajero",price:5500,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"MR527678",partNo:"MR527678",application:"Mitsubishi Pajero 2005-2023",description:"Front brake pads for Pajero. Heavy-duty.",vehicleMake:"Mitsubishi",vehicleModel:"Pajero",yearStart:2005,yearEnd:2023,sku:"BP-MP-0523",stock:15},
-{name:"Oil Filter - Nissan",price:1300,category:"Filters",image:"🔩",brand:"NISSAN Genuine",oem:"15208-65F0A",partNo:"15208-65F0A",application:"Nissan All Models",description:"Genuine Nissan oil filter.",vehicleMake:"Nissan",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-NS-ALL",stock:70},
-{name:"Universal Alternator",price:21000,category:"Electrical",image:"🔋",brand:"DENSO",oem:"27060-0T041",partNo:"27060-0T041",application:"Universal All Models",description:"High-output alternator for various vehicles.",vehicleMake:"Universal",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"ALT-UNI-001",stock:8},
-{name:"Timing Belt Kit - Toyota",price:14500,category:"Engine",image:"⛓️",brand:"Gates",oem:"13568-09070",partNo:"13568-09070",application:"Toyota All Models",description:"Complete timing belt kit with tensioner.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"TB-TY-ALL",stock:12},
-{name:"Water Pump - Toyota",price:8900,category:"Cooling",image:"💧",brand:"AISIN",oem:"16100-09280",partNo:"16100-09280",application:"Toyota All Models",description:"High-quality water pump for Toyota.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"WP-TY-ALL",stock:20},
-{name:"Shock Absorber - Toyota Hilux",price:14500,category:"Suspension",image:"🛠️",brand:"KYB",oem:"48531-09885",partNo:"48531-09885",application:"Toyota Hilux 2015-2023",description:"Front shock absorber for Hilux.",vehicleMake:"Toyota",vehicleModel:"Hilux",yearStart:2015,yearEnd:2023,sku:"SA-TH-1523",stock:10}
+{name:"Brake Pads - Toyota Camry",price:4500,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-33470",partNo:"04465-33470",application:"Toyota Camry 2018-2023",description:"Front brake pads for Toyota Camry. Ceramic compound for smooth stopping.",vehicleMake:"Toyota",vehicleModel:"Camry",yearStart:2018,yearEnd:2023,sku:"BP-TC-1823",stock:25,availability:"in_stock"},
+{name:"Brake Pads - Toyota Corolla",price:3500,category:"Brakes",image:"🔧",brand:"Akebono",oem:"04465-02480",partNo:"04465-02480",application:"Toyota Corolla 2008-2023",description:"Front brake pads for Toyota Corolla. OEM quality.",vehicleMake:"Toyota",vehicleModel:"Corolla",yearStart:2008,yearEnd:2023,sku:"BP-TC-0823",stock:30,availability:"in_stock"},
+{name:"Brake Pads - Toyota Hilux",price:5000,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-0K340",partNo:"04465-0K340",application:"Toyota Hilux 2015-2023",description:"Heavy-duty brake pads for Toyota Hilux. Perfect for rough terrain.",vehicleMake:"Toyota",vehicleModel:"Hilux",yearStart:2015,yearEnd:2023,sku:"BP-TH-1523",stock:20,availability:"in_stock"},
+{name:"Brake Pads - Toyota Land Cruiser",price:6200,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"04465-60310",partNo:"04465-60310",application:"Toyota Land Cruiser 2010-2023",description:"Heavy-duty brake pads for Land Cruiser. Maximum stopping power.",vehicleMake:"Toyota",vehicleModel:"Land Cruiser",yearStart:2010,yearEnd:2023,sku:"BP-TL-1023",stock:18,availability:"in_stock"},
+{name:"Oil Filter - Toyota",price:1500,category:"Filters",image:"🔩",brand:"TOYOTA Genuine",oem:"90915-YZZD2",partNo:"90915-YZZD2",application:"Toyota All Models",description:"Genuine Toyota oil filter. Traps 95% of contaminants.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-TY-ALL",stock:100,availability:"in_stock"},
+{name:"Air Filter - Toyota",price:2200,category:"Filters",image:"💨",brand:"DENSO",oem:"17801-0D050",partNo:"17801-0D050",application:"Toyota All Models",description:"Engine air filter for Toyota. Improves fuel efficiency.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"AF-TY-ALL",stock:50,availability:"in_stock"},
+{name:"Spark Plugs - Toyota (4 Pack)",price:2800,category:"Electrical",image:"⚡",brand:"NGK",oem:"90919-01253",partNo:"90919-01253",application:"Toyota All Models",description:"Iridium spark plugs for Toyota. Better combustion and performance.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"SP-TY-ALL",stock:60,availability:"in_stock"},
+{name:"Brake Pads - Honda Civic",price:3900,category:"Brakes",image:"🔧",brand:"ACDelco",oem:"45022-SNA-A01",partNo:"45022-SNA-A01",application:"Honda Civic 2016-2023",description:"Front brake pads for Honda Civic. Premium quality.",vehicleMake:"Honda",vehicleModel:"Civic",yearStart:2016,yearEnd:2023,sku:"BP-HC-1623",stock:25,availability:"in_stock"},
+{name:"Oil Filter - Honda",price:1200,category:"Filters",image:"🔩",brand:"HONDA Genuine",oem:"15400-PLM-A01",partNo:"15400-PLM-A01",application:"Honda All Models",description:"Genuine Honda oil filter. Perfect fit.",vehicleMake:"Honda",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-HN-ALL",stock:80,availability:"in_stock"},
+{name:"Brake Pads - Nissan X-Trail",price:4200,category:"Brakes",image:"🔧",brand:"Akebono",oem:"D1060-JD00A",partNo:"D1060-JD00A",application:"Nissan X-Trail 2010-2023",description:"Front brake pads for Nissan X-Trail. OEM specification.",vehicleMake:"Nissan",vehicleModel:"X-Trail",yearStart:2010,yearEnd:2023,sku:"BP-NX-1023",stock:20,availability:"in_stock"},
+{name:"Brake Pads - Mitsubishi Pajero",price:5500,category:"Brakes",image:"🔧",brand:"BOSCH",oem:"MR527678",partNo:"MR527678",application:"Mitsubishi Pajero 2005-2023",description:"Front brake pads for Pajero. Heavy-duty.",vehicleMake:"Mitsubishi",vehicleModel:"Pajero",yearStart:2005,yearEnd:2023,sku:"BP-MP-0523",stock:15,availability:"in_stock"},
+{name:"Oil Filter - Nissan",price:1300,category:"Filters",image:"🔩",brand:"NISSAN Genuine",oem:"15208-65F0A",partNo:"15208-65F0A",application:"Nissan All Models",description:"Genuine Nissan oil filter.",vehicleMake:"Nissan",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"OF-NS-ALL",stock:70,availability:"in_stock"},
+{name:"Universal Alternator",price:21000,category:"Electrical",image:"🔋",brand:"DENSO",oem:"27060-0T041",partNo:"27060-0T041",application:"Universal All Models",description:"High-output alternator for various vehicles.",vehicleMake:"Universal",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"ALT-UNI-001",stock:8,availability:"in_stock"},
+{name:"Timing Belt Kit - Toyota",price:14500,category:"Engine",image:"⛓️",brand:"Gates",oem:"13568-09070",partNo:"13568-09070",application:"Toyota All Models",description:"Complete timing belt kit with tensioner.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"TB-TY-ALL",stock:12,availability:"in_stock"},
+{name:"Water Pump - Toyota",price:8900,category:"Cooling",image:"💧",brand:"AISIN",oem:"16100-09280",partNo:"16100-09280",application:"Toyota All Models",description:"High-quality water pump for Toyota.",vehicleMake:"Toyota",vehicleModel:"All Models",yearStart:0,yearEnd:0,sku:"WP-TY-ALL",stock:20,availability:"in_stock"},
+{name:"Shock Absorber - Toyota Hilux",price:14500,category:"Suspension",image:"🛠️",brand:"KYB",oem:"48531-09885",partNo:"48531-09885",application:"Toyota Hilux 2015-2023",description:"Front shock absorber for Hilux.",vehicleMake:"Toyota",vehicleModel:"Hilux",yearStart:2015,yearEnd:2023,sku:"SA-TH-1523",stock:10,availability:"in_stock"}
 ];
 
 // ==================== STATE MANAGEMENT ====================
@@ -716,7 +747,6 @@ function isImageReference(val){
     if(/\.(jpe?g|png|webp|gif|bmp|svg)$/i.test(v)) return true;
     return false;
 }
-// Convert relative images/ paths to absolute pages URLs. Leaves http(s) and emojis alone.
 function toAbsoluteImageUrl(img){
     if(!img) return img;
     const v = String(img).trim();
@@ -830,22 +860,6 @@ async function fetchProductsFromGitHub(){
         return false;
     }
 }
-// Retry loop: after a save, GitHub Pages needs 30-90s to deploy. Try a few times.
-// Checks if the newest expected SKU is present in the fetched list.
-async function fetchProductsWithRetry(expectedSku, attempts = 4, delayMs = 15000){
-    let lastCount = 0;
-    for(let i = 0; i < attempts; i++){
-        await fetchProductsFromGitHub();
-        lastCount = products.length;
-        if(!expectedSku){ return true; }
-        if(products.some(p => p.sku === expectedSku)){ return true; }
-        if(i < attempts - 1){
-            console.log(`Waiting for GitHub Pages to catch up (attempt ${i+1}/${attempts})...`);
-            await new Promise(r => setTimeout(r, delayMs));
-        }
-    }
-    return false;
-}
 async function fetchOptionsFromGitHub(){
     try {
         const res = await axios.get(OPTIONS_URL + '?t=' + Date.now());
@@ -887,7 +901,6 @@ async function fetchOrdersFromGitHub(){
         return false;
     }
 }
-
 async function putFileToGitHub(filePath, contentObject, commitMessage){
     const token = getToken();
     if(!token){ throw new Error('No GitHub token saved'); }
@@ -912,7 +925,6 @@ async function putFileToGitHub(filePath, contentObject, commitMessage){
     });
     return true;
 }
-// Read back via GitHub API (not Pages) to verify the save landed
 async function verifyProductsOnGitHub(expectedSku){
     const token = getToken();
     if(!token) return false;
@@ -932,7 +944,6 @@ async function verifyProductsOnGitHub(expectedSku){
         return false;
     }
 }
-
 function syncProductMainImage(product){
     if(Array.isArray(product.images) && product.images.length > 0){
         product.image = product.images[0];
@@ -943,7 +954,6 @@ async function saveProductsToGitHub(expectedSku){
     try {
         products.forEach(syncProductMainImage);
         await putFileToGitHub(GITHUB_FILE, products, `Update products.json — ${new Date().toISOString()}`);
-        // Verify via API read-back
         const verified = expectedSku ? await verifyProductsOnGitHub(expectedSku) : true;
         if(verified){
             showNotification('✅ Saved to GitHub! Site updates in ~1 min.');
@@ -1112,7 +1122,7 @@ function updateFloatingWhatsApp(){
 function addToCart(index){
     const product=products[index];
     const existingItem=cart.find(item=>item.sku===product.sku);
-    if(existingItem){ existingItem.quantity++; } else { cart.push({...product,quantity:1}); }
+    if(existingItem){ existingItem.quantity++; } else { cart.push({...product,quantity:1,availability:normalizeStock(product.availability)}); }
     saveCart(); updateCartCount();
     showNotification(`${product.name} added to cart!`);
 }
@@ -1134,19 +1144,30 @@ function viewCart(){
     const itemsContainer=document.getElementById('cartItems');
     const totalElement=document.getElementById('cartTotal');
     const whatsappButtons=document.getElementById('cartWhatsAppButtons');
+    const noteEl = document.getElementById('cartNote');
     if(cart.length===0){
         itemsContainer.innerHTML='<p style="text-align:center;color:#666;">Your cart is empty</p>';
         totalElement.textContent='KSh 0';
         whatsappButtons.innerHTML='';
+        if(noteEl) noteEl.innerHTML='';
     }else{
-        let itemsHTML=''; let total=0;
+        let itemsHTML=''; let total=0; let hasOnOrder = false;
         cart.forEach((item,index)=>{
             const itemTotal=item.price*item.quantity;
             total+=itemTotal;
-            itemsHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #eee;"><div><strong>${item.image} ${item.name}</strong><br><small>${formatPrice(item.price)} x ${item.quantity} = ${formatPrice(itemTotal)}</small></div><div style="display:flex;align-items:center;gap:5px;"><button onclick="decreaseQuantity(${index})" style="padding:5px 10px;background:#ff6f00;color:#fff;border:none;border-radius:3px;cursor:pointer;">-</button><span style="font-weight:bold;">${item.quantity}</span><button onclick="increaseQuantity(${index})" style="padding:5px 10px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">+</button><button onclick="removeFromCart(${index})" style="padding:5px 10px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️</button></div></div>`;
+            const st = normalizeStock(item.availability);
+            if(st === STOCK_ON_ORDER) hasOnOrder = true;
+            const statusClass = st === STOCK_ON_ORDER ? 'on-order' : 'in-stock';
+            const statusText = st === STOCK_ON_ORDER ? 'Shipped on Order' : 'In Stock';
+            itemsHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #eee;gap:8px;flex-wrap:wrap;"><div style="flex:1;min-width:180px;"><strong>${item.image} ${escapeAttr(item.name)}</strong><span class="cart-item-status ${statusClass}">${statusText}</span><br><small>${formatPrice(item.price)} x ${item.quantity} = ${formatPrice(itemTotal)}</small></div><div style="display:flex;align-items:center;gap:5px;"><button onclick="decreaseQuantity(${index})" style="padding:5px 10px;background:#ff6f00;color:#fff;border:none;border-radius:3px;cursor:pointer;">-</button><span style="font-weight:bold;">${item.quantity}</span><button onclick="increaseQuantity(${index})" style="padding:5px 10px;background:#4caf50;color:#fff;border:none;border-radius:3px;cursor:pointer;">+</button><button onclick="removeFromCart(${index})" style="padding:5px 10px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;">🗑️</button></div></div>`;
         });
         itemsContainer.innerHTML=itemsHTML;
         totalElement.textContent=formatPrice(total);
+        if(noteEl){
+            noteEl.innerHTML = hasOnOrder
+                ? `<div class="cart-note">⚠️ Some items are <strong>Shipped on Order (~2 weeks)</strong> and require a deposit. We'll confirm on WhatsApp.</div>`
+                : '';
+        }
         const adilBg = availability.adil ? '#128C7E' : '#9e9e9e';
         const suhaylBg = availability.suhayl ? '#128C7E' : '#9e9e9e';
         const adilDot = availability.adil ? 'green' : 'red';
@@ -1179,6 +1200,7 @@ async function checkoutCart(brother){
 
     const orderId = 'A' + Date.now().toString().slice(-8);
     const orderTotal = cart.reduce((s,i)=>s + i.price*i.quantity, 0);
+    const hasOnOrder = cart.some(i => normalizeStock(i.availability) === STOCK_ON_ORDER);
     const order = {
         id: orderId,
         date: new Date().toISOString(),
@@ -1188,7 +1210,15 @@ async function checkoutCart(brother){
         handledByName: brotherName,
         status: 'new',
         source: 'cart',
-        items: cart.map(i => ({ name: i.name, sku: i.sku, price: i.price, quantity: i.quantity, subtotal: i.price*i.quantity })),
+        hasOnOrderItems: hasOnOrder,
+        items: cart.map(i => ({
+            name: i.name,
+            sku: i.sku,
+            price: i.price,
+            quantity: i.quantity,
+            subtotal: i.price*i.quantity,
+            availability: normalizeStock(i.availability)
+        })),
         total: orderTotal
     };
 
@@ -1209,9 +1239,15 @@ async function checkoutCart(brother){
     message += `I want to order:\n\n`;
     cart.forEach(item=>{
         const itemTotal=item.price*item.quantity;
-        message+=`📦 ${item.name}\n   Qty: ${item.quantity}\n   Price: ${formatPrice(item.price)} each\n   Subtotal: ${formatPrice(itemTotal)}\n\n`;
+        const st = normalizeStock(item.availability);
+        const statusTag = st === STOCK_ON_ORDER ? '[Shipped on Order ~2 weeks]' : '[In Stock]';
+        message+=`📦 ${item.name} ${statusTag}\n   Qty: ${item.quantity}\n   Price: ${formatPrice(item.price)} each\n   Subtotal: ${formatPrice(itemTotal)}\n\n`;
     });
-    message+=`💰 TOTAL: ${formatPrice(orderTotal)}\n\nPlease confirm availability and delivery.`;
+    message+=`💰 TOTAL: ${formatPrice(orderTotal)}\n\n`;
+    if(hasOnOrder){
+        message+=`Note: Items marked [Shipped on Order] require a deposit and arrive in ~2 weeks.\n\n`;
+    }
+    message+=`Please confirm availability and delivery.`;
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,'_blank');
 
     setTimeout(() => {
@@ -1242,13 +1278,15 @@ function renderProductCard(product){
     const isUniversal = product.vehicleMake === 'Universal';
     const imgs = getProductImages(product);
     const countBadge = imgs.length > 1 ? `<div class="image-count-badge">1 / ${imgs.length}</div>` : '';
+    const stock = normalizeStock(product.availability);
+    const stockBadge = stockBadgeHTML(stock);
     const card=document.createElement('div');
     card.className='product-card';
     card.onclick = (ev) => {
         if(ev.target.closest('button')) return;
         openGallery(idx);
     };
-    card.innerHTML=`<div class="product-image">${renderImageHTML(product)}${countBadge}</div><div class="product-name">${escapeAttr(product.name)}${isUniversal?' <span class="universal-badge">Universal</span>':''}</div><div class="product-oem">Part No: ${escapeAttr(partNo)}</div><div class="product-vehicle-info"><i class="fas fa-car"></i> Fits: ${escapeAttr(application)}</div><div class="product-description">${escapeAttr(product.description||'')}</div><div class="product-brand">${escapeAttr(product.brand||'')}</div><div class="product-price">${formatPrice(product.price)}</div><div class="product-buttons"><button class="add-to-cart-btn" onclick="addToCart(${idx})"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="order-now-btn" onclick="orderNow(${idx})"><i class="fas fa-bolt"></i> Order Now</button></div>`;
+    card.innerHTML=`<div class="product-image">${renderImageHTML(product)}${countBadge}</div><div class="product-name">${escapeAttr(product.name)}${isUniversal?' <span class="universal-badge">Universal</span>':''}</div><div>${stockBadge}</div><div class="product-oem">Part No: ${escapeAttr(partNo)}</div><div class="product-vehicle-info"><i class="fas fa-car"></i> Fits: ${escapeAttr(application)}</div><div class="product-description">${escapeAttr(product.description||'')}</div><div class="product-brand">${escapeAttr(product.brand||'')}</div><div class="product-price">${formatPrice(product.price)}</div><div class="product-buttons"><button class="add-to-cart-btn" onclick="addToCart(${idx})"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="order-now-btn" onclick="orderNow(${idx})"><i class="fas fa-bolt"></i> Order Now</button></div>`;
     return card;
 }
 function loadProducts(){
@@ -1291,8 +1329,14 @@ function renderGallery(product){
             return `<div class="gallery-thumb${active}" onclick="galleryGoTo(${i})">${inner}</div>`;
         }).join('');
     }
+    const stock = normalizeStock(product.availability);
+    const badgeLarge = stockBadgeHTML(stock, true);
+    const stockNote = (stock === STOCK_ON_ORDER)
+        ? `<div class="stock-note">Deposit required — arrives in about 2 weeks.</div>`
+        : '';
     document.getElementById('galleryInfo').innerHTML = `
         <div class="pname">${escapeAttr(product.name || '')}</div>
+        <div style="margin:6px 0;">${badgeLarge}${stockNote}</div>
         <div class="pmeta">
             ${product.brand ? `Brand: <strong>${escapeAttr(product.brand)}</strong><br>` : ''}
             ${product.partNo || product.oem ? `Part No: ${escapeAttr(product.partNo || product.oem)}<br>` : ''}
@@ -1385,7 +1429,9 @@ function searchByVIN(){
         matchingProducts.forEach(product=>{
             const idx=products.indexOf(product);
             const partNo = product.partNo || product.oem || 'N/A';
-            resultsHTML+=`<div style="background:#fff;padding:15px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><div style="flex:1;min-width:200px;"><strong style="font-size:16px;">${renderImageHTML(product)} ${escapeAttr(product.name)}</strong><br><small>Part No: ${escapeAttr(partNo)} | Brand: ${escapeAttr(product.brand)}</small><br><small>Fits: ${escapeAttr(product.application||'')}</small></div><div style="text-align:right;"><div style="color:#ff6f00;font-size:20px;font-weight:bold;">${formatPrice(product.price)}</div></div></div><div class="product-buttons" style="margin-top:10px;"><button class="add-to-cart-btn" onclick="addToCart(${idx})"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="order-now-btn" onclick="orderNow(${idx})"><i class="fas fa-bolt"></i> Order Now</button></div></div>`;
+            const stock = normalizeStock(product.availability);
+            const stockTag = stock === STOCK_ON_ORDER ? ' <span class="cart-item-status on-order">Shipped on Order</span>' : ' <span class="cart-item-status in-stock">In Stock</span>';
+            resultsHTML+=`<div style="background:#fff;padding:15px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><div style="flex:1;min-width:200px;"><strong style="font-size:16px;">${renderImageHTML(product)} ${escapeAttr(product.name)}</strong>${stockTag}<br><small>Part No: ${escapeAttr(partNo)} | Brand: ${escapeAttr(product.brand)}</small><br><small>Fits: ${escapeAttr(product.application||'')}</small></div><div style="text-align:right;"><div style="color:#ff6f00;font-size:20px;font-weight:bold;">${formatPrice(product.price)}</div></div></div><div class="product-buttons" style="margin-top:10px;"><button class="add-to-cart-btn" onclick="addToCart(${idx})"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="order-now-btn" onclick="orderNow(${idx})"><i class="fas fa-bolt"></i> Order Now</button></div></div>`;
         });
         resultsHTML+=`</div>`;
     } else { resultsHTML+=buildSourceItFallback(); }
@@ -1522,10 +1568,20 @@ function getComboValue(idPrefix){
     if(sel.value === '__ADD_NEW__'){ return (newInput?.value || '').trim(); }
     return sel.value;
 }
+// Build a small stock selector
+function buildStockSelectHTML(id, currentValue){
+    const v = normalizeStock(currentValue);
+    return `<div class="combo-wrap"><label>Availability</label>
+        <select id="${id}">
+            <option value="in_stock" ${v===STOCK_IN?'selected':''}>In Stock</option>
+            <option value="on_order" ${v===STOCK_ON_ORDER?'selected':''}>Shipped on Order (~2 weeks, deposit)</option>
+        </select>
+        <div class="combo-hint">Shipped on Order shows a badge and reminds the customer about the deposit in WhatsApp.</div>
+    </div>`;
+}
 
 // ==================== MULTI-IMAGE PICKER ====================
 const multiImgState = {};
-
 function getImagesForPicker(key, initial){
     if(!multiImgState[key]) multiImgState[key] = { images: [] };
     if(initial && multiImgState[key].images.length === 0 && !multiImgState[key].initialized){
@@ -1559,7 +1615,6 @@ function renderMultiImagePicker(targetKey){
     if(!list || !addArea) return;
     const state = multiImgState[targetKey] || { images: [] };
     const imgs = state.images;
-
     if(imgs.length === 0){
         list.innerHTML = `<div class="img-picker-empty">No images yet</div>`;
     } else {
@@ -1628,7 +1683,6 @@ async function handleMultiImageFile(ev, targetKey, productName){
         multiImgState[targetKey] = state;
         renderMultiImagePicker(targetKey);
         setStatus('✅ Uploaded. GitHub Pages shows it in ~1 min.', 'success');
-        // After 45s, mark as no-longer-pending and re-render so it tries the real URL
         setTimeout(() => {
             const st = multiImgState[targetKey];
             if(st && st.pending){ delete st.pending[newIndex]; }
@@ -1726,7 +1780,7 @@ function openQuickAdd(prefill){
                     <label style="font-size:13px;font-weight:700;">Vehicle Model *</label>
                     <input type="text" id="qa_vmodel" list="qa_model_list" value="${escapeAttr(p.vehicleModel||'')}" placeholder="e.g. Hilux, Fortuner, Prado" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
                     <datalist id="qa_model_list">${allModels.map(m => `<option value="${escapeAttr(m)}">`).join('')}</datalist>
-                    <div class="multi-model-hint">Separate multiple models with commas — e.g. Hilux, Fortuner, Prado</div>
+                    <div class="multi-model-hint">Separate multiple models with commas</div>
                 </div>
             </div>
             <div style="font-size:11px;color:#888;margin:4px 0 12px;">Use "Universal" for make + "All Models" for model if it fits anything.</div>
@@ -1741,6 +1795,8 @@ function openQuickAdd(prefill){
                     <input type="number" id="qa_yend" value="${p.yearEnd||''}" placeholder="e.g. 2023" style="width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;">
                 </div>
             </div>
+
+            ${buildStockSelectHTML('qa_stock', 'in_stock')}
 
             ${brandCombo}
 
@@ -1781,6 +1837,7 @@ async function saveQuickAdd(){
     const vModel = (document.getElementById('qa_vmodel').value || '').trim() || 'All Models';
     const yStart = parseInt(document.getElementById('qa_ystart').value) || 0;
     const yEnd = parseInt(document.getElementById('qa_yend').value) || 0;
+    const stockVal = normalizeStock(document.getElementById('qa_stock').value);
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
 
@@ -1819,6 +1876,7 @@ async function saveQuickAdd(){
         vehicleModel: vModel,
         yearStart: yStart,
         yearEnd: yEnd,
+        availability: stockVal,
         sku: newSku,
         stock: 1
     };
@@ -1861,6 +1919,7 @@ function renderAdminProductCards(){
         const catCombo = buildComboHTML(`edit_cat_${index}`, 'Category', catOptions, product.category || '', 'Type new category name');
         const brandCombo = buildComboHTML(`edit_br_${index}`, 'Brand', brandOptions, product.brand || '', 'Type new brand name');
         const imgPicker = buildImagePickerHTML(`edit_img_${index}`, getProductImages(product), product.name || 'product');
+        const stockSelect = buildStockSelectHTML(`edit_stock_${index}`, product.availability);
         html+=`<div style="margin-bottom:15px;padding:15px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9;" id="adminCard_${index}">
             <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px;">Product Name (editable):</label>
             <input type="text" id="name_${index}" value="${escapeAttr(product.name||'')}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-weight:700;font-size:15px;margin-bottom:6px;">
@@ -1886,6 +1945,7 @@ function renderAdminProductCards(){
                 <div><label style="font-size:12px;">Year Start:</label><input type="number" id="ystart_${index}" value="${product.yearStart||0}" style="width:100%;padding:5px;"></div>
                 <div><label style="font-size:12px;">Year End:</label><input type="number" id="yend_${index}" value="${product.yearEnd||0}" style="width:100%;padding:5px;"></div>
             </div>
+            ${stockSelect}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div>
             <div style="margin-top:10px;"><label style="font-size:12px;font-weight:700;">Images (photos, URLs, or emojis):</label>${imgPicker}</div>
             <div style="margin-top:10px;"><label style="font-size:12px;">Description:</label><textarea id="desc_${index}" style="width:100%;padding:5px;height:40px;">${escapeAttr(product.description||'')}</textarea></div>
@@ -1925,7 +1985,12 @@ function renderOrdersList(){
     }
     let html = '';
     cachedOrders.forEach(o => {
-        const itemsLines = (o.items||[]).map(i => `• ${escapeAttr(i.name)} × ${i.quantity} — ${formatPrice(i.subtotal)}`).join('<br>');
+        const itemsLines = (o.items||[]).map(i => {
+            const st = normalizeStock(i.availability);
+            const tag = st === STOCK_ON_ORDER ? ' <span class="cart-item-status on-order">Shipped on Order</span>' : ' <span class="cart-item-status in-stock">In Stock</span>';
+            return `• ${escapeAttr(i.name)}${tag} × ${i.quantity} — ${formatPrice(i.subtotal)}`;
+        }).join('<br>');
+        const onOrderNote = o.hasOnOrderItems ? `<div style="font-size:12px;color:#e65100;font-weight:700;margin-top:6px;">⚠️ Contains Shipped on Order items — deposit required</div>` : '';
         html += `<div class="order-card status-${o.status||'new'}">
             <div class="order-head">
                 <div>
@@ -1941,7 +2006,7 @@ function renderOrdersList(){
             </div>
             <div class="order-customer"><strong>${escapeAttr(o.customerName||'')}</strong> · ${escapeAttr(o.customerPhone||'')}</div>
             <div class="order-customer">Handled by: <strong>${escapeAttr((o.handledByName||o.handledBy||'').toUpperCase())}</strong> · Status: <strong>${statusLabel(o.status)}</strong></div>
-            <div class="order-items">${itemsLines}</div>
+            <div class="order-items">${itemsLines}${onOrderNote}</div>
             <div class="order-total">Total: ${formatPrice(o.total)}</div>
             <div class="order-actions">
                 <button class="btn-print" onclick="printOrder('${escapeAttr(o.id)}')"><i class="fas fa-print"></i> Print</button>
@@ -1977,11 +2042,17 @@ function buildReceiptText(o){
     lines.push(``);
     lines.push(`Items:`);
     (o.items||[]).forEach(i => {
-        lines.push(`  • ${i.name}`);
+        const st = normalizeStock(i.availability);
+        const tag = st === STOCK_ON_ORDER ? ' [Shipped on Order ~2 weeks]' : ' [In Stock]';
+        lines.push(`  • ${i.name}${tag}`);
         lines.push(`      Qty: ${i.quantity} x ${formatPrice(i.price)} = ${formatPrice(i.subtotal)}`);
     });
     lines.push(``);
     lines.push(`TOTAL: ${formatPrice(o.total)}`);
+    if(o.hasOnOrderItems){
+        lines.push(``);
+        lines.push(`Note: Items marked [Shipped on Order] require a deposit and arrive in ~2 weeks.`);
+    }
     lines.push(``);
     lines.push(`Thank you for your business.`);
     lines.push(`ADIL: 0713349554 | SUHAYL: 0752763924`);
@@ -1991,7 +2062,12 @@ function buildReceiptText(o){
 function printOrder(id){
     const o = findOrderById(id);
     if(!o){ alert('Order not found'); return; }
-    const itemsRows = (o.items||[]).map(i => `<tr><td>${escapeHtml(i.name)}</td><td style="text-align:center">${i.quantity}</td><td style="text-align:right">${formatPrice(i.price)}</td><td style="text-align:right">${formatPrice(i.subtotal)}</td></tr>`).join('');
+    const itemsRows = (o.items||[]).map(i => {
+        const st = normalizeStock(i.availability);
+        const tag = st === STOCK_ON_ORDER ? '<br><small style="color:#e65100;font-weight:700;">Shipped on Order ~2 weeks</small>' : '';
+        return `<tr><td>${escapeHtml(i.name)}${tag}</td><td style="text-align:center">${i.quantity}</td><td style="text-align:right">${formatPrice(i.price)}</td><td style="text-align:right">${formatPrice(i.subtotal)}</td></tr>`;
+    }).join('');
+    const onOrderNote = o.hasOnOrderItems ? `<div style="background:#fff8e1;border-left:3px solid #ffc107;padding:8px 12px;border-radius:5px;font-size:12px;color:#e65100;margin-top:10px;"><strong>Note:</strong> Items marked Shipped on Order require a deposit and arrive in ~2 weeks.</div>` : '';
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt #${escapeHtml(o.id)}</title>
     <style>
         body{font-family:Arial,sans-serif;padding:20px;max-width:480px;margin:0 auto;color:#222}
@@ -2021,6 +2097,7 @@ function printOrder(id){
             <tbody>${itemsRows}</tbody>
         </table>
         <div class="total">TOTAL: ${formatPrice(o.total)}</div>
+        ${onOrderNote}
         <div class="footer">Thank you for your business — A & S AUTOPARTS</div>
         <script>window.onload = function(){ setTimeout(function(){ window.print(); }, 300); }<\/script>
     </body></html>`;
@@ -2164,6 +2241,7 @@ function showAddProductForm(){
             <div><label>Year End:</label><input type="number" id="new_yend" value="0" style="width:100%;padding:5px;"></div>
             <div><label>Stock:</label><input type="number" id="new_stock" value="0" style="width:100%;padding:5px;"></div>
         </div>
+        ${buildStockSelectHTML('new_stock_status', 'in_stock')}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">${brandCombo}${catCombo}</div>
         <div style="margin-top:10px;"><label style="font-weight:700;">Images (photos, URLs, or emojis):</label>${buildImagePickerHTML('new_img', [], 'new-part')}</div>
         <div style="margin-top:10px;"><label>Description:</label><textarea id="new_description" style="width:100%;padding:5px;height:40px;"></textarea></div>
@@ -2181,6 +2259,7 @@ async function addNewProduct(){
     const images = readImagePickerValue('new_img');
     const imgVal = images.length > 0 ? images[0] : '🔧';
     const nameVal = document.getElementById('new_name').value;
+    const stockStatus = normalizeStock(document.getElementById('new_stock_status').value);
     if(!brandVal){ alert('Please select or add a brand.'); return; }
     if(!catVal){ alert('Please select or add a category.'); return; }
     const dup = findDuplicate({ name: nameVal, partNo: partNo, sku: null }, -1);
@@ -2219,6 +2298,7 @@ async function addNewProduct(){
         yearEnd:parseInt(document.getElementById('new_yend').value)||0,
         stock:parseInt(document.getElementById('new_stock').value)||0,
         description:document.getElementById('new_description').value,
+        availability: stockStatus,
         sku:newSku
     };
     if(!newProduct.name||!newProduct.price){alert('Please enter product name and price');return}
@@ -2245,6 +2325,7 @@ async function updateProduct(index){
     products[index].vehicleModel = (document.getElementById(`vmodel_${index}`).value || 'All Models').trim();
     products[index].yearStart = parseInt(document.getElementById(`ystart_${index}`).value) || 0;
     products[index].yearEnd = parseInt(document.getElementById(`yend_${index}`).value) || 0;
+    products[index].availability = normalizeStock(document.getElementById(`edit_stock_${index}`).value);
     const newBrandVal = getComboValue(`edit_br_${index}`);
     const newCatVal = getComboValue(`edit_cat_${index}`);
     if(!newBrandVal){ alert('Please select or add a brand.'); return; }
