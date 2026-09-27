@@ -479,5 +479,26 @@
     "description": "",
     "availability": "on_order",
     "sku": "SKU-1790510797047"
+  },
+  {
+    "name": "OIL FILTER - AQUA",
+    "price": 1300,
+    "partNo": "JS-C118J",
+    "oem": "JS-C118J",
+    "application": "Toyota Aqua - M15A-FXE",
+    "category": "Engine",
+    "brand": "JS",
+    "image": "images/new-part-1790523093010.jpg",
+    "images": [
+      "images/new-part-1790523093010.jpg"
+    ],
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Aqua",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 0,
+    "description": "",
+    "availability": "in_stock",
+    "sku": "SKU-1790523100671"
   }
 ]
