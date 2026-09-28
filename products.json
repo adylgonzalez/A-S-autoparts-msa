@@ -524,5 +524,29 @@
     "description": "",
     "availability": "on_order",
     "sku": "SKU-1790573305664"
+  },
+  {
+    "name": "1NZ FE - ENGINE (1.5L)",
+    "price": 0,
+    "priceMode": "range",
+    "priceMin": 120000,
+    "priceMax": 150000,
+    "partNo": "1NZ FE ",
+    "oem": "1NZ FE ",
+    "application": "Probox, Succeed, Vitz, Auris, Corolla",
+    "category": "EX JAPAN",
+    "brand": "TOYOTA",
+    "image": "images/new-part-1790575406002.jpg",
+    "images": [
+      "images/new-part-1790575406002.jpg"
+    ],
+    "vehicleMake": "Toyota",
+    "vehicleModel": "Vitz, Probox, Succeed, Auris",
+    "yearStart": 0,
+    "yearEnd": 0,
+    "stock": 0,
+    "description": "",
+    "availability": "on_order",
+    "sku": "SKU-1790575418199"
   }
 ]
