@@ -2,8 +2,12 @@
   {
     "name": "Brake Pads - Toyota Camry",
     "price": 4000,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-toyota-camry-1789139525512.jpg",
+    "images": [
+      "images/brake-pads-toyota-camry-1789139525512.jpg"
+    ],
     "brand": "BOSCH",
     "partNo": "04465-33470",
     "oem": "04465-33470",
@@ -14,13 +18,18 @@
     "yearStart": 2018,
     "yearEnd": 2023,
     "sku": "BP-TC-1823",
-    "stock": 25
+    "stock": 25,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Toyota Corolla",
     "price": 3500,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-toyota-corolla-1789139590764.jpg",
+    "images": [
+      "images/brake-pads-toyota-corolla-1789139590764.jpg"
+    ],
     "brand": "Akebono",
     "partNo": "04465-02480",
     "oem": "04465-02480",
@@ -31,13 +40,18 @@
     "yearStart": 2008,
     "yearEnd": 2023,
     "sku": "BP-TC-0823",
-    "stock": 30
+    "stock": 30,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Toyota Hilux",
     "price": 5000,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-toyota-hilux-1789139825293.jpg",
+    "images": [
+      "images/brake-pads-toyota-hilux-1789139825293.jpg"
+    ],
     "brand": "BOSCH",
     "partNo": "04465-0K340",
     "oem": "04465-0K340",
@@ -48,13 +62,18 @@
     "yearStart": 2015,
     "yearEnd": 2023,
     "sku": "BP-TH-1523",
-    "stock": 20
+    "stock": 20,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Toyota Land Cruiser",
     "price": 6200,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-toyota-land-cruiser-1789140225809.jpg",
+    "images": [
+      "images/brake-pads-toyota-land-cruiser-1789140225809.jpg"
+    ],
     "brand": "BOSCH",
     "partNo": "04465-60310",
     "oem": "04465-60310",
@@ -65,13 +84,18 @@
     "yearStart": 2010,
     "yearEnd": 2023,
     "sku": "BP-TL-1023",
-    "stock": 18
+    "stock": 18,
+    "availability": "in_stock"
   },
   {
     "name": "Oil Filter - Toyota",
     "price": 1500,
+    "priceMode": "fixed",
     "category": "Filters",
     "image": "images/oil-filter-toyota-1789585151349.jpg",
+    "images": [
+      "images/oil-filter-toyota-1789585151349.jpg"
+    ],
     "brand": "TOYOTA Genuine",
     "partNo": "90915-YZZD2",
     "oem": "90915-YZZD2",
@@ -82,13 +106,18 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "OF-TY-ALL",
-    "stock": 100
+    "stock": 100,
+    "availability": "in_stock"
   },
   {
     "name": "Air Filter - Toyota",
     "price": 2200,
+    "priceMode": "fixed",
     "category": "Filters",
     "image": "images/air-filter-toyota-1789585250220.jpg",
+    "images": [
+      "images/air-filter-toyota-1789585250220.jpg"
+    ],
     "brand": "DENSO",
     "partNo": "17801-0D050",
     "oem": "17801-0D050",
@@ -99,13 +128,18 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "AF-TY-ALL",
-    "stock": 50
+    "stock": 50,
+    "availability": "in_stock"
   },
   {
     "name": "Spark Plugs - Toyota (4 Pack)",
     "price": 2800,
+    "priceMode": "fixed",
     "category": "Electrical",
     "image": "images/spark-plugs-toyota-4-pack-1789585354349.jpg",
+    "images": [
+      "images/spark-plugs-toyota-4-pack-1789585354349.jpg"
+    ],
     "brand": "NGK",
     "partNo": "90919-01253",
     "oem": "90919-01253",
@@ -116,13 +150,18 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "SP-TY-ALL",
-    "stock": 60
+    "stock": 60,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Honda Civic",
     "price": 3900,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-honda-civic-1789585448536.jpg",
+    "images": [
+      "images/brake-pads-honda-civic-1789585448536.jpg"
+    ],
     "brand": "ACDelco",
     "partNo": "45022-SNA-A01",
     "oem": "45022-SNA-A01",
@@ -133,13 +172,18 @@
     "yearStart": 2016,
     "yearEnd": 2023,
     "sku": "BP-HC-1623",
-    "stock": 25
+    "stock": 25,
+    "availability": "in_stock"
   },
   {
     "name": "Oil Filter - Honda",
     "price": 1200,
+    "priceMode": "fixed",
     "category": "Filters",
     "image": "images/oil-filter-honda-1789584994525.jpg",
+    "images": [
+      "images/oil-filter-honda-1789584994525.jpg"
+    ],
     "brand": "HONDA Genuine",
     "partNo": "15400-PLM-A01",
     "oem": "15400-PLM-A01",
@@ -150,13 +194,18 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "OF-HN-ALL",
-    "stock": 80
+    "stock": 80,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Nissan X-Trail",
     "price": 4200,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-nissan-x-trail-1789585659524.jpg",
+    "images": [
+      "images/brake-pads-nissan-x-trail-1789585659524.jpg"
+    ],
     "brand": "Akebono",
     "partNo": "D1060-JD00A",
     "oem": "D1060-JD00A",
@@ -167,13 +216,18 @@
     "yearStart": 2010,
     "yearEnd": 2023,
     "sku": "BP-NX-1023",
-    "stock": 20
+    "stock": 20,
+    "availability": "in_stock"
   },
   {
     "name": "Brake Pads - Mitsubishi Pajero",
     "price": 5500,
+    "priceMode": "fixed",
     "category": "Brakes",
     "image": "images/brake-pads-mitsubishi-pajero-1789586120535.jpg",
+    "images": [
+      "images/brake-pads-mitsubishi-pajero-1789586120535.jpg"
+    ],
     "brand": "BOSCH",
     "partNo": "MR527678",
     "oem": "MR527678",
@@ -184,13 +238,18 @@
     "yearStart": 2005,
     "yearEnd": 2023,
     "sku": "BP-MP-0523",
-    "stock": 15
+    "stock": 15,
+    "availability": "in_stock"
   },
   {
     "name": "Oil Filter - Nissan",
     "price": 1300,
+    "priceMode": "fixed",
     "category": "Filters",
     "image": "images/oil-filter-nissan-1789586508199.jpg",
+    "images": [
+      "images/oil-filter-nissan-1789586508199.jpg"
+    ],
     "brand": "NISSAN Genuine",
     "partNo": "15208-65F0A",
     "oem": "15208-65F0A",
@@ -201,13 +260,18 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "OF-NS-ALL",
-    "stock": 70
+    "stock": 70,
+    "availability": "in_stock"
   },
   {
     "name": "Timing Belt Kit - Toyota",
     "price": 14500,
+    "priceMode": "fixed",
     "category": "Engine",
     "image": "images/timing-belt-kit-toyota-1789586302979.jpg",
+    "images": [
+      "images/timing-belt-kit-toyota-1789586302979.jpg"
+    ],
     "brand": "Gates",
     "partNo": "13568-09070",
     "oem": "13568-09070",
@@ -218,13 +282,16 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "TB-TY-ALL",
-    "stock": 12
+    "stock": 12,
+    "availability": "in_stock"
   },
   {
     "name": "Water Pump - Toyota",
     "price": 8900,
+    "priceMode": "fixed",
     "category": "Cooling",
     "image": "💧",
+    "images": [],
     "brand": "AISIN",
     "partNo": "16100-09280",
     "oem": "16100-09280",
@@ -235,13 +302,16 @@
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "WP-TY-ALL",
-    "stock": 20
+    "stock": 20,
+    "availability": "in_stock"
   },
   {
     "name": "Shock Absorber - Toyota Hilux",
     "price": 14500,
+    "priceMode": "fixed",
     "category": "Suspension",
     "image": "🛠️",
+    "images": [],
     "brand": "KYB",
     "partNo": "48531-09885",
     "oem": "48531-09885",
@@ -252,139 +322,170 @@
     "yearStart": 2015,
     "yearEnd": 2023,
     "sku": "SA-TH-1523",
-    "stock": 10
+    "stock": 10,
+    "availability": "in_stock"
   },
   {
-    "name": "Alternator",
+    "name": "Alternator - Toyota Crown / Mark X / Lexus IS",
     "price": 15000,
+    "priceMode": "fixed",
     "partNo": "N/A",
     "oem": "N/A",
     "application": "Toyota Crown, Mark X, Lexus IS250/IS350",
     "category": "Electrical",
     "brand": "DENSO",
-    "vehicleMake": "Toyota Crown, Mark X, lexus IS250, IS350, GS",
-    "vehicleModel": "All Models",
+    "vehicleMake": "Lexus",
+    "vehicleModel": "IS250, IS350, GS, Crown, Mark X",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 5,
     "image": "images/alternator-1789123527469.jpg",
-    "description": "",
-    "sku": "SKU-1789066296841"
+    "images": [
+      "images/alternator-1789123527469.jpg"
+    ],
+    "description": "Alternator for Toyota Crown, Mark X, and Lexus IS/GS models.",
+    "sku": "SKU-1789066296841",
+    "availability": "in_stock"
   },
   {
-    "name": "Radiator",
+    "name": "Radiator - Toyota Crown / Mark X / Lexus IS250",
     "price": 13500,
+    "priceMode": "fixed",
     "partNo": "N/A",
     "oem": "N/A",
-    "application": "Toyota Crown, Mark X, Lexus IS250/IS350",
+    "application": "Toyota Crown, Mark X, Lexus IS250",
     "brand": "Tongshi",
     "category": "Cooling",
     "image": "images/new-part-1789922536279.jpg",
-    "description": "Radiator",
+    "images": [
+      "images/new-part-1789922536279.jpg"
+    ],
+    "description": "Radiator for Toyota Crown, Mark X, and Lexus IS250.",
     "vehicleMake": "Toyota",
-    "vehicleModel": "Mark X, Crown, Lexus IS250",
+    "vehicleModel": "Mark X, Crown",
     "yearStart": 0,
     "yearEnd": 0,
     "sku": "QA-1789922547253",
     "stock": 1,
-    "images": [
-      "images/new-part-1789922536279.jpg"
-    ]
+    "availability": "in_stock"
   },
   {
-    "name": "Front Brake Pads",
+    "name": "Front Brake Pads - Toyota Land Cruiser Prado / Hilux / Fortuner",
     "price": 14800,
-    "partNo": "04465-35290/04465-60320/04465-60210/04465-0K580/04465-YZZJ2/04465-YZZE1/4605A72",
-    "oem": "04465-35290/04465-60320/04465-60210/04465-0K580/04465-YZZJ2/04465-YZZE1/4605A72",
-    "application": "Prado 120/150/Hilux/Pajero/Fortuner/LexusGX400/Surf/Fjcruiserr ",
+    "priceMode": "fixed",
+    "partNo": "04465-60320",
+    "oem": "04465-60320",
+    "application": "Prado 120/150, Hilux, Fortuner, FJ Cruiser",
     "category": "Brakes",
     "brand": "TOYOTA Genuine",
     "image": "images/front-brake-pads-1789937099666.jpg",
+    "images": [
+      "images/front-brake-pads-1789937099666.jpg"
+    ],
     "vehicleMake": "Toyota",
-    "vehicleModel": "TRJ120/KDJ120/VZJ121/TRJ125/TRJ150/KDJ150/LJ150/GDJ150/KUN25/KUN125/KUN135/GSJ15",
+    "vehicleModel": "Prado, Hilux, Fortuner",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 15,
-    "description": "",
-    "sku": "SKU-1789935028369"
+    "description": "Front brake pads. Also cross-references: 04465-35290, 04465-60210, 04465-0K580, 04465-YZZJ2, 04465-YZZE1",
+    "sku": "SKU-1789935028369",
+    "availability": "in_stock"
   },
   {
-    "name": "Air Filter",
+    "name": "Air Filter - Toyota Probox / Vitz / Voxy / Noah",
     "price": 650,
+    "priceMode": "fixed",
     "partNo": "17801-21050",
     "oem": "17801-21050",
-    "application": "Probox/Allison/Ractis/Sienta/Wish/Voxy/Noah/Vitz",
+    "application": "Probox/Allion/Ractis/Sienta/Wish/Voxy/Noah/Vitz",
     "category": "Engine",
     "brand": "BOSCH",
     "image": "images/air-filter-1789937000988.jpg",
+    "images": [
+      "images/air-filter-1789937000988.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "NZT260/ZRT260/NCP160/NCP120/ZRR70/ZRR80/NCP131/ZSA44/ZGE20",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 50,
-    "description": "",
-    "sku": "SKU-1789935603019"
+    "description": "Engine air filter for Toyota Probox, Vitz, Voxy, Noah and related models.",
+    "sku": "SKU-1789935603019",
+    "availability": "in_stock"
   },
   {
-    "name": "SPARK PLUGS -  IRIDIUM TT",
+    "name": "Spark Plugs - DENSO Iridium TT",
     "price": 25000,
+    "priceMode": "fixed",
     "partNo": "IKBH20TT",
     "oem": "IKBH20TT",
-    "application": "All 4gr Engines",
+    "application": "All 4GR Engines",
     "category": "Ignition",
     "brand": "DENSO",
     "image": "images/new-part-1789937846021.jpg",
+    "images": [
+      "images/new-part-1789937846021.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Crown grs180,grs182,grs200, Mark x, Lexus IS250, Lexus GS250",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 10,
-    "description": "",
-    "sku": "SKU-1789937851009"
+    "description": "Iridium TT spark plugs for 4GR-FSE engines.",
+    "sku": "SKU-1789937851009",
+    "availability": "in_stock"
   },
   {
     "name": "Toyota Crown - Front Lip",
     "price": 15000,
+    "priceMode": "fixed",
     "partNo": "N/A",
     "oem": "N/A",
     "application": "GRS180, 182, 184",
     "category": "Accessories",
     "brand": "Other",
     "image": "images/new-part-1789938936002.jpg",
+    "images": [
+      "images/new-part-1789938936002.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Crown",
     "yearStart": 2004,
     "yearEnd": 2008,
     "stock": 5,
-    "description": "",
+    "description": "Front lip for Toyota Crown GRS180/182/184.",
     "sku": "SKU-1789938960916",
-    "images": [
-      "images/new-part-1789938936002.jpg"
-    ]
+    "availability": "in_stock"
   },
   {
-    "name": "Coolant bypass Pipe Aluminium",
+    "name": "Coolant Bypass Pipe Aluminium - Mazda CX-5",
     "price": 6000,
+    "priceMode": "fixed",
     "partNo": "SH20-15-290A",
     "oem": "SH20-15-290A",
-    "application": "Mazda Diesel",
+    "application": "Mazda CX-5 Diesel",
     "category": "Cooling",
     "brand": "Local",
     "image": "images/new-part-1790078181841.jpg",
+    "images": [
+      "images/new-part-1790078181841.jpg"
+    ],
     "vehicleMake": "Mazda",
-    "vehicleModel": "Mazda3/5&CX5",
-    "yearStart": 0,
-    "yearEnd": 0,
+    "vehicleModel": "CX-5",
+    "yearStart": 2017,
+    "yearEnd": 2019,
     "stock": 5,
-    "description": "",
-    "sku": "SKU-1790078198325"
+    "description": "Coolant bypass pipe for Mazda CX-5 diesel.",
+    "sku": "SKU-1790078198325",
+    "availability": "in_stock"
   },
   {
-    "name": "Oil filter",
+    "name": "Oil Filter - Toyota Land Cruiser HZJ/HDJ",
     "price": 3500,
+    "priceMode": "fixed",
     "partNo": "90915-30002",
     "oem": "90915-30002",
-    "application": "HZJ75/HZJ76/HZJ78/HZJ79/HZJ105/HDJ80/HDJ100/",
+    "application": "HZJ75/HZJ76/HZJ78/HZJ79/HZJ105/HDJ80/HDJ100",
     "category": "Engine",
     "brand": "TOYOTA Genuine",
     "image": "images/new-part-1790436011688.jpg",
@@ -392,16 +493,18 @@
       "images/new-part-1790436011688.jpg"
     ],
     "vehicleMake": "Toyota",
-    "vehicleModel": "HZJ75/HZJ76/HZJ78/HZJ79/HZJ105/HDJ80/HDJ100",
+    "vehicleModel": "HZJ75, HZJ76, HZJ78, HZJ79, HZJ105, HDJ80, HDJ100",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 50,
-    "description": "",
-    "sku": "SKU-1790436025358"
+    "description": "Genuine Toyota oil filter for Land Cruiser HZJ/HDJ models.",
+    "sku": "SKU-1790436025358",
+    "availability": "in_stock"
   },
   {
-    "name": "Brake Shoe",
+    "name": "Brake Shoe - Toyota Land Cruiser HZJ75/HZJ79",
     "price": 14500,
+    "priceMode": "fixed",
     "partNo": "04495-60070",
     "oem": "04495-60070",
     "application": "Toyota Landcruiser",
@@ -412,16 +515,18 @@
       "images/new-part-1790436476646.jpg"
     ],
     "vehicleMake": "Toyota",
-    "vehicleModel": "HZJ75/HZJ79",
+    "vehicleModel": "HZJ75, HZJ79",
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 5,
-    "description": "",
-    "sku": "SKU-1790436480789"
+    "description": "Rear brake shoe for Toyota Land Cruiser HZJ75/HZJ79.",
+    "sku": "SKU-1790436480789",
+    "availability": "in_stock"
   },
   {
-    "name": "SPARK PLUGS -  DENSO TOUGH",
+    "name": "Spark Plugs - DENSO Tough",
     "price": 7000,
+    "priceMode": "fixed",
     "partNo": "VFKB16",
     "oem": "VFKB16",
     "application": "TOYOTA 1NZ-FXE - Vitz, Sienta, Aqua, Prius, Fielder, Probox",
@@ -436,12 +541,14 @@
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 2,
-    "description": "",
-    "sku": "SKU-1790441177399"
+    "description": "DENSO Tough spark plugs for 1NZ-FXE engines.",
+    "sku": "SKU-1790441177399",
+    "availability": "in_stock"
   },
   {
-    "name": "Oil Filter",
+    "name": "Oil Filter - Mazda Demio",
     "price": 1000,
+    "priceMode": "fixed",
     "partNo": "F103301",
     "oem": "F103301",
     "application": "Mazda Demio",
@@ -456,12 +563,16 @@
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 5,
-    "description": "",
-    "sku": "SKU-1790442101493"
+    "description": "Oil filter for Mazda Demio.",
+    "sku": "SKU-1790442101493",
+    "availability": "in_stock"
   },
   {
     "name": "ENGINE - 4GR FSE",
-    "price": 100000,
+    "price": 0,
+    "priceMode": "range",
+    "priceMin": 100000,
+    "priceMax": 180000,
     "partNo": "4GR FSE",
     "oem": "4GR FSE",
     "application": "Crown, Lexus IS250, Mark X",
@@ -472,17 +583,18 @@
       "images/new-part-1790510775643.jpg"
     ],
     "vehicleMake": "Toyota",
-    "vehicleModel": "Crown, Mark X, Lexus IS250",
+    "vehicleModel": "Crown, Mark X",
     "yearStart": 2004,
     "yearEnd": 2014,
     "stock": 0,
-    "description": "",
+    "description": "Used engine, 4GR-FSE. Price depends on condition and mileage.",
     "availability": "on_order",
     "sku": "SKU-1790510797047"
   },
   {
     "name": "OIL FILTER - AQUA",
     "price": 1300,
+    "priceMode": "fixed",
     "partNo": "JS-C118J",
     "oem": "JS-C118J",
     "application": "Toyota Aqua - M15A-FXE",
@@ -497,7 +609,7 @@
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 0,
-    "description": "",
+    "description": "Oil filter for Toyota Aqua.",
     "availability": "in_stock",
     "sku": "SKU-1790523100671"
   },
@@ -509,7 +621,7 @@
     "priceMax": 500000,
     "partNo": "ALL BMW ENGINES",
     "oem": "ALL BMW ENGINES",
-    "application": "BMWS",
+    "application": "BMWs",
     "category": "EX JAPAN",
     "brand": "BMW",
     "image": "images/new-part-1790573296035.jpg",
@@ -521,7 +633,7 @@
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 0,
-    "description": "",
+    "description": "Used BMW engines. Price depends on model and condition.",
     "availability": "on_order",
     "sku": "SKU-1790573305664"
   },
@@ -531,8 +643,8 @@
     "priceMode": "range",
     "priceMin": 120000,
     "priceMax": 150000,
-    "partNo": "1NZ FE ",
-    "oem": "1NZ FE ",
+    "partNo": "1NZ FE",
+    "oem": "1NZ FE",
     "application": "Probox, Succeed, Vitz, Auris, Corolla",
     "category": "EX JAPAN",
     "brand": "TOYOTA",
@@ -545,7 +657,7 @@
     "yearStart": 0,
     "yearEnd": 0,
     "stock": 0,
-    "description": "",
+    "description": "Used 1NZ-FE engine (1.5L). Price depends on condition.",
     "availability": "on_order",
     "sku": "SKU-1790575418199"
   }
