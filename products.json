@@ -735,23 +735,27 @@
   },
   {
     "name": "Oil Filter - Toyota Hilux / Fortuner / Hiace (Diesel)",
-    "price": 1700,
+    "price": 1500,
     "priceMode": "fixed",
     "partNo": "90915-YZZD2",
     "oem": "90915-YZZD2",
     "application": "Toyota Hilux, Fortuner, Hiace, Innova (Diesel)",
     "category": "Filters",
     "brand": "TOYOTA Genuine",
-    "image": "🔩",
-    "images": [],
+    "image": "images/oil-filter-toyota-hilux-fortuner-hiace-d-1790714502106.jpg",
+    "images": [
+      "images/oil-filter-toyota-hilux-fortuner-hiace-d-1790714502106.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Hilux, Fortuner, Hiace, Innova",
     "yearStart": 2004,
     "yearEnd": 2023,
     "stock": 50,
-    "description": "Genuine Toyota oil filter for diesel Hilux, Fortuner, Hiace and Innova. [VERIFY: supplier]",
+    "description": "Genuine Toyota oil filter for diesel Hilux, Fortuner, Hiace and Innova.",
     "sku": "OF-TH-0423",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Air Filter - Toyota Camry (2018-2023)",
