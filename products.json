@@ -88,28 +88,6 @@
     "availability": "in_stock"
   },
   {
-    "name": "Oil Filter - Toyota",
-    "price": 1500,
-    "priceMode": "fixed",
-    "category": "Filters",
-    "image": "images/oil-filter-toyota-1789585151349.jpg",
-    "images": [
-      "images/oil-filter-toyota-1789585151349.jpg"
-    ],
-    "brand": "TOYOTA Genuine",
-    "partNo": "90915-YZZD2",
-    "oem": "90915-YZZD2",
-    "application": "Toyota All Models",
-    "description": "Genuine Toyota oil filter. Traps 95% of contaminants.",
-    "vehicleMake": "Toyota",
-    "vehicleModel": "All Models",
-    "yearStart": 0,
-    "yearEnd": 0,
-    "sku": "OF-TY-ALL",
-    "stock": 100,
-    "availability": "in_stock"
-  },
-  {
     "name": "Air Filter - Toyota",
     "price": 2200,
     "priceMode": "fixed",
