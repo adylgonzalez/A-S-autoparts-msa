@@ -737,23 +737,27 @@
   },
   {
     "name": "Air Filter - Toyota Camry (2018-2023)",
-    "price": 2500,
+    "price": 1500,
     "priceMode": "fixed",
     "partNo": "17801-0P051",
     "oem": "17801-0P051",
     "application": "Toyota Camry 2018-2023 2.0L/2.5L",
     "category": "Filters",
-    "brand": "DENSO",
-    "image": "💨",
-    "images": [],
+    "brand": "TOYOTA Genuine",
+    "image": "images/air-filter-toyota-camry-2018-2023-1790714843654.jpg",
+    "images": [
+      "images/air-filter-toyota-camry-2018-2023-1790714843654.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Camry",
     "yearStart": 2018,
     "yearEnd": 2023,
     "stock": 25,
-    "description": "Engine air filter for Toyota Camry 2018-2023. [VERIFY: supplier]",
+    "description": "Engine air filter for Toyota Camry 2018-2023.",
     "sku": "AF-TC-1823",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Air Filter - Toyota Hilux (2015-2023)",
