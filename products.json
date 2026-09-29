@@ -792,16 +792,20 @@
     "application": "Toyota Corolla, Yaris, Vitz, Axio",
     "category": "Filters",
     "brand": "BOSCH",
-    "image": "💨",
-    "images": [],
+    "image": "images/air-filter-toyota-corolla-yaris-vitz-1790715105032.jpg",
+    "images": [
+      "images/air-filter-toyota-corolla-yaris-vitz-1790715105032.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Corolla, Yaris, Vitz, Axio",
     "yearStart": 2006,
     "yearEnd": 2023,
     "stock": 35,
-    "description": "Engine air filter for Toyota Corolla, Yaris, Vitz and Axio. [VERIFY: supplier]",
+    "description": "Engine air filter for Toyota Corolla, Yaris, Vitz and Axio.",
     "sku": "AF-TC-0623",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Cabin Air Filter - Toyota Camry / RAV4 / Corolla",
