@@ -670,16 +670,20 @@
     "application": "Toyota Camry 3.5L V6, RAV4",
     "category": "Filters",
     "brand": "TOYOTA Genuine",
-    "image": "🔩",
-    "images": [],
+    "image": "images/oil-filter-toyota-camry-v6-rav4-1790713809452.jpg",
+    "images": [
+      "images/oil-filter-toyota-camry-v6-rav4-1790713809452.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Camry, RAV4",
     "yearStart": 2012,
     "yearEnd": 2024,
     "stock": 30,
-    "description": "Genuine Toyota oil filter element. Fits Camry 3.5L V6 and RAV4. [VERIFY: supplier]",
+    "description": "Genuine Toyota oil filter element. Fits Camry 3.5L V6 and RAV4.",
     "sku": "OF-TC-1224",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Oil Filter - Toyota Corolla / Auris / Yaris",
@@ -2422,4 +2426,3 @@
     "availability": "in_stock"
   }
 ]
-
