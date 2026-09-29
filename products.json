@@ -687,23 +687,27 @@
   },
   {
     "name": "Oil Filter - Toyota Corolla / Auris / Yaris",
-    "price": 1500,
+    "price": 1200,
     "priceMode": "fixed",
     "partNo": "04152-YZZA6",
     "oem": "04152-YZZA6",
     "application": "Toyota Corolla, Auris, Yaris, RAV4 2.0L",
     "category": "Filters",
     "brand": "TOYOTA Genuine",
-    "image": "🔩",
-    "images": [],
+    "image": "images/oil-filter-toyota-corolla-auris-yaris-1790714194101.jpg",
+    "images": [
+      "images/oil-filter-toyota-corolla-auris-yaris-1790714194101.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Corolla, Auris, Yaris, RAV4",
     "yearStart": 2007,
     "yearEnd": 2024,
     "stock": 40,
-    "description": "Genuine Toyota oil filter element. Fits Corolla, Auris, Yaris and RAV4 2.0L. [VERIFY: supplier]",
+    "description": "Genuine Toyota oil filter element. Fits Corolla, Auris, Yaris and RAV4 2.0L.",
     "sku": "OF-TC-0724",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Oil Filter - Toyota Vitz / Probox / Premio",
