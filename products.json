@@ -761,23 +761,27 @@
   },
   {
     "name": "Air Filter - Toyota Hilux (2015-2023)",
-    "price": 2800,
+    "price": 3200,
     "priceMode": "fixed",
     "partNo": "17801-0L040",
     "oem": "17801-0L040",
     "application": "Toyota Hilux 2015-2023, Fortuner 2015-2023",
     "category": "Filters",
     "brand": "DENSO",
-    "image": "💨",
-    "images": [],
+    "image": "images/air-filter-toyota-hilux-2015-2023-1790714943933.jpg",
+    "images": [
+      "images/air-filter-toyota-hilux-2015-2023-1790714943933.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Hilux, Fortuner",
     "yearStart": 2015,
     "yearEnd": 2023,
     "stock": 30,
-    "description": "Engine air filter for Toyota Hilux and Fortuner 2015-2023. [VERIFY: supplier]",
+    "description": "Engine air filter for Toyota Hilux and Fortuner 2015-2023.",
     "sku": "AF-TH-1523",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Air Filter - Toyota Corolla / Yaris / Vitz",
