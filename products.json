@@ -718,16 +718,20 @@
     "application": "Toyota Vitz, Probox, Premio, Axio, NZE",
     "category": "Filters",
     "brand": "TOYOTA Genuine",
-    "image": "🔩",
-    "images": [],
+    "image": "images/oil-filter-toyota-vitz-probox-premio-1790714304060.jpg",
+    "images": [
+      "images/oil-filter-toyota-vitz-probox-premio-1790714304060.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Vitz, Probox, Premio, Axio",
     "yearStart": 2000,
     "yearEnd": 2020,
     "stock": 60,
-    "description": "Genuine Toyota spin-on oil filter. Fits Vitz, Probox, Premio and similar models. [VERIFY: supplier]",
+    "description": "Genuine Toyota spin-on oil filter. Fits Vitz, Probox, Premio and similar models.",
     "sku": "OF-TV-0020",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Oil Filter - Toyota Hilux / Fortuner / Hiace (Diesel)",
