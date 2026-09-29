@@ -2416,15 +2416,19 @@
     "application": "Toyota Corolla ZRE, Fielder, Axio, Auris 2006-2023",
     "category": "Bearings",
     "brand": "NTN",
-    "image": "⚙️",
-    "images": [],
+    "image": "images/wheel-bearing-toyota-corolla-fielder-axi-1790715265323.jpg",
+    "images": [
+      "images/wheel-bearing-toyota-corolla-fielder-axi-1790715265323.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Corolla, Fielder, Axio, Auris",
     "yearStart": 2006,
     "yearEnd": 2023,
     "stock": 10,
-    "description": "Rear wheel hub bearing assembly for Toyota Corolla, Fielder and Axio. [VERIFY: supplier]",
+    "description": "Rear wheel hub bearing assembly for Toyota Corolla, Fielder and Axio.",
     "sku": "WB-TC-0623",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   }
 ]
