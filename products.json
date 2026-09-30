@@ -849,23 +849,27 @@
   },
   {
     "name": "Spark Plugs - Toyota Camry V6 (6 Pack)",
-    "price": 6500,
-    "priceMode": "fixed",
+    "price": 0,
+    "priceMode": "on_request",
     "partNo": "90919-01263",
     "oem": "90919-01263",
     "application": "Toyota Camry 3.5L V6 2018-2023",
     "category": "Ignition",
-    "brand": "DENSO",
-    "image": "⚡",
-    "images": [],
+    "brand": "TOYOTA Genuine",
+    "image": "images/spark-plugs-toyota-camry-v6-6-pack-1790759113509.jpg",
+    "images": [
+      "images/spark-plugs-toyota-camry-v6-6-pack-1790759113509.jpg"
+    ],
     "vehicleMake": "Toyota",
     "vehicleModel": "Camry",
     "yearStart": 2018,
     "yearEnd": 2023,
     "stock": 15,
-    "description": "Spark plug set for Camry 3.5L V6. Iridium. [VERIFY: supplier]",
+    "description": "Spark plug set for Camry 3.5L V6. Iridium.",
     "sku": "SP-TC-1823",
-    "availability": "in_stock"
+    "availability": "on_order",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Spark Plugs - Toyota Corolla 1.8",
