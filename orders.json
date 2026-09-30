@@ -1,29 +1,2 @@
 [
-  {
-    "id": "A56735104",
-    "date": "2026-09-30T08:25:35.157Z",
-    "customerName": "adil",
-    "customerPhone": "0713349554",
-    "handledBy": "adil",
-    "handledByName": "ADIL",
-    "status": "new",
-    "source": "cart",
-    "hasOnOrderItems": false,
-    "hasQuoteItems": false,
-    "fixedItemsTotal": 5800,
-    "items": [
-      {
-        "name": "Brake Pads - Nissan Skyline V36 / Fuga Y51 (Rear)",
-        "sku": "BP-NSKF-1014R",
-        "price": 5800,
-        "priceMode": "fixed",
-        "priceMin": null,
-        "priceMax": null,
-        "quantity": 1,
-        "subtotal": 5800,
-        "availability": "in_stock"
-      }
-    ],
-    "total": 5800
-  }
 ]
