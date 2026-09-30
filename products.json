@@ -4499,17 +4499,21 @@
     "oem": "PE5R-18-110",
     "application": "Mazda Atenza GJ, Axela BM, CX-5 KE/KF, Mazda6, Mazda3 Skyactiv-G",
     "category": "Ignition",
-    "brand": "NGK",
-    "image": "⚡",
-    "images": [],
+    "brand": "MAZDA Genuine",
+    "image": "images/spark-plugs-mazda-atenza-axela-cx-5-skya-1790758706273.jpg",
+    "images": [
+      "images/spark-plugs-mazda-atenza-axela-cx-5-skya-1790758706273.jpg"
+    ],
     "vehicleMake": "Mazda",
     "vehicleModel": "Atenza, Axela, CX-5, Mazda6, Mazda3",
     "yearStart": 2012,
     "yearEnd": 2023,
     "stock": 15,
-    "description": "Iridium spark plugs for Skyactiv-G petrol engines. Sold as set of 4. [VERIFY: supplier]",
+    "description": "Iridium spark plugs for Skyactiv-G petrol engines. Sold as set of 4. ",
     "sku": "SP-MSKY-1223",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Serpentine Belt - Toyota Crown / Mark X / Lexus IS250 4GR-FSE",
