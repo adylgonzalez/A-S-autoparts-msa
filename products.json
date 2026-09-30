@@ -4473,23 +4473,27 @@
   },
   {
     "name": "Spark Plugs - Nissan Skyline V36 / Fuga Y50 VQ35HR (6 Pack)",
-    "price": 8500,
+    "price": 12000,
     "priceMode": "fixed",
     "partNo": "22401-JA01B",
     "oem": "22401-JA01B",
     "application": "Nissan Skyline V36, Fuga Y50/Y51, Murano Z51 VQ35HR/VQ37VHR",
     "category": "Ignition",
-    "brand": "NGK",
-    "image": "⚡",
-    "images": [],
+    "brand": "NISSAN Genuine",
+    "image": "images/spark-plugs-nissan-skyline-v36-fuga-y50--1790758842707.jpg",
+    "images": [
+      "images/spark-plugs-nissan-skyline-v36-fuga-y50--1790758842707.jpg"
+    ],
     "vehicleMake": "Nissan",
     "vehicleModel": "Skyline, Fuga, Murano",
     "yearStart": 2006,
     "yearEnd": 2015,
     "stock": 12,
-    "description": "Iridium spark plugs for VQ35HR/VQ37VHR engines. Sold as set of 6. [VERIFY: supplier]",
+    "description": "Iridium spark plugs for VQ35HR/VQ37VHR engines. Sold as set of 6.",
     "sku": "SP-NSKF-0615",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Spark Plugs - Mazda Atenza / Axela / CX-5 Skyactiv (4 Pack)",
