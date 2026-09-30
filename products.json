@@ -4439,21 +4439,25 @@
     "name": "Oxygen Sensor (O2) - Mazda Atenza / Axela / CX-5 Skyactiv",
     "price": 8500,
     "priceMode": "fixed",
-    "partNo": "PE11-18-8G1",
-    "oem": "PE11-18-8G1",
+    "partNo": "PE11-18-8G1, PE01-18-8G1A",
+    "oem": "PE11-18-8G1, PE01-18-8G1A",
     "application": "Mazda Atenza GJ, Axela BM, CX-5 KE/KF, Mazda6, Mazda3",
     "category": "Sensors",
     "brand": "NTK",
-    "image": "🔌",
-    "images": [],
+    "image": "images/oxygen-sensor-o2-mazda-atenza-axela-cx-5-1790759349782.jpg",
+    "images": [
+      "images/oxygen-sensor-o2-mazda-atenza-axela-cx-5-1790759349782.jpg"
+    ],
     "vehicleMake": "Mazda",
     "vehicleModel": "Atenza, Axela, CX-5, Mazda6, Mazda3",
     "yearStart": 2012,
     "yearEnd": 2023,
     "stock": 8,
-    "description": "Oxygen sensor (downstream) for Skyactiv-G petrol engines. [VERIFY: supplier]",
+    "description": "Oxygen sensor (downstream) for Skyactiv-G petrol engines.",
     "sku": "O2-MSKY-1223",
-    "availability": "in_stock"
+    "availability": "in_stock",
+    "priceMin": null,
+    "priceMax": null
   },
   {
     "name": "Fuel Injector - Nissan Skyline V36 / Fuga Y50 VQ35HR",
