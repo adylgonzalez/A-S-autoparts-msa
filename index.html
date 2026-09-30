@@ -42,18 +42,23 @@
 
     <style>
         *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f5f5f5}
-        .top-bar{background:#1a237e;color:#fff;padding:10px 20px;text-align:center;font-size:14px}
+        .top-bar{background:#1a237e;color:#fff;padding:8px 20px;text-align:center;font-size:13px}
         .top-bar a{color:#fff;text-decoration:none;font-weight:700;border-bottom:1px dotted rgba(255,255,255,.4)}
         .top-bar a:hover{color:#ff6f00;border-bottom-color:#ff6f00}
-        .header{background:#fff;padding:20px;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-        .header h1{color:#1a237e;font-size:36px;margin-bottom:10px}
+        .header{background:#fff;padding:14px 20px;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+        .header h1{color:#1a237e;font-size:30px;margin-bottom:6px}
         .header h1 span{color:#ff6f00}
-        .header p{color:#666;font-size:16px}
-        .nav{background:#1a237e;padding:15px;text-align:center;transition:transform .3s ease,max-height .3s ease,padding .3s ease;overflow:hidden;max-height:140px}
-        .nav a{color:#fff;text-decoration:none;padding:10px 20px;margin:0 5px;display:inline-block;cursor:pointer;border-radius:5px}
+        .header p{color:#666;font-size:14px}
+        .nav{background:#1a237e;padding:8px;text-align:center}
+        .nav a{color:#fff;text-decoration:none;padding:7px 14px;margin:0 3px;display:inline-block;cursor:pointer;border-radius:5px;font-size:14px;transition:background .2s}
         .nav a:hover{background:#ff6f00}
         .site-header-wrap{position:sticky;top:0;z-index:1200;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.08)}
-        .site-header-wrap.nav-hidden .nav{max-height:0;padding-top:0;padding-bottom:0;transform:translateY(-100%)}
+
+        /* Hide top-bar + header logo on scroll for a compact sticky nav */
+        .site-header-wrap.scrolled .top-bar,
+        .site-header-wrap.scrolled .header{display:none}
+        .site-header-wrap.scrolled .nav{padding:6px}
+
         .search-section{background:#fff;padding:20px}
         .vin-search{background:#f0f4ff;padding:20px;border-radius:10px;max-width:700px;margin:20px auto;text-align:center;transition:opacity .3s ease}
         .vin-search h3{color:#1a237e;margin-bottom:15px}
@@ -94,7 +99,6 @@
         .category-card:hover{transform:translateY(-5px);background:#e0e0e0}
         .category-card i{font-size:40px;color:#ff6f00;margin-bottom:15px}
         .category-card h3{color:#1a237e;margin-bottom:10px}
-        .category-count{position:absolute;top:10px;right:10px;background:#ff6f00;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px}
         .products{padding:40px 20px;background:#f5f5f5}
         .products h2{text-align:center;color:#1a237e;margin-bottom:30px;font-size:32px}
         .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto;align-items:stretch}
@@ -129,12 +133,13 @@
         .admin-btn{position:fixed;bottom:10px;left:10px;opacity:.3;padding:5px 10px;background:#ccc;border:none;cursor:pointer;z-index:999;font-size:12px}
         .admin-btn:hover{opacity:1}
         .cart-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:3000;max-width:500px;width:95%;max-height:80vh;overflow-y:auto;display:none}
+
         @media(max-width:768px){
             .header{padding:12px 10px}
-            .header h1{font-size:24px;margin-bottom:4px}
+            .header h1{font-size:22px;margin-bottom:4px}
             .header p{font-size:12px}
-            .nav{padding:8px;max-height:220px}
-            .nav a{display:block;padding:8px 12px;font-size:13px;margin:3px 2px}
+            .nav{padding:6px}
+            .nav a{display:inline-block;padding:6px 10px;font-size:12px;margin:2px 1px}
             .vehicle-selector select{width:100%;margin:5px 0}
             .vehicle-selector button{width:100%;margin:8px 0 0}
             .product-buttons{flex-direction:column}
@@ -147,7 +152,7 @@
 
         /* === MOBILE CALL BAR === */
         .mobile-call-bar{position:fixed;bottom:0;left:0;right:0;background:#1a237e;display:none;padding:8px;z-index:1150;box-shadow:0 -2px 10px rgba(0,0,0,.25);gap:8px}
-        .mobile-call-bar a{flex:1;text-align:center;color:#fff;text-decoration:none;font-weight:700;padding:12px 8px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px}
+        .mobile-call-bar a{flex:1;text-align:center;color:#fff;text-decoration:none;font-weight:700;padding:12px 6px;border-radius:8px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
         .mobile-call-bar a.call{background:#4caf50}
         .mobile-call-bar a.wa{background:#25D366}
         @media(max-width:768px){.mobile-call-bar{display:flex}}
@@ -364,7 +369,8 @@
         <div class="top-bar">
             📞 <a href="tel:+254713349554">ADIL: 0713349554</a> |
             <a href="tel:+254752763924">SUHAYL: 0752763924</a> |
-            <a href="https://wa.me/254713349554?text=Hello%20A%20%26%20S%20AUTOPARTS" target="_blank">💬 WhatsApp</a> |
+            💬 <a href="https://wa.me/254713349554?text=Hello%20ADIL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank">WA ADIL</a> |
+            <a href="https://wa.me/254752763924?text=Hello%20SUHAYL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank">WA SUHAYL</a> |
             📍 Mombasa, Kenya
         </div>
         <div class="header"><h1>A & S <span>AUTOPARTS</span></h1><p>Two Brothers, One Mission: Quality Parts</p></div>
@@ -492,7 +498,8 @@
         <div class="contact-details">
             <p><i class="fas fa-phone"></i> ADIL: <a href="tel:+254713349554">0713349554</a></p>
             <p><i class="fas fa-phone"></i> SUHAYL: <a href="tel:+254752763924">0752763924</a></p>
-            <p><i class="fab fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/254713349554" target="_blank">Chat with us 24/7</a></p>
+            <p><i class="fab fa-whatsapp"></i> WhatsApp ADIL: <a href="https://wa.me/254713349554?text=Hello%20ADIL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank">Chat 24/7</a></p>
+            <p><i class="fab fa-whatsapp"></i> WhatsApp SUHAYL: <a href="https://wa.me/254752763924?text=Hello%20SUHAYL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank">Chat 24/7</a></p>
             <p><i class="fas fa-map-marker-alt"></i> Mombasa, Kenya</p>
             <p><i class="fas fa-clock"></i> Mon-Fri: 8AM - 5PM</p>
             <p><i class="fas fa-clock"></i> Sat: 8AM - 12PM</p>
@@ -510,8 +517,9 @@
 
     <!-- ===== MOBILE CALL BAR ===== -->
     <div class="mobile-call-bar">
-        <a href="tel:+254713349554" class="call"><i class="fas fa-phone"></i> Call ADIL</a>
-        <a href="https://wa.me/254713349554?text=Hello%20A%20%26%20S%20AUTOPARTS" target="_blank" class="wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://wa.me/254713349554?text=Hello%20ADIL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank" class="wa"><i class="fab fa-whatsapp"></i> WA ADIL</a>
+        <a href="https://wa.me/254752763924?text=Hello%20SUHAYL%2C%20A%20%26%20S%20AUTOPARTS" target="_blank" class="wa"><i class="fab fa-whatsapp"></i> WA SUHAYL</a>
+        <a href="tel:+254713349554" class="call"><i class="fas fa-phone"></i> Call</a>
     </div>
 
     <div class="cart-modal" id="cartModal">
@@ -891,27 +899,18 @@ function toggleVinSearch(){
     }
 }
 
-// ==================== SMART HIDE HEADER ON SCROLL ====================
+// ==================== SMART HEADER SCROLL (compact nav only, keep visible) ====================
 (function(){
     const headerWrap = document.getElementById('siteHeaderWrap');
     if(!headerWrap) return;
-    let lastScrollY = window.scrollY;
     let ticking = false;
-    const SCROLL_THRESHOLD = 8;
     function updateHeader(){
-        const currentScrollY = window.scrollY;
-        const diff = currentScrollY - lastScrollY;
-        if(Math.abs(diff) > SCROLL_THRESHOLD){
-            if(diff > 0 && currentScrollY > 120){
-                headerWrap.classList.add('nav-hidden');
-            } else if(diff < 0){
-                headerWrap.classList.remove('nav-hidden');
-            }
+        const y = window.scrollY;
+        if(y > 120){
+            headerWrap.classList.add('scrolled');
+        } else {
+            headerWrap.classList.remove('scrolled');
         }
-        if(currentScrollY <= 40){
-            headerWrap.classList.remove('nav-hidden');
-        }
-        lastScrollY = currentScrollY;
         ticking = false;
     }
     window.addEventListener('scroll', function(){
