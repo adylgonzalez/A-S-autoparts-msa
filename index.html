@@ -53,12 +53,6 @@
         .nav a{color:#fff;text-decoration:none;padding:7px 14px;margin:0 3px;display:inline-block;cursor:pointer;border-radius:5px;font-size:14px;transition:background .2s}
         .nav a:hover{background:#ff6f00}
         .site-header-wrap{position:sticky;top:0;z-index:1200;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.08)}
-
-        /* Hide top-bar + header logo on scroll for a compact sticky nav */
-        .site-header-wrap.scrolled .top-bar,
-        .site-header-wrap.scrolled .header{display:none}
-        .site-header-wrap.scrolled .nav{padding:6px}
-
         .search-section{background:#fff;padding:20px}
         .vin-search{background:#f0f4ff;padding:20px;border-radius:10px;max-width:700px;margin:20px auto;text-align:center;transition:opacity .3s ease}
         .vin-search h3{color:#1a237e;margin-bottom:15px}
@@ -898,29 +892,6 @@ function toggleVinSearch(){
         if(vinInput) vinInput.value = '';
     }
 }
-
-// ==================== SMART HEADER SCROLL (compact nav only, keep visible) ====================
-(function(){
-    const headerWrap = document.getElementById('siteHeaderWrap');
-    if(!headerWrap) return;
-    let ticking = false;
-    function updateHeader(){
-        const y = window.scrollY;
-        if(y > 120){
-            headerWrap.classList.add('scrolled');
-        } else {
-            headerWrap.classList.remove('scrolled');
-        }
-        ticking = false;
-    }
-    window.addEventListener('scroll', function(){
-        if(!ticking){
-            window.requestAnimationFrame(updateHeader);
-            ticking = true;
-        }
-    }, {passive:true});
-})();
-
 // ==================== DUPLICATE DETECTION ====================
 function normalizeForCompare(str){
     if(!str) return '';
